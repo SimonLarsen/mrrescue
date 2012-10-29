@@ -2,6 +2,7 @@ require("AnAL")
 require("resources")
 require("map")
 require("player")
+require("water")
 
 WIDTH = 256
 HEIGHT = 200
@@ -17,10 +18,10 @@ function love.load()
 	lg.setMode(WIDTH*SCALE,HEIGHT*SCALE,false,true)
 	lg.setDefaultImageFilter("nearest","nearest")
 
-	loadImages()
+	loadResources()
 
 	map = Map.create()
-	player = Player.create(64,80)
+	player = Player.create(64,70)
 end
 
 function love.update(dt)
@@ -28,12 +29,17 @@ function love.update(dt)
 end
 
 function love.draw()
+	-- Scale screen
 	lg.scale(SCALE,SCALE)
+	-- Calculate translation offest
 	translate_x = math.min(math.max(0, player.x-WIDTH/2), MAPW-WIDTH)
 	translate_y = math.min(math.max(0, player.y-11-HEIGHT/2), MAPH-HEIGHT)
 	lg.translate(-math.floor(translate_x), -math.floor(translate_y))
 
+	-- Draw map
 	map:draw()
+
+	-- Draw player
 	player:draw()
 end
 
