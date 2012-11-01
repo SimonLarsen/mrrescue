@@ -99,10 +99,20 @@ function Player:update(dt)
 
 		-- Check if player has moved off ladder
 		local idBottom = map:getPointId(self.x, self.y)
-		if idBottom == 2
-		or idBottom ~= 5 and idBottom ~= 137 and idBottom ~= 153 then
+		local idMid = map:getPointId(self.x, self.y-11)
+		local idTop = map:getPointId(self.x, self.y-22)
+		if idBottom == 2 then
 			self.y = oldy
 			self:setState(PL_RUN)
+		elseif idBottom ~= 5 and idBottom ~= 137 and idBottom ~= 153 then
+			self:setState(PL_RUN)
+		end
+
+		-- Check if player tries to move to a side
+		if love.keyboard.isDown("a","d"," ") then
+			if idBottom ~= 5 and idMid ~= 5 and idTop ~= 5 then
+				self:setState(PL_RUN)
+			end
 		end
 	end
 
@@ -139,6 +149,7 @@ function Player:setState(state)
 		self.state = PL_CLIMB
 		self.anim = self.animClimbDown
 		self.yspeed = 0
+		self.x = math.floor(self.x/16)*16+8
 	end
 
 	self.anim:reset()
@@ -198,8 +209,17 @@ function Player:moveX(dist)
 		end
 	end
 
+	for i,v in ipairs(map.objects) do
+		if v.solid == true then
+			if self:collideBox(v:getBBox()) then
+				collision = true
+				self.x = v:getBBox().x-5.0001
+			end
+		end
+	end
+
 	if collision == true then
-		self.xspeed = -0.6*self.xspeed
+		self.xspeed = -1.0*self.xspeed
 	end
 end
 
@@ -228,6 +248,15 @@ function Player:moveY(dist)
 	end
 end
 
+function Player:collideBox(bbox)
+	if self.x-6  > bbox.x+bbox.w or self.x+5 < bbox.x
+	or self.y-22 > bbox.y+bbox.h or self.y   < bbox.y then
+		return false
+	else
+		return true
+	end
+end
+
 function Player:draw()
 	-- Floor position
 	self.flx = math.floor(self.x)
@@ -235,7 +264,9 @@ function Player:draw()
 
 	if self.state == PL_RUN then
 		-- Draw player
-		if math.abs(self.xspeed) < 30 then
+		if self.onGround == false then
+			love.graphics.drawq(img.player_running, quad.player_jump, self.flx, self.fly, 0, self.dir, 1, 7, 22)
+		elseif math.abs(self.xspeed) < 30 then
 			love.graphics.drawq(img.player_running, quad.player_idle, self.flx, self.fly, 0, self.dir, 1, 7, 22)
 		else
 			self.anim:draw(self.flx, self.fly, 0, self.dir, 1, 7, 22)
@@ -247,7 +278,7 @@ function Player:draw()
 		self.anim:draw(self.flx, self.fly, 0, 1,1, 7, 22)
 	end
 
-	-- Draw water (DEBUGGING)
+	-- Draw water
 	for i,v in ipairs(self.water) do
 		v:draw()
 	end

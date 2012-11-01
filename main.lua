@@ -3,15 +3,18 @@ require("resources")
 require("map")
 require("player")
 require("water")
+require("door")
 
 WIDTH = 256
 HEIGHT = 200
-SCALE = 3
 MAPW = 41*16
 MAPH = 16*16
+translate_x, translate_y = 0,0
+
+local SCALE = 3
+local FRAMERATE_CAP = 1/15
 
 local lg = love.graphics
-local translate_x, translate_y
 
 function love.load()
 	lg.setBackgroundColor(82,117,176)
@@ -25,6 +28,10 @@ function love.load()
 end
 
 function love.update(dt)
+	-- Cap framerate
+	if dt > FRAMERATE_CAP then dt = FRAMERATE_CAP end
+
+	-- Update entities
 	player:update(dt)
 end
 
@@ -44,5 +51,9 @@ function love.draw()
 end
 
 function love.keypressed(k, uni)
-	player:keypressed(k)
+	if k == "escape" then
+		love.event.quit()
+	else
+		player:keypressed(k)
+	end
 end

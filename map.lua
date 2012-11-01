@@ -10,6 +10,7 @@ function Map.create()
 	local self = setmetatable({}, Map)
 	
 	self.data = loader.load("base.tmx")
+	self.objects = {}
 
 	for i=1,3 do
 		self:addFloor(i)
@@ -19,7 +20,12 @@ function Map.create()
 end
 
 function Map:draw()
+	self.data:setDrawRange(translate_x, translate_y, WIDTH, HEIGHT)
 	self.data:draw()
+
+	for i,v in ipairs(self.objects) do
+		v:draw()
+	end
 end
 
 function Map:collidePoint(x,y)
@@ -41,6 +47,14 @@ function Map:addFloor(floor)
 	for x,y,tile in floor_data("main"):iterate() do
 		self.data("main"):set(x,y+yoffset,tile)
 	end
+
+	if floor_data("objects") then
+		for i,v in pairs(floor_data("objects").objects) do
+			if v.type == "door" then
+				table.insert(self.objects, Door.create(v.x, v.y+yoffset*16, v.properties.dir))
+			end
+		end
+	end
 end
 
 function Map:getId(x,y)
@@ -51,5 +65,6 @@ function Map:getPointId(x,y)
 	local cx = math.floor(x/16)
 	local cy = math.floor(y/16)
 
-	return self.data("main"):get(cx,cy).id
+	local tile = self.data("main"):get(cx,cy)
+	return tile and tile.id
 end
