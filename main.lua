@@ -2,7 +2,6 @@ require("AnAL")
 require("resources")
 require("map")
 require("player")
-require("water")
 require("door")
 
 WIDTH = 256
@@ -24,7 +23,7 @@ function love.load()
 	loadResources()
 
 	map = Map.create()
-	player = Player.create(64,70)
+	player = Player.create(MAPW/2,70)
 end
 
 function love.update(dt)
@@ -33,6 +32,7 @@ function love.update(dt)
 
 	-- Update entities
 	player:update(dt)
+	map:update(dt)
 end
 
 function love.draw()

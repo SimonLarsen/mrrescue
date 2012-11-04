@@ -33,3 +33,12 @@ end
 function Water:draw()
 	love.graphics.draw(img.water, math.floor(self.x-8), math.floor(self.y-8))
 end
+
+function Water:collideBox(bbox)
+	if self.x-5 > bbox.x+bbox.w or self.x+5 < bbox.x
+	or self.y-5 > bbox.y+bbox.h or self.y+5 < bbox.y then
+		return false
+	else
+		return true
+	end
+end

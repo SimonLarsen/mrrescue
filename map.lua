@@ -19,6 +19,16 @@ function Map.create()
 	return self
 end
 
+function Map:update(dt)
+	for i=#self.objects,1,-1 do
+		if self.objects[i].alive == false then
+			table.remove(self.objects, i)
+		else
+			self.objects[i]:update(dt)
+		end
+	end
+end
+
 function Map:draw()
 	self.data:setDrawRange(translate_x, translate_y, WIDTH, HEIGHT)
 	self.data:draw()

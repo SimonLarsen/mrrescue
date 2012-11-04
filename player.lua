@@ -7,6 +7,7 @@ local BRAKE_SPEED = 250
 local GRAVITY = 350
 local JUMP_POWER = 130
 local CLIMB_SPEED = 60
+local STREAM_SPEED = 400
 
 local COL_OFFSETS = {{-6,-0.0001}, {5,-0.0001}, {-6,-22}, {5,-22}} -- Collision point offsets
 
@@ -21,10 +22,11 @@ function Player.create(x,y)
 	self.yspeed = 0
 	self.onGround = false
 
+	self.shooting = false
+	self.streamLength = 0
+
 	self.state = PL_RUN
 	self.gundir = 2 -- gun direction
-
-	self.water = {}
 
 	self.dir = 1 -- -1 for left, 1 for right
 
@@ -32,25 +34,46 @@ function Player.create(x,y)
 	self.animClimbUp   = newAnimation(img.player_climb_up,   14, 23, 0.12, 4)
 	self.animClimbDown = newAnimation(img.player_climb_down, 14, 23, 0.12, 4)
 	self.anim = self.animRun
+	self.waterFrame = 0
 	
 	return self
 end
 
 function Player:update(dt)
+	self.shooting = false
+
 	-- RUNNING STATE
+	local changedDir = false -- true if player changed horizontal direction
 	if self.state == PL_RUN then
 		-- Handle input
 		if love.keyboard.isDown("d") then
 			self.xspeed = self.xspeed + RUN_SPEED*dt
-			self.dir = 1
+
+			if self.dir == -1 then
+				self.dir = 1
+				changedDir = true
+			end
 
 			if self.xspeed > MAX_SPEED then self.xspeed = MAX_SPEED end
 		end
 		if love.keyboard.isDown("a") then
 			self.xspeed = self.xspeed - RUN_SPEED*dt
-			self.dir = -1
+
+			if self.dir == 1 then
+				self.dir = -1
+				changedDir = true
+			end
 
 			if self.xspeed < -MAX_SPEED then self.xspeed = -MAX_SPEED end
+		end
+
+		-- Shoot
+		if love.keyboard.isDown("j") then
+			self.shooting = true
+			self.streamLength = self.streamLength + STREAM_SPEED*dt
+		else
+			self.shooting = false
+			self.streamLength = 0
 		end
 
 		-- Cap speeds
@@ -68,13 +91,15 @@ function Player:update(dt)
 		self:moveY(self.yspeed*dt)
 
 		-- Find gundirection
+		local old_gundir = self.gundir
 		self.gundir = 2
 		if love.keyboard.isDown("w") then
-			if love.keyboard.isDown("a","d") then self.gundir = 1
-			else self.gundir = 0 end
+			self.gundir = 0
 		elseif love.keyboard.isDown("s") then
-			if love.keyboard.isDown("a","d") then self.gundir = 3
-			else self.gundir = 4 end
+			self.gundir = 4
+		end
+		if self.gundir ~= old_gundir or changedDir and self.gundir == 2 then
+			self.streamLength = 0
 		end
 
 		-- Set animation speeds
@@ -118,16 +143,7 @@ function Player:update(dt)
 
 	-- Update animations
 	self.anim:update(dt)
-
-
-	-- Update water
-	for i=#self.water,1,-1 do
-		if self.water[i].alive == true then
-			self.water[i]:update(dt)
-		else
-			table.remove(self.water, i)
-		end
-	end
+	self.waterFrame = self.waterFrame + dt*10
 end
 
 function Player:keypressed(k)
@@ -145,6 +161,7 @@ function Player:setState(state)
 		self.state = PL_RUN
 		self.anim = self.animRun
 		self.xspeed, self.yspeed = 0, 0
+
 	elseif state == PL_CLIMB then
 		self.state = PL_CLIMB
 		self.anim = self.animClimbDown
@@ -176,8 +193,6 @@ function Player:shoot()
 		if self.dir == 1 then waterdir = -math.pi/4
 		else waterdir = -(3*math.pi)/4 end
 	end
-
-	table.insert(self.water, Water.create(self.x+8*math.cos(waterdir), self.y-5-8*math.sin(waterdir), waterdir))
 end
 
 function Player:climb()
@@ -197,6 +212,7 @@ function Player:moveX(dist)
 	local collision = false
 	self.x = self.x + dist
 	
+	-- Collide with solid tiles
 	for i=1,#COL_OFFSETS do
 		if map:collidePoint(self.x+COL_OFFSETS[i][1], self.y+COL_OFFSETS[i][2]) then
 			collision = true
@@ -208,12 +224,17 @@ function Player:moveX(dist)
 			end
 		end
 	end
-
+	-- Collide with solid objects
 	for i,v in ipairs(map.objects) do
 		if v.solid == true then
 			if self:collideBox(v:getBBox()) then
 				collision = true
-				self.x = v:getBBox().x-5.0001
+				local bbox = v:getBBox()
+				if self.xspeed > 0 then
+					self.x = bbox.x-5.0001
+				else
+					self.x = bbox.x+bbox.w+6
+				end
 			end
 		end
 	end
@@ -274,12 +295,35 @@ function Player:draw()
 
 		-- Draw gun
 		love.graphics.drawq(img.player_gun, quad.player_gun[self.gundir], self.flx, self.fly-16, 0, self.dir, 1, 3, 0)
+
+		-- Draw water
+		if self.shooting == true then
+			self:drawWater()
+		end
+
 	elseif self.state == PL_CLIMB then
 		self.anim:draw(self.flx, self.fly, 0, 1,1, 7, 22)
 	end
+end
 
-	-- Draw water
-	for i,v in ipairs(self.water) do
-		v:draw()
+function Player:drawWater()
+	local quadx = 8-math.floor((self.waterFrame*8)%8)
+	local wquad = love.graphics.newQuad(quadx, 0, math.floor(self.streamLength), 9, 16,16)
+	local frame = math.floor(self.waterFrame%2)
+
+	if self.gundir == 0 then -- up
+		love.graphics.drawq(img.stream, wquad, self.flx, self.fly, -math.pi/2, 1, self.dir, -19, 4)
+		love.graphics.drawq(img.water, quad.water_out[frame], self.flx+self.dir*0.5, self.fly-16, -math.pi/2, 1,1, 0,7.5)
+		love.graphics.drawq(img.water, quad.water_end[frame], self.flx+self.dir*0.5, self.fly-20-math.floor(self.streamLength), -math.pi/2, 1,1, 8, 7.5)
+
+	elseif self.gundir == 2 then -- horizontal
+		love.graphics.drawq(img.stream, wquad, self.flx+self.dir*12, self.fly-10, 0, self.dir, 1)
+		love.graphics.drawq(img.water, quad.water_out[frame], self.flx, self.fly, 0, self.dir,1, -9,13)
+		love.graphics.drawq(img.water, quad.water_end[frame], self.flx+self.dir*(12+math.floor(self.streamLength)), self.fly-5, 0, self.dir,1, 7.5, 8)
+	
+	elseif self.gundir == 4 then -- down
+		love.graphics.drawq(img.stream, wquad, self.flx, self.fly, -math.pi/2, -1, self.dir, -5, 4)
+		love.graphics.drawq(img.water, quad.water_out[frame], self.flx+self.dir*0.5, self.fly+2, math.pi/2, 1,1, 0,7.5)
+		love.graphics.drawq(img.water, quad.water_end[frame], self.flx+self.dir*0.5, self.fly+math.floor(self.streamLength), math.pi/2, 1,1, 5, 7.5)
 	end
 end
