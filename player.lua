@@ -46,7 +46,7 @@ function Player:update(dt)
 	local changedDir = false -- true if player changed horizontal direction
 	if self.state == PL_RUN then
 		-- Handle input
-		if love.keyboard.isDown("d") then
+		if love.keyboard.isDown("d")  then
 			self.xspeed = self.xspeed + RUN_SPEED*dt
 
 			if self.dir == -1 then
@@ -55,8 +55,8 @@ function Player:update(dt)
 			end
 
 			if self.xspeed > MAX_SPEED then self.xspeed = MAX_SPEED end
-		end
-		if love.keyboard.isDown("a") then
+
+		elseif love.keyboard.isDown("a") then
 			self.xspeed = self.xspeed - RUN_SPEED*dt
 
 			if self.dir == 1 then
