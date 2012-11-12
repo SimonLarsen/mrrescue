@@ -49,6 +49,14 @@ function Map:collidePoint(x,y)
 	return false
 end
 
+function Map:collideCell(cx,cy)
+	local tile = self.data("main"):get(cx,cy)
+	if tile and tile.id < 128 then
+		return true
+	end
+	return false
+end
+
 function Map:addFloor(floor)
 	local yoffset = 5*(floor-1) -- either 0, 5 or 10
 
