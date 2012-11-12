@@ -43,102 +43,10 @@ function Player:update(dt)
 	self.shooting = false
 
 	-- RUNNING STATE
-	local changedDir = false -- true if player changed horizontal direction
 	if self.state == PL_RUN then
-		-- Handle input
-		if love.keyboard.isDown("d")  then
-			self.xspeed = self.xspeed + RUN_SPEED*dt
-
-			if self.dir == -1 then
-				self.dir = 1
-				changedDir = true
-			end
-
-			if self.xspeed > MAX_SPEED then self.xspeed = MAX_SPEED end
-
-		elseif love.keyboard.isDown("a") then
-			self.xspeed = self.xspeed - RUN_SPEED*dt
-
-			if self.dir == 1 then
-				self.dir = -1
-				changedDir = true
-			end
-
-			if self.xspeed < -MAX_SPEED then self.xspeed = -MAX_SPEED end
-		end
-
-		-- Shoot
-		if love.keyboard.isDown("j") then
-			self.shooting = true
-			self.streamLength = self.streamLength + STREAM_SPEED*dt
-		else
-			self.shooting = false
-			self.streamLength = 0
-		end
-
-		-- Cap speeds
-		if self.xspeed < 0 then
-			self.xspeed = self.xspeed + math.max(dt*BRAKE_SPEED, self.xspeed)
-		elseif self.xspeed > 0 then
-			self.xspeed = self.xspeed - math.min(dt*BRAKE_SPEED, self.xspeed)
-		end
-
-		-- Update gravity
-		self.yspeed = self.yspeed + GRAVITY*dt
-		-- Move in x axis
-		self:moveX(self.xspeed*dt)
-		-- Move in y axis
-		self:moveY(self.yspeed*dt)
-
-		-- Find gundirection
-		local old_gundir = self.gundir
-		self.gundir = 2
-		if love.keyboard.isDown("w") then
-			self.gundir = 0
-		elseif love.keyboard.isDown("s") then
-			self.gundir = 4
-		end
-		if self.gundir ~= old_gundir or changedDir and self.gundir == 2 then
-			self.streamLength = 0
-		end
-
-		-- Set animation speeds
-		self.anim:setSpeed(math.abs(self.xspeed)/MAX_SPEED)
-
-	-- CLIMBING STATE
+		self:updateRunning(dt)
 	elseif self.state == PL_CLIMB then
-		local oldy = self.y
-		-- Move up and down ladder
-		local animSpeed = 0
-		if love.keyboard.isDown("s") then
-			self.y = self.y + CLIMB_SPEED*dt
-			self.anim = self.animClimbDown
-			animSpeed = 1
-		end
-		if love.keyboard.isDown("w") then
-			self.y = self.y - CLIMB_SPEED*dt
-			self.anim = self.animClimbUp
-			animSpeed = 1
-		end
-		self.anim:setSpeed(animSpeed)
-
-		-- Check if player has moved off ladder
-		local idBottom = map:getPointId(self.x, self.y)
-		local idMid = map:getPointId(self.x, self.y-11)
-		local idTop = map:getPointId(self.x, self.y-22)
-		if idBottom == 2 then
-			self.y = oldy
-			self:setState(PL_RUN)
-		elseif idBottom ~= 5 and idBottom ~= 137 and idBottom ~= 153 then
-			self:setState(PL_RUN)
-		end
-
-		-- Check if player tries to move to a side
-		if love.keyboard.isDown("a","d"," ") then
-			if idBottom ~= 5 and idMid ~= 5 and idTop ~= 5 then
-				self:setState(PL_RUN)
-			end
-		end
+		self:updateClimbing(dt)
 	end
 
 	-- Update animations
@@ -146,11 +54,147 @@ function Player:update(dt)
 	self.waterFrame = self.waterFrame + dt*10
 end
 
+function Player:updateRunning(dt)
+	local changedDir = false -- true if player changed horizontal direction
+	-- Handle input
+	if love.keyboard.isDown("d")  then
+		self.xspeed = self.xspeed + RUN_SPEED*dt
+
+		if self.dir == -1 then
+			self.dir = 1
+			changedDir = true
+		end
+
+		if self.xspeed > MAX_SPEED then self.xspeed = MAX_SPEED end
+
+	elseif love.keyboard.isDown("a") then
+		self.xspeed = self.xspeed - RUN_SPEED*dt
+
+		if self.dir == 1 then
+			self.dir = -1
+			changedDir = true
+		end
+
+		if self.xspeed < -MAX_SPEED then self.xspeed = -MAX_SPEED end
+	end
+
+	-- Cap speeds
+	if self.xspeed < 0 then
+		self.xspeed = self.xspeed + math.max(dt*BRAKE_SPEED, self.xspeed)
+	elseif self.xspeed > 0 then
+		self.xspeed = self.xspeed - math.min(dt*BRAKE_SPEED, self.xspeed)
+	end
+
+	-- Update gravity
+	self.yspeed = self.yspeed + GRAVITY*dt
+	-- Move in x axis
+	self:moveX(self.xspeed*dt)
+	-- Move in y axis
+	self:moveY(self.yspeed*dt)
+
+	-- Find gundirection
+	local old_gundir = self.gundir
+	self.gundir = 2
+	if love.keyboard.isDown("w") then
+		self.gundir = 0
+	elseif love.keyboard.isDown("s") then
+		self.gundir = 4
+	end
+	if self.gundir ~= old_gundir or changedDir and self.gundir == 2 then
+		self.streamLength = 0
+	end
+
+	-- Update stream length and collide it with entities/walls
+	self:updateStream(dt)
+
+	-- Set animation speeds
+	self.anim:setSpeed(math.abs(self.xspeed)/MAX_SPEED)
+end
+
+function Player:updateStream(dt)
+	-- Shoot
+	if love.keyboard.isDown("j") then
+		self.shooting = true
+		self.streamLength = self.streamLength + STREAM_SPEED*dt
+	else
+		self.shooting = false
+		self.streamLength = 0
+	end
+
+	-- Collide
+	local span = math.ceil((self.streamLength+12)/16)
+	local cx = math.floor(self.x/16)
+	local cy = math.floor((self.y-6)/16)
+	if self.gundir == 0 then -- up
+		for i = 1,span do
+			cy = cy - 1
+			if map:collideCell(cx,cy) == true then
+				self.streamLength = self.y-(cy+1)*16-20
+				break
+			end
+		end
+	elseif self.gundir == 4 then -- down
+		for i = 1,span do
+			cy = cy + 1
+			if map:collideCell(cx,cy) == true then
+				self.streamLength = cy*16-self.y-2
+				break
+			end
+		end
+	elseif self.gundir == 2 then -- horizontal
+		--cx = cx - self.dir
+		for i = 1,span do
+			cx = cx + self.dir
+			if map:collideCell(cx,cy) == true then
+				if self.dir == -1 then
+					self.streamLength = self.x-(cx+1)*16-13
+				else
+					self.streamLength = cx*16-self.x-10
+				end
+				break
+			end
+		end
+	end
+end
+
+function Player:updateClimbing(dt)
+	local oldy = self.y
+	-- Move up and down ladder
+	local animSpeed = 0
+	if love.keyboard.isDown("s") then
+		self.y = self.y + CLIMB_SPEED*dt
+		self.anim = self.animClimbDown
+		animSpeed = 1
+	end
+	if love.keyboard.isDown("w") then
+		self.y = self.y - CLIMB_SPEED*dt
+		self.anim = self.animClimbUp
+		animSpeed = 1
+	end
+	self.anim:setSpeed(animSpeed)
+
+	-- Check if player has moved off ladder
+	local idBottom = map:getPointId(self.x, self.y)
+	local idMid = map:getPointId(self.x, self.y-11)
+	local idTop = map:getPointId(self.x, self.y-22)
+	if idBottom == 2 then
+		self.y = oldy
+		self:setState(PL_RUN)
+	elseif idBottom ~= 5 and idBottom ~= 137 and idBottom ~= 153 then
+		self:setState(PL_RUN)
+	end
+
+	-- Check if player tries to move to a side
+	if love.keyboard.isDown("a","d"," ") then
+		if idBottom ~= 5 and idMid ~= 5 and idTop ~= 5 then
+			self:setState(PL_RUN)
+		end
+	end
+end
+
 function Player:keypressed(k)
 	if k == " " then
 		self:jump()
-	elseif k == "j" and self.state == PL_RUN then
-		self:shoot()
 	elseif k == "k" and self.state == PL_RUN then
 		self:climb()
 	end
@@ -175,23 +219,6 @@ end
 function Player:jump()
 	if self.onGround == true then
 		self.yspeed = -JUMP_POWER
-	end
-end
-
-function Player:shoot()
-	local waterdir = 0
-	if self.gundir == 0 then -- straight up
-		waterdir = math.pi/2
-	elseif self.gundir == 4 then -- straight down
-		waterdir = -math.pi/2
-	elseif self.gundir == 1 then -- diagonally up
-		if self.dir == 1 then waterdir = math.pi/4
-		else waterdir = (3*math.pi)/4 end
-	elseif self.gundir == 2 then -- forward
-		if self.dir == -1 then waterdir = math.pi end
-	else						 -- diagonally down
-		if self.dir == 1 then waterdir = -math.pi/4
-		else waterdir = -(3*math.pi)/4 end
 	end
 end
 
@@ -225,6 +252,7 @@ function Player:moveX(dist)
 		end
 	end
 	-- Collide with solid objects
+	--[[
 	for i,v in ipairs(map.objects) do
 		if v.solid == true then
 			if self:collideBox(v:getBBox()) then
@@ -238,6 +266,7 @@ function Player:moveX(dist)
 			end
 		end
 	end
+	--]]
 
 	if collision == true then
 		self.xspeed = -1.0*self.xspeed
