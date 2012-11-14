@@ -1,5 +1,6 @@
 Door = {}
 Door.__index = Door
+setmetatable(Door,Entity)
 
 local GRAVITY = 550
 
