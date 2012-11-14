@@ -63,7 +63,12 @@ function love.draw()
 end
 
 function drawDebug()
-	love.graphics.print("Player: ("..player.flx.." , "..player.fly..")",10,10)
+	for i,v in ipairs({{0,0,0,255},{255,255,255,255}}) do
+		lg.setColor(v)
+		lg.print("x: "..player.flx.."   y: "..player.fly,10+i,10+i)
+		lg.print("xspeed: "..math.floor(player.xspeed).."   yspeed: "..math.floor(player.yspeed),10+i,30+i)
+		lg.print("streamLength: "..math.floor(player.streamLength).."   streamCollided: ".. (player.streamCollided and "true" or "false"),10+i,50+i)
+	end
 end
 
 function love.keypressed(k, uni)
