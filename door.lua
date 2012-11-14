@@ -35,15 +35,15 @@ function Door:update(dt)
 
 		self.solid = false
 
-		if self.y > MAPW then
+		if self.y > MAPH then
 			self.alive = false
 		end
 	end
 end
 
-function Door:shot(xspeed,yspeed)
+function Door:shot(dir)
 	self.state = 1
-	self.xspeed = xspeed/4
+	self.xspeed = 50*dir
 	self.yspeed = -100
 end
 
@@ -57,4 +57,12 @@ end
 
 function Door:getBBox()
 	return self.bbox
+end
+
+function Door:collide(box)
+	if self.state == 0 then
+		return collideBoxes(self.bbox,box)
+	else
+		return false
+	end
 end

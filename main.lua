@@ -1,5 +1,6 @@
-require("AnAL")
 require("resources")
+require("util")
+require("AnAL")
 require("map")
 require("player")
 require("door")

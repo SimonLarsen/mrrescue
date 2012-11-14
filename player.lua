@@ -161,8 +161,31 @@ function Player:updateStream(dt)
 			end
 		end
 	end
+
+	-- Collide with entities
+	-- Calculate stream's collision box (table creation each frame!)
+	local sbox
+	if self.gundir == 0 then -- up
+		sbox = {x = self.x-4.5, y = self.y-15-self.streamLength, w = 9, h = self.streamLength}
+	elseif self.gundir == 2 then -- horizontal
+		if self.dir == -1 then
+			sbox = {x = self.x-8-self.streamLength, y = self.y-10, w = self.streamLength, h = 9}
+		else
+			sbox = {x = self.x+8, y = self.y-10, w = self.streamLength, h = 9}
+		end
+	elseif self.gundir == 4 then -- down
+		sbox = {x = self.x-4.5, y = self.y+1, w = 9, h = self.streamLength}
+	end
+	-- Collide with entities
+	for i,v in ipairs(map.objects) do
+		if v:collide(sbox) then
+			v:shot(self.dir)
+		end
+	end
 end
 
+--- Called each update if the current state is PL_CLIMB
+-- @param dt Time passed since last update
 function Player:updateClimbing(dt)
 	local oldy = self.y
 	-- Move up and down ladder
@@ -257,8 +280,8 @@ function Player:moveX(dist)
 			end
 		end
 	end
+
 	-- Collide with solid objects
-	--[[
 	for i,v in ipairs(map.objects) do
 		if v.solid == true then
 			if self:collideBox(v:getBBox()) then
@@ -272,7 +295,6 @@ function Player:moveX(dist)
 			end
 		end
 	end
-	--]]
 
 	if collision == true then
 		self.xspeed = -1.0*self.xspeed
