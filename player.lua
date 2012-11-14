@@ -24,6 +24,7 @@ function Player.create(x,y)
 
 	self.shooting = false
 	self.streamLength = 0
+	self.streamCollided = false
 
 	self.state = PL_RUN
 	self.gundir = 2 -- gun direction
@@ -125,11 +126,14 @@ function Player:updateStream(dt)
 	local span = math.ceil((self.streamLength+12)/16)
 	local cx = math.floor(self.x/16)
 	local cy = math.floor((self.y-6)/16)
+	self.streamCollided = false
+
 	if self.gundir == 0 then -- up
 		for i = 1,span do
 			cy = cy - 1
 			if map:collideCell(cx,cy) == true then
 				self.streamLength = self.y-(cy+1)*16-20
+				self.streamCollided = true
 				break
 			end
 		end
@@ -138,6 +142,7 @@ function Player:updateStream(dt)
 			cy = cy + 1
 			if map:collideCell(cx,cy) == true then
 				self.streamLength = cy*16-self.y-2
+				self.streamCollided = true
 				break
 			end
 		end
@@ -151,6 +156,7 @@ function Player:updateStream(dt)
 				else
 					self.streamLength = cx*16-self.x-10
 				end
+				self.streamCollided = true
 				break
 			end
 		end
@@ -342,17 +348,29 @@ function Player:drawWater()
 
 	if self.gundir == 0 then -- up
 		love.graphics.drawq(img.stream, wquad, self.flx, self.fly, -math.pi/2, 1, self.dir, -19, 4)
+		if self.streamCollided == false then
+			love.graphics.drawq(img.water, quad.water_end[frame], self.flx+self.dir*0.5, self.fly-20-math.floor(self.streamLength), -math.pi/2, 1,1, 8, 7.5)
+		else
+			love.graphics.drawq(img.water, quad.water_hit[frame], self.flx+self.dir*0.5, self.fly-13-math.floor(self.streamLength), -math.pi/2, 1,1, 8, 9.5)
+		end
 		love.graphics.drawq(img.water, quad.water_out[frame], self.flx+self.dir*0.5, self.fly-16, -math.pi/2, 1,1, 0,7.5)
-		love.graphics.drawq(img.water, quad.water_end[frame], self.flx+self.dir*0.5, self.fly-20-math.floor(self.streamLength), -math.pi/2, 1,1, 8, 7.5)
 
 	elseif self.gundir == 2 then -- horizontal
 		love.graphics.drawq(img.stream, wquad, self.flx+self.dir*12, self.fly-10, 0, self.dir, 1)
+		if self.streamCollided == false then
+			love.graphics.drawq(img.water, quad.water_end[frame], self.flx+self.dir*(12+math.floor(self.streamLength)), self.fly-5, 0, self.dir,1, 7.5, 8)
+		else
+			love.graphics.drawq(img.water, quad.water_hit[frame], self.flx+self.dir*(6.5+math.floor(self.streamLength))-1, self.fly-8, 0, self.dir,1, 9.5, 8)
+		end
 		love.graphics.drawq(img.water, quad.water_out[frame], self.flx, self.fly, 0, self.dir,1, -9,13)
-		love.graphics.drawq(img.water, quad.water_end[frame], self.flx+self.dir*(12+math.floor(self.streamLength)), self.fly-5, 0, self.dir,1, 7.5, 8)
 	
 	elseif self.gundir == 4 then -- down
 		love.graphics.drawq(img.stream, wquad, self.flx, self.fly, -math.pi/2, -1, self.dir, -5, 4)
+		if self.streamCollided == false then
+			love.graphics.drawq(img.water, quad.water_end[frame], self.flx+self.dir*0.5, self.fly+math.floor(self.streamLength), math.pi/2, 1,1, 5, 7.5)
+		else
+			love.graphics.drawq(img.water, quad.water_hit[frame], self.flx+self.dir*0.5, self.fly+math.floor(self.streamLength), math.pi/2, 1,1, 11, 9.5)
+		end
 		love.graphics.drawq(img.water, quad.water_out[frame], self.flx+self.dir*0.5, self.fly+2, math.pi/2, 1,1, 0,7.5)
-		love.graphics.drawq(img.water, quad.water_end[frame], self.flx+self.dir*0.5, self.fly+math.floor(self.streamLength), math.pi/2, 1,1, 5, 7.5)
 	end
 end
