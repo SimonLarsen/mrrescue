@@ -46,4 +46,9 @@ function loadResources()
 	quad.water_end = {}
 	quad.water_end[0] = love.graphics.newQuad(32,0, 16,15, getSize(img.water))
 	quad.water_end[1] = love.graphics.newQuad(48,0, 16,15, getSize(img.water))
+
+	quad.water_hit = {}
+	for i=0,2 do
+		quad.water_hit[i] = love.graphics.newQuad(i*16, 16, 16, 19, getSize(img.water))
+	end
 end
