@@ -142,7 +142,7 @@ function Player:updateStream(dt)
 		for i = 1,span do
 			cy = cy - 1
 			if map:collideCell(cx,cy) == true then
-				map:hitCell(cx,cy)
+				map:hitCell(cx,cy,self.dir)
 				self.streamLength = self.y-(cy+1)*16-20
 				self.streamCollided = true
 				break
@@ -152,7 +152,7 @@ function Player:updateStream(dt)
 		for i = 1,span do
 			cy = cy + 1
 			if map:collideCell(cx,cy) == true then
-				map:hitCell(cx,cy)
+				map:hitCell(cx,cy,self.dir)
 				self.streamLength = cy*16-self.y-2
 				self.streamCollided = true
 				break
@@ -163,7 +163,7 @@ function Player:updateStream(dt)
 		for i = 1,span do
 			cx = cx + self.dir
 			if map:collideCell(cx,cy) == true then
-				map:hitCell(cx,cy)
+				map:hitCell(cx,cy,self.dir)
 				if self.dir == -1 then
 					self.streamLength = self.x-(cx+1)*16-13
 				else
