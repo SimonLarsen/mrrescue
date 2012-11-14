@@ -3,7 +3,10 @@ require("util")
 require("AnAL")
 require("map")
 require("player")
+
+require("entity")
 require("door")
+require("particles")
 
 WIDTH = 256
 HEIGHT = 200

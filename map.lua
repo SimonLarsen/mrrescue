@@ -11,6 +11,7 @@ function Map.create()
 	
 	self.data = loader.load("base.tmx")
 	self.objects = {}
+	self.particles = {}
 
 	for i=1,3 do
 		self:addFloor(i)
@@ -20,11 +21,21 @@ function Map.create()
 end
 
 function Map:update(dt)
+	-- Update entities
 	for i=#self.objects,1,-1 do
 		if self.objects[i].alive == false then
 			table.remove(self.objects, i)
 		else
 			self.objects[i]:update(dt)
+		end
+	end
+
+	-- Update particles
+	for i=#self.particles,1,-1 do
+		if self.particles[i].alive == false then
+			table.remove(self.particles, i)
+		else
+			self.particles[i]:update(dt)
 		end
 	end
 end
@@ -34,6 +45,10 @@ function Map:draw()
 	self.data:draw()
 
 	for i,v in ipairs(self.objects) do
+		v:draw()
+	end
+
+	for i,v in ipairs(self.particles) do
 		v:draw()
 	end
 end
@@ -60,22 +75,24 @@ end
 --- Called when stream is stopped by cell
 -- @param cx X coordinate of the cell
 -- @param cy Y coordinate of the cell
-function Map:hitCell(cx,cy)
+function Map:hitCell(cx,cy,dir)
 	local tile = self.data("main"):get(cx,cy)
 	if tile then
 		if tile.id == 38 or tile.id == 39 then
-			self:destroyWindow(cx,cy-1,tile.id)
+			self:destroyWindow(cx,cy-1,tile.id,dir)
 		end
 	end
 end
 
-function Map:destroyWindow(cx,cy,id)
+function Map:destroyWindow(cx,cy,id,dir)
 	if id == 38 then -- left window
 		self.data("main"):set(cx,cy,   self.data.tiles[239])
 		self.data("main"):set(cx,cy+1, self.data.tiles[255])
+		table.insert(self.particles, Shards.create(cx*16+6, cy*16, dir))
 	elseif id == 39 then -- right window
 		self.data("main"):set(cx,cy,   self.data.tiles[240])
 		self.data("main"):set(cx,cy+1, self.data.tiles[256])
+		table.insert(self.particles, Shards.create(cx*16+10, cy*16, dir))
 	end
 	self.data:forceRedraw()
 end

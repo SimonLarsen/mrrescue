@@ -8,7 +8,8 @@ local IMAGE_FILES = {
 	"player_running",
 	"door",
 	"stream",
-	"water"
+	"water",
+	"shards"
 }
 
 --- Returns size of an Image as two return values
@@ -50,5 +51,10 @@ function loadResources()
 	quad.water_hit = {}
 	for i=0,2 do
 		quad.water_hit[i] = love.graphics.newQuad(i*16, 16, 16, 19, getSize(img.water))
+	end
+
+	quad.shard = {}
+	for i=0,7 do
+		quad.shard[i] = love.graphics.newQuad(i*8,0,8,8, getSize(img.shards))
 	end
 end
