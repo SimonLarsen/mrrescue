@@ -40,6 +40,9 @@ function Player.create(x,y)
 	return self
 end
 
+--- Updates the player
+-- Called once once each love.update
+-- @param dt Time passed since last update
 function Player:update(dt)
 	self.shooting = false
 
@@ -55,6 +58,8 @@ function Player:update(dt)
 	self.waterFrame = self.waterFrame + dt*10
 end
 
+--- Called each update if current state is PL_RUN
+-- @param dt Time passed since laste update
 function Player:updateRunning(dt)
 	local changedDir = false -- true if player changed horizontal direction
 	-- Handle input
@@ -112,6 +117,9 @@ function Player:updateRunning(dt)
 	self.anim:setSpeed(math.abs(self.xspeed)/MAX_SPEED)
 end
 
+--- Updates the water stream
+-- Updates the length of the water stream
+-- and performs collision with walls and other entities
 function Player:updateStream(dt)
 	-- Shoot
 	if love.keyboard.isDown("j") then
@@ -122,7 +130,7 @@ function Player:updateStream(dt)
 		self.streamLength = 0
 	end
 
-	-- Collide
+	-- Collide with walls
 	local span = math.ceil((self.streamLength+12)/16)
 	local cx = math.floor(self.x/16)
 	local cy = math.floor((self.y-6)/16)
@@ -229,6 +237,7 @@ function Player:keypressed(k)
 	end
 end
 
+--- Changes the current state and resets current animation
 function Player:setState(state)
 	if state == PL_RUN then
 		self.state = PL_RUN
