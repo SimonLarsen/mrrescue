@@ -8,20 +8,19 @@ function Door.create(x,y,dir)
 
 	self.alive = true
 	self.solid = true
+
 	self.x = x
+	if dir == "left" then
+		self.x = self.x+12
+	end
 	self.y = y
+
 	self.state = 0 -- 0 = closed, 1 = off hinges
 	self.dir = dir
 
 	self.xspeed = 0
 	self.yspeed = 0
-
-	-- Create bbox
-	if dir == "left" then
-		self.bbox = {x = x+12, y=y, w=4, h=47}
-	else
-		self.bbox = {x = x, y=y, w=4, h=47}
-	end
+	self.bbox = {x=self.x, y=self.y, w=4, h=47}
 
 	return self
 end
@@ -48,11 +47,7 @@ function Door:shot(dir)
 end
 
 function Door:draw()
-	if self.dir == "left" then
-		love.graphics.drawq(img.door, quad.door_closed, self.x+10, self.y)
-	else
-		love.graphics.drawq(img.door, quad.door_closed, self.x-2,  self.y)
-	end
+	love.graphics.drawq(img.door, quad.door_closed, self.x-2,  self.y+24, self.state*(100+self.yspeed)*self.xspeed*0.0005, 1,1, 0, 24)
 end
 
 function Door:getBBox()
