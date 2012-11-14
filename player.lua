@@ -7,7 +7,8 @@ local BRAKE_SPEED = 250
 local GRAVITY = 350
 local JUMP_POWER = 130
 local CLIMB_SPEED = 60
-local STREAM_SPEED = 400
+local STREAM_SPEED = 400 -- stream growth speed
+local MAX_STREAM = 200 -- maximum stream length
 
 local COL_OFFSETS = {{-6,-0.0001}, {5,-0.0001}, {-6,-22}, {5,-22}} -- Collision point offsets
 
@@ -124,10 +125,11 @@ function Player:updateStream(dt)
 	-- Shoot
 	if love.keyboard.isDown("j") then
 		self.shooting = true
-		self.streamLength = self.streamLength + STREAM_SPEED*dt
+		self.streamLength = math.min(self.streamLength + STREAM_SPEED*dt, MAX_STREAM)
 	else
 		self.shooting = false
 		self.streamLength = 0
+		return
 	end
 
 	-- Collide with walls
@@ -140,6 +142,7 @@ function Player:updateStream(dt)
 		for i = 1,span do
 			cy = cy - 1
 			if map:collideCell(cx,cy) == true then
+				map:hitCell(cx,cy)
 				self.streamLength = self.y-(cy+1)*16-20
 				self.streamCollided = true
 				break
@@ -149,6 +152,7 @@ function Player:updateStream(dt)
 		for i = 1,span do
 			cy = cy + 1
 			if map:collideCell(cx,cy) == true then
+				map:hitCell(cx,cy)
 				self.streamLength = cy*16-self.y-2
 				self.streamCollided = true
 				break
@@ -159,6 +163,7 @@ function Player:updateStream(dt)
 		for i = 1,span do
 			cx = cx + self.dir
 			if map:collideCell(cx,cy) == true then
+				map:hitCell(cx,cy)
 				if self.dir == -1 then
 					self.streamLength = self.x-(cx+1)*16-13
 				else
@@ -305,6 +310,7 @@ function Player:moveX(dist)
 		end
 	end
 
+	-- Bounce off walls if collision
 	if collision == true then
 		self.xspeed = -1.0*self.xspeed
 	end

@@ -57,6 +57,29 @@ function Map:collideCell(cx,cy)
 	return false
 end
 
+--- Called when stream is stopped by cell
+-- @param cx X coordinate of the cell
+-- @param cy Y coordinate of the cell
+function Map:hitCell(cx,cy)
+	local tile = self.data("main"):get(cx,cy)
+	if tile then
+		if tile.id == 38 or tile.id == 39 then
+			self:destroyWindow(cx,cy-1,tile.id)
+		end
+	end
+end
+
+function Map:destroyWindow(cx,cy,id)
+	if id == 38 then -- left window
+		self.data("main"):set(cx,cy,   self.data.tiles[239])
+		self.data("main"):set(cx,cy+1, self.data.tiles[255])
+	elseif id == 39 then -- right window
+		self.data("main"):set(cx,cy,   self.data.tiles[240])
+		self.data("main"):set(cx,cy+1, self.data.tiles[256])
+	end
+	self.data:forceRedraw()
+end
+
 function Map:addFloor(floor)
 	local yoffset = 5*(floor-1) -- either 0, 5 or 10
 
