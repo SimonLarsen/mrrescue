@@ -216,9 +216,9 @@ function Player:updateClimbing(dt)
 	self.anim:setSpeed(animSpeed)
 
 	-- Check if player has moved off ladder
-	local idBottom = map:getPointId(self.x, self.y)
-	local idMid = map:getPointId(self.x, self.y-11)
-	local idTop = map:getPointId(self.x, self.y-22)
+	local idBottom = map:getPoint(self.x, self.y)
+	local idMid = map:getPoint(self.x, self.y-11)
+	local idTop = map:getPoint(self.x, self.y-22)
 	if idBottom == 2 then
 		self.y = oldy
 		self:setState(PL_RUN)
@@ -267,8 +267,8 @@ end
 
 function Player:climb()
 	if self.gundir == 0 or self.gundir == 4 then -- UP
-		local below = map:getPointId(self.x, self.y+1)
-		local top    = map:getPointId(self.x, self.y-22)
+		local below = map:getPoint(self.x, self.y+1)
+		local top    = map:getPoint(self.x, self.y-22)
 		if below == 5 or below == 137 or below == 153
 		or top == 5 or top == 137 or top == 153 then
 			self:setState(PL_CLIMB)

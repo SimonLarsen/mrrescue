@@ -54,12 +54,15 @@ function love.draw()
 	lg.translate(-math.floor(translate_x), -math.floor(translate_y))
 
 	-- Draw map
+	map:setDrawRange(translate_x, translate_y, WIDTH, HEIGHT)
 	map:draw()
 
 	-- Draw player
 	player:draw()
 
+	-- Restore untransformed matrix
 	lg.pop()
+
 	-- Draw debug information
 	if show_debug == true then
 		drawDebug()

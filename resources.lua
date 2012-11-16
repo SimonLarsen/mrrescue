@@ -2,6 +2,7 @@ img = {}  	-- global Image objects
 quad = {}	-- global Quads
 
 local IMAGE_FILES = {
+	"tiles",
 	"player_gun",
 	"player_climb_down",
 	"player_climb_up",
@@ -56,5 +57,14 @@ function loadResources()
 	quad.shard = {}
 	for i=0,7 do
 		quad.shard[i] = love.graphics.newQuad(i*8,0,8,8, getSize(img.shards))
+	end
+
+	quad.tile = {}
+	local id = 1
+	for iy = 0,15 do
+		for ix = 0,15 do
+			quad.tile[id] = love.graphics.newQuad(ix*16, iy*16, 16, 16, getSize(img.tiles))
+			id = id + 1
+		end
 	end
 end
