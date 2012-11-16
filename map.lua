@@ -3,12 +3,24 @@ Map.__index = Map
 
 local lg = love.graphics
 
+local floor_files = {
+	"1-1-1.lua",
+	"1-2.lua",
+	"2-1.lua",
+	"2-2.lua"
+}
+
 function Map.create()
 	local self = setmetatable({}, Map)
 
 	local file = dofile("maps/base.lua")
 
-	self.data = file.layers[1].data
+	for i,v in ipairs(file.layers) do
+		if v.name == "main" then
+			self.data = v.data
+			break
+		end
+	end
 	self.width = file.width
 	self.height = file.height
 
@@ -19,6 +31,10 @@ function Map.create()
 
 	self.objects = {}
 	self.particles = {}
+
+	for i=1,3 do
+		self:addFloor(i)
+	end
 
 	return self
 end
@@ -94,7 +110,28 @@ function Map:forceRedraw()
 end
 
 function Map:addFloor(floor)
-	return -- TODO IMPLEMENT
+	local yoffset = 5*(floor-1) -- 0, 5 or 10
+
+	local file = dofile("maps/floors/"..floor_files[math.random(#floor_files)])
+	for i,v in ipairs(file.layers) do
+		-- Load tiles
+		if v.name == "main" then
+			for iy = 0,file.height-1 do
+				for ix = 0,file.width-1 do
+					local tile = v.data[iy*file.width+ix+1]
+					self:set(ix,iy+yoffset, tile)
+				end
+			end
+
+		-- Load objects
+		elseif v.name == "objects" then
+			for j,o in ipairs(v.objects) do
+				if o.type == "door" then
+					table.insert(self.objects, Door.create(o.x, o.y+yoffset*16, o.properties.dir))
+				end
+			end
+		end
+	end
 end
 
 function Map:collidePoint(x,y)
@@ -153,4 +190,12 @@ end
 
 function Map:set(x,y,val)
 	self.data[y*self.width+x+1] = val
+end
+
+function Map:getWidth()
+	return self.width
+end
+
+function Map:getHeight()
+	return self.height
 end
