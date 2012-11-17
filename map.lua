@@ -13,7 +13,7 @@ local floor_files = {
 function Map.create()
 	local self = setmetatable({}, Map)
 
-	local file = dofile("maps/base.lua")
+	local file = love.filesystem.load("maps/base.lua")()
 
 	for i,v in ipairs(file.layers) do
 		if v.name == "main" then
@@ -112,7 +112,7 @@ end
 function Map:addFloor(floor)
 	local yoffset = 5*(floor-1) -- 0, 5 or 10
 
-	local file = dofile("maps/floors/"..floor_files[math.random(#floor_files)])
+	local file = love.filesystem.load("maps/floors/"..floor_files[math.random(#floor_files)])()
 	for i,v in ipairs(file.layers) do
 		-- Load tiles
 		if v.name == "main" then
