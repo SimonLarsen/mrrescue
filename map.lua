@@ -31,11 +31,16 @@ function Map.create()
 
 	self.objects = {}
 	self.particles = {}
+	self.enemies = {}
 
 	for i=1,3 do
 		self:addFloor(i)
 	end
 
+	self.background = table.random(BACKGROUND_FILES)
+
+	table.insert(self.enemies, NormalEnemy.create(80,80))
+	table.insert(self.enemies, NormalEnemy.create(160,80))
 	return self
 end
 
@@ -46,6 +51,15 @@ function Map:update(dt)
 			table.remove(self.objects, i)
 		else
 			self.objects[i]:update(dt)
+		end
+	end
+
+	-- Update enemies
+	for i=#self.enemies,1,-1 do
+		if self.enemies[i].alive == false then
+			table.remove(self.objects, i)
+		else
+			self.enemies[i]:update(dt)
 		end
 	end
 
@@ -70,6 +84,11 @@ function Map:setDrawRange(x,y,w,h)
 end
 
 function Map:draw()
+	-- Draw background
+	local xin = translate_x/(MAPW-WIDTH)
+	local yin = translate_y/(MAPH-HEIGHT)
+	lg.draw(img[self.background], translate_x-xin*(512-WIDTH), translate_y-yin*(256-HEIGHT))
+
 	-- Recreate sprite batch if redraw is set
 	if self.redraw == true then
 		self.batch:clear()
@@ -94,8 +113,12 @@ function Map:draw()
 	-- Draw sprite batch
 	lg.draw(self.batch, 0,0)
 
-	-- Draw entities and particles
+	-- Draw entities, enemies and particles
 	for i,v in ipairs(self.objects) do
+		v:draw()
+	end
+
+	for i,v in ipairs(self.enemies) do
 		v:draw()
 	end
 
@@ -112,7 +135,8 @@ end
 function Map:addFloor(floor)
 	local yoffset = 5*(floor-1) -- 0, 5 or 10
 
-	local file = love.filesystem.load("maps/floors/"..floor_files[math.random(#floor_files)])()
+	--local file = love.filesystem.load("maps/floors/"..floor_files[math.random(#floor_files)])()
+	local file = love.filesystem.load("maps/floors/"..table.random(floor_files))()
 	for i,v in ipairs(file.layers) do
 		-- Load tiles
 		if v.name == "main" then

@@ -32,7 +32,7 @@ function Player.create(x,y)
 
 	self.dir = 1 -- -1 for left, 1 for right
 
-	self.animRun =  newAnimation(img.player_running, 15, 22, 0.12, 4)
+	self.animRun 	   = newAnimation(img.player_running, 15, 22, 0.12, 4)
 	self.animClimbUp   = newAnimation(img.player_climb_up,   14, 23, 0.12, 4)
 	self.animClimbDown = newAnimation(img.player_climb_down, 14, 23, 0.12, 4)
 	self.anim = self.animRun
@@ -63,6 +63,7 @@ end
 -- @param dt Time passed since laste update
 function Player:updateRunning(dt)
 	local changedDir = false -- true if player changed horizontal direction
+
 	-- Handle input
 	if love.keyboard.isDown("d")  then
 		self.xspeed = self.xspeed + RUN_SPEED*dt
@@ -179,20 +180,52 @@ function Player:updateStream(dt)
 	-- Calculate stream's collision box (table creation each frame!)
 	local sbox
 	if self.gundir == 0 then -- up
-		sbox = {x = self.x-4.5, y = self.y-15-self.streamLength, w = 9, h = self.streamLength}
+		sbox = {x = self.x-4.5, y = self.y-17-self.streamLength, w = 9, h = self.streamLength}
 	elseif self.gundir == 2 then -- horizontal
 		if self.dir == -1 then
-			sbox = {x = self.x-8-self.streamLength, y = self.y-10, w = self.streamLength, h = 9}
+			sbox = {x = self.x-9-self.streamLength, y = self.y-10, w = self.streamLength, h = 9}
 		else
-			sbox = {x = self.x+8, y = self.y-10, w = self.streamLength, h = 9}
+			sbox = {x = self.x+9, y = self.y-10, w = self.streamLength, h = 9}
 		end
 	elseif self.gundir == 4 then -- down
 		sbox = {x = self.x-4.5, y = self.y+1, w = 9, h = self.streamLength}
 	end
-	-- Collide with entities
+	-- Collide with enemies
+	local closestHit = nil
+	local min = 999999
+	-- Collide with objects
 	for i,v in ipairs(map.objects) do
-		if v:collide(sbox) then
-			v:shot(self.dir)
+		if v:collideBox(sbox) == true then
+			local dist = self:cutStream(v:getBBox())
+			if dist < min then
+				closestHit = v
+				min = dist
+			end
+			self.streamCollided = true
+		end
+	end
+	for i,v in ipairs(map.enemies) do
+		if v:collideBox(sbox) == true then
+			local dist = self:cutStream(v:getBBox())
+			if dist < min then
+				closestHit = v
+				min = dist
+			end
+			self.streamCollided = true
+		end
+	end
+	if closestHit ~= nil then
+		closestHit:shot(dt,self.dir)
+		self.streamLength = min
+	end
+end
+
+function Player:cutStream(box)
+	if self.gundir == 2 then
+		if self.dir == -1 then -- left
+			return self.x - (box.x+box.w)-11
+		else
+			return box.x - self.x-9
 		end
 	end
 end
@@ -219,10 +252,10 @@ function Player:updateClimbing(dt)
 	local idBottom = map:getPoint(self.x, self.y)
 	local idMid = map:getPoint(self.x, self.y-11)
 	local idTop = map:getPoint(self.x, self.y-22)
-	if idBottom == 2 then
+	if idBottom == 2 then -- over ladder
 		self.y = oldy
 		self:setState(PL_RUN)
-	elseif idBottom ~= 5 and idBottom ~= 137 and idBottom ~= 153 then
+	elseif idBottom ~= 5 and idBottom ~= 137 and idBottom ~= 153 then -- hit bottom
 		self:setState(PL_RUN)
 	end
 

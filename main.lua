@@ -3,8 +3,8 @@ require("util")
 require("AnAL")
 require("map")
 require("player")
-
 require("entity")
+require("enemy")
 require("door")
 require("particles")
 
@@ -22,7 +22,7 @@ local lg = love.graphics
 
 function love.load()
 	lg.setBackgroundColor(82,117,176)
-	lg.setMode(WIDTH*SCALE,HEIGHT*SCALE,false,true)
+	lg.setMode(WIDTH*SCALE, HEIGHT*SCALE, false, true)
 	lg.setDefaultImageFilter("nearest","nearest")
 
 	lg.setFont(lg.newFont(16))
@@ -37,6 +37,10 @@ function love.update(dt)
 	-- Cap framerate
 	if dt > FRAMERATE_CAP then dt = FRAMERATE_CAP end
 
+	if love.keyboard.isDown("l") then
+		dt = dt/4
+	end
+
 	-- Update entities
 	player:update(dt)
 	map:update(dt)
@@ -45,9 +49,9 @@ end
 function love.draw()
 	-- Push untransformed matrix
 	lg.push()
-
 	-- Scale screen
 	lg.scale(SCALE,SCALE)
+
 	-- Calculate translation offest
 	translate_x = math.min(math.max(0, player.x-WIDTH/2), MAPW-WIDTH)
 	translate_y = math.min(math.max(0, player.y-11-HEIGHT/2), MAPH-HEIGHT)

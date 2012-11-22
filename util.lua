@@ -10,3 +10,7 @@ function collideBoxes(b1,b2)
 		return true
 	end
 end
+
+function table.random(t)
+	return t[math.random(#t)]
+end

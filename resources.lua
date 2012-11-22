@@ -1,7 +1,8 @@
 img = {}  	-- global Image objects
 quad = {}	-- global Quads
 
-local IMAGE_FILES = {
+IMAGE_FILES = {
+	-- Sprites
 	"tiles",
 	"player_gun",
 	"player_climb_down",
@@ -10,7 +11,14 @@ local IMAGE_FILES = {
 	"door",
 	"stream",
 	"water",
-	"shards"
+	"shards",
+	"enemy_normal_run",
+	"enemy_normal_hit",
+	"enemy_normal_recover"
+}
+
+BACKGROUND_FILES = {
+	"mountains"
 }
 
 --- Returns size of an Image as two return values
@@ -25,6 +33,9 @@ function loadResources()
 	for i,v in ipairs(IMAGE_FILES) do
 		img[v] = love.graphics.newImage("data/"..v..".png")
 	end
+	for i,v in ipairs(BACKGROUND_FILES) do
+		img[v] = love.graphics.newImage("data/backgrounds/"..v..".png")
+	end
 
 	-- Set special image attributes
 	img.stream:setWrap("repeat", "clamp")
@@ -38,8 +49,8 @@ function loadResources()
 		quad.player_gun[i] = love.graphics.newQuad(i*12,0,12,18, getSize(img.player_gun))
 	end
 
-	quad.door_closed = love.graphics.newQuad(0,0, 8,48, getSize(img.door))
-	quad.door_open   = love.graphics.newQuad(16,0, 24,48, getSize(img.door))
+	quad.door_normal  = love.graphics.newQuad( 0,0, 8,48, getSize(img.door))
+	quad.door_damaged = love.graphics.newQuad(16,0, 8,48, getSize(img.door))
 
 	quad.water_out = {}
 	quad.water_out[0] = love.graphics.newQuad(0,0, 8,15, getSize(img.water))
