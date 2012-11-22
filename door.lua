@@ -1,4 +1,4 @@
-Door = {}
+Door = {solid = true}
 Door.__index = Door
 setmetatable(Door,Entity)
 
@@ -8,7 +8,7 @@ function Door.create(x,y,dir)
 	local self = setmetatable({}, Door)	
 
 	self.alive = true
-	self.solid = true
+	self.health = 0.3
 
 	self.x = x
 	if dir == "left" then
@@ -41,21 +41,29 @@ function Door:update(dt)
 	end
 end
 
-function Door:shot(dir)
-	self.state = 1
-	self.xspeed = 50*dir
-	self.yspeed = -100
+function Door:shot(dt,dir)
+	self.health = self.health - dt
+
+	if self.health < 0 then
+		self.state = 1
+		self.xspeed = 50*dir
+		self.yspeed = -100
+	end
 end
 
 function Door:draw()
-	love.graphics.drawq(img.door, quad.door_closed, self.x-2,  self.y+24, self.state*(100+self.yspeed)*self.xspeed*0.0005, 1,1, 0, 24)
+	if self.health > 0.15 then
+		love.graphics.drawq(img.door, quad.door_normal, self.x-2,  self.y+24, self.state*(100+self.yspeed)*self.xspeed*0.0005, 1,1, 0, 24)
+	else
+		love.graphics.drawq(img.door, quad.door_damaged, self.x-2,  self.y+24, self.state*(100+self.yspeed)*self.xspeed*0.0005, 1,1, 0, 24)
+	end
 end
 
 function Door:getBBox()
 	return self.bbox
 end
 
-function Door:collide(box)
+function Door:collideBox(box)
 	if self.state == 0 then
 		return collideBoxes(self.bbox,box)
 	else
