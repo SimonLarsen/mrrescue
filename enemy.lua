@@ -2,6 +2,8 @@
 NormalEnemy = { MOVE_SPEED = 100 }
 NormalEnemy.__index = NormalEnemy
 
+local EN_RUN, EN_HIT, EN_RECOVER = 0,1,2
+
 function NormalEnemy.create(x,y)
 	local self = setmetatable({}, NormalEnemy)
 
@@ -11,7 +13,7 @@ function NormalEnemy.create(x,y)
 	self.y = y
 	self.dir = 1
 	self.health = 100
-	self.state = 1 -- 1 = normal, 2 = hit, 3 = recovering
+	self.state = EN_RUN
 
 	self.animRun = newAnimation(img.enemy_normal_run, 16, 26, 0.12, 4)
 	self.animHit = newAnimation(img.enemy_normal_hit, 16, 26, 0.12, 2)
@@ -24,7 +26,8 @@ end
 
 function NormalEnemy:update(dt)
 	-- Normal state
-	if self.state == 1 then
+	if self.state == EN_RUN then
+		local oldx = self.x
 		self.x = self.x + self.dir*self.MOVE_SPEED*dt
 		
 		if map:collidePoint(self.x + self.dir*7, self.y-13) == true then
@@ -34,23 +37,24 @@ function NormalEnemy:update(dt)
 		for i,v in ipairs(map.objects) do
 			if v.solid == true then
 				if self:collideBox(v:getBBox()) then
+					self.x = oldx
 					self.dir = self.dir*-1
 					break
 				end
 			end
 		end
 	-- Getting hit
-	elseif self.state == 2 then
+	elseif self.state == EN_HIT then
 		if self.hit == false then
-			self.state = 3
+			self.state = EN_RECOVER
 			self.anim = self.animRecover
 			self.recoverTime = 0.7
 		end
 	-- Recovering
-	elseif self.state == 3 then
+	elseif self.state == EN_RECOVER then
 		self.recoverTime = self.recoverTime - dt
 		if self.recoverTime < 0 then
-			self.state = 1
+			self.state = EN_RUN
 			self.anim = self.animRun
 		end
 	end
@@ -78,7 +82,7 @@ end
 
 function NormalEnemy:shot(dt,dir)
 	self.dir = -1*dir
-	self.state = 2
+	self.state = EN_HIT
 	self.anim = self.animHit
 	self.hit = true
 end
