@@ -12,7 +12,7 @@ local MAX_STREAM = 200 -- maximum stream length
 
 local COL_OFFSETS = {{-6,-0.0001}, {5,-0.0001}, {-6,-22}, {5,-22}} -- Collision point offsets
 
-local PL_RUN, PL_CLIMB = 0,1
+local PL_RUN, PL_CLIMB, PL_CARRY = 0,1,2
 
 function Player.create(x,y)
 	local self = setmetatable({}, Player)
@@ -27,14 +27,19 @@ function Player.create(x,y)
 	self.streamLength = 0
 	self.streamCollided = false
 
+	self.grabbed = nil
+
 	self.state = PL_RUN
 	self.gundir = 2 -- gun direction
 
 	self.dir = 1 -- -1 for left, 1 for right
 
-	self.animRun 	   = newAnimation(img.player_running, 15, 22, 0.12, 4)
+	self.animRun 	   = newAnimation(img.player_running, 16, 22, 0.12, 4)
 	self.animClimbUp   = newAnimation(img.player_climb_up,   14, 23, 0.12, 4)
 	self.animClimbDown = newAnimation(img.player_climb_down, 14, 23, 0.12, 4)
+	self.animCarryLeft  = newAnimation(img.human_1_carry_left,  22, 32, 0.12, 4)
+	self.animCarryRight = newAnimation(img.human_1_carry_right, 22, 32, 0.12, 4)
+
 	self.anim = self.animRun
 	self.waterFrame = 0
 	
@@ -50,8 +55,16 @@ function Player:update(dt)
 	-- RUNNING STATE
 	if self.state == PL_RUN then
 		self:updateRunning(dt)
+		self:updateGun(dt)
 	elseif self.state == PL_CLIMB then
 		self:updateClimbing(dt)
+	elseif self.state == PL_CARRY then
+		self:updateRunning(dt)
+		if self.dir == -1 then
+			self.anim = self.animCarryLeft
+		else
+			self.anim = self.animCarryRight
+		end
 	end
 
 	-- Update animations
@@ -100,6 +113,11 @@ function Player:updateRunning(dt)
 	-- Move in y axis
 	self:moveY(self.yspeed*dt)
 
+	-- Set animation speeds
+	self.anim:setSpeed(math.abs(self.xspeed)/MAX_SPEED)
+end
+
+function Player:updateGun(dt)
 	-- Find gundirection
 	local old_gundir = self.gundir
 	self.gundir = 2
@@ -114,9 +132,6 @@ function Player:updateRunning(dt)
 
 	-- Update stream length and collide it with entities/walls
 	self:updateStream(dt)
-
-	-- Set animation speeds
-	self.anim:setSpeed(math.abs(self.xspeed)/MAX_SPEED)
 end
 
 --- Updates the water stream
@@ -192,7 +207,7 @@ function Player:updateStream(dt)
 	end
 	-- Collide with enemies
 	local closestHit = nil
-	local min = 999999
+	local min = 9999
 	-- Collide with objects
 	for i,v in ipairs(map.objects) do
 		if v:collideBox(sbox) == true then
@@ -270,8 +285,16 @@ end
 function Player:keypressed(k)
 	if k == " " then
 		self:jump()
-	elseif k == "k" and self.state == PL_RUN then
-		self:climb()
+	elseif k == "k" then
+		if self.state == PL_RUN then
+			if self:climb() == false then
+				self:grab()
+			end
+		elseif self.state == PL_CARRY then
+			self:setState(PL_RUN)
+			self.grabbed:putDown(self.x, self.y)
+			self.grabbed = nil
+		end
 	end
 end
 
@@ -281,12 +304,13 @@ function Player:setState(state)
 		self.state = PL_RUN
 		self.anim = self.animRun
 		self.xspeed, self.yspeed = 0, 0
-
 	elseif state == PL_CLIMB then
 		self.state = PL_CLIMB
 		self.anim = self.animClimbDown
 		self.yspeed = 0
 		self.x = math.floor(self.x/16)*16+8
+	elseif state == PL_CARRY then
+		self.state = PL_CARRY
 	end
 
 	self.anim:reset()
@@ -305,6 +329,19 @@ function Player:climb()
 		if below == 5 or below == 137 or below == 153
 		or top == 5 or top == 137 or top == 153 then
 			self:setState(PL_CLIMB)
+			return true
+		end
+	end
+	return false
+end
+
+function Player:grab()
+	for i,v in ipairs(map.humans) do
+		if self:collideBox(v:getBBox()) then
+			self.grabbed = v
+			self:setState(PL_CARRY)
+			v:grab()
+			return
 		end
 	end
 end
@@ -348,7 +385,7 @@ function Player:moveX(dist)
 		self.xspeed = -1.0*self.xspeed
 	end
 end
-
+	
 function Player:moveY(dist)
 	self.onGround = false
 	if self.yspeed == 0 then return end
@@ -391,11 +428,11 @@ function Player:draw()
 	if self.state == PL_RUN then
 		-- Draw player
 		if self.onGround == false then
-			love.graphics.drawq(img.player_running, quad.player_jump, self.flx, self.fly, 0, self.dir, 1, 7, 22)
+			love.graphics.drawq(img.player_running, quad.player_jump, self.flx, self.fly, 0, self.dir, 1, 8, 22)
 		elseif math.abs(self.xspeed) < 30 then
-			love.graphics.drawq(img.player_running, quad.player_idle, self.flx, self.fly, 0, self.dir, 1, 7, 22)
+			love.graphics.drawq(img.player_running, quad.player_idle, self.flx, self.fly, 0, self.dir, 1, 8, 22)
 		else
-			self.anim:draw(self.flx, self.fly, 0, self.dir, 1, 7, 22)
+			self.anim:draw(self.flx, self.fly, 0, self.dir, 1, 8, 22)
 		end
 
 		-- Draw gun
@@ -408,6 +445,8 @@ function Player:draw()
 
 	elseif self.state == PL_CLIMB then
 		self.anim:draw(self.flx, self.fly, 0, 1,1, 7, 22)
+	elseif self.state == PL_CARRY then
+		self.anim:draw(self.flx, self.fly, 0, 1,1, 12, 32)
 	end
 end
 

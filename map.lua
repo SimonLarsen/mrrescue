@@ -32,6 +32,7 @@ function Map.create()
 	self.objects = {}
 	self.particles = {}
 	self.enemies = {}
+	self.humans = {}
 
 	for i=1,3 do
 		self:addFloor(i)
@@ -39,8 +40,8 @@ function Map.create()
 
 	self.background = table.random(BACKGROUND_FILES)
 
-	table.insert(self.enemies, NormalEnemy.create(80,80))
-	table.insert(self.enemies, NormalEnemy.create(160,80))
+	table.insert(self.humans, Human.create(80,80,1))
+
 	return self
 end
 
@@ -60,6 +61,15 @@ function Map:update(dt)
 			table.remove(self.objects, i)
 		else
 			self.enemies[i]:update(dt)
+		end
+	end
+
+	-- Update humans
+	for i=#self.humans,1,-1 do
+		if self.humans[i].alive == false then
+			table.remove(self.humans, i)
+		else
+			self.humans[i]:update(dt)
 		end
 	end
 
@@ -118,6 +128,10 @@ function Map:draw()
 		v:draw()
 	end
 
+	for i,v in ipairs(self.humans) do
+		v:draw()
+	end
+
 	for i,v in ipairs(self.enemies) do
 		v:draw()
 	end
@@ -135,7 +149,6 @@ end
 function Map:addFloor(floor)
 	local yoffset = 5*(floor-1) -- 0, 5 or 10
 
-	--local file = love.filesystem.load("maps/floors/"..floor_files[math.random(#floor_files)])()
 	local file = love.filesystem.load("maps/floors/"..table.random(floor_files))()
 	for i,v in ipairs(file.layers) do
 		-- Load tiles

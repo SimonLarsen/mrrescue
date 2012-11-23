@@ -12,9 +12,14 @@ IMAGE_FILES = {
 	"stream",
 	"water",
 	"shards",
+
 	"enemy_normal_run",
 	"enemy_normal_hit",
-	"enemy_normal_recover"
+	"enemy_normal_recover",
+
+	"human_1_run",
+	"human_1_carry_left",
+	"human_1_carry_right",
 }
 
 BACKGROUND_FILES = {
@@ -41,8 +46,8 @@ function loadResources()
 	img.stream:setWrap("repeat", "clamp")
 
 	-- Create quads
-	quad.player_idle = love.graphics.newQuad(45,0,15,22, getSize(img.player_running))
-	quad.player_jump = love.graphics.newQuad(15,0,15,22, getSize(img.player_running))
+	quad.player_idle = love.graphics.newQuad(48,0,16,22, getSize(img.player_running))
+	quad.player_jump = love.graphics.newQuad(16,0,16,22, getSize(img.player_running))
 
 	quad.player_gun = {}
 	for i=0,4 do
