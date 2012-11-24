@@ -41,6 +41,7 @@ function Map.create()
 	self.background = table.random(BACKGROUND_FILES)
 
 	table.insert(self.humans, Human.create(80,80,1))
+	table.insert(self.enemies, NormalEnemy.create(160,80))
 
 	return self
 end
@@ -193,7 +194,7 @@ end
 function Map:hitCell(cx,cy,dir)
 	local id = self:get(cx,cy)
 	if id == 38 or id == 39 then
-		self:destroyWindow(cx,cy-1,id,dir)
+		self:destroyWindow(cx,cy,id,dir)
 	end
 end
 
@@ -203,14 +204,14 @@ end
 --@param id ID of the tile that was hit triggered
 --@param dir Direction of the water stream upon collision
 function Map:destroyWindow(cx,cy,id,dir)
-	if id == 38 then -- left window
-		self:set(cx,cy,   239)
-		self:set(cx,cy+1, 255)
-		table.insert(self.particles, Shards.create(cx*16+6, cy*16, dir))
-	elseif id == 39 then -- right window
-		self:set(cx,cy,   240)
-		self:set(cx,cy+1, 256)
-		table.insert(self.particles, Shards.create(cx*16+10, cy*16, dir))
+	if id == 38 then -- left lower window
+		self:set(cx,cy-1, 239)
+		self:set(cx,cy,   255)
+		table.insert(self.particles, Shards.create(cx*16+6, (cy-1)*16, dir))
+	elseif id == 39 then -- right lower window
+		self:set(cx,cy-1, 240)
+		self:set(cx,cy,   256)
+		table.insert(self.particles, Shards.create(cx*16+10, (cy-1)*16, dir))
 	end
 	self:forceRedraw()
 end

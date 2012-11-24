@@ -1,15 +1,24 @@
-Human = { MOVE_SPEED = 60 }
+Human = {}
 Human.__index = Human
+
+local MOVE_SPEED = 60
+local THROW_SPEED = 250
+local NUM_HUMANS = 4
+local GRAVITY = 350
+local COL_OFFSETS = {{-5,-0.9001}, {5,-0.9001}, {-5,-18}, {5,-18}} -- Collision point offsets
+
+local HS_WALK, HS_CARRIED, HS_FLY = 0,1,2
 
 function Human.create(x,y,id)
 	local self = setmetatable({}, Human)
 
 	self.alive = true
 	self.x, self.y = x,y
+	self.xspeed, self.yspeed = 0,0
 	self.dir = 1
-	self.id = id
+	self.id = id or math.random(1, NUM_HUMANS)
 
-	self.state = 1 -- 1 = walking, 2 = carried, 3 = flying
+	self.state = HS_WALK
 
 	self.animRun = newAnimation(img.human_1_run, 20,32, 0.22, 4)
 	self.anim = self.animRun
@@ -19,41 +28,128 @@ end
 
 function Human:update(dt)
 	-- Walking state
-	if self.state == 1 then
-		local oldx = self.x
-		self.x = self.x + self.dir*self.MOVE_SPEED*dt
+	if self.state == HS_WALK then
+		self.xspeed = self.dir*MOVE_SPEED
+		self.yspeed = self.yspeed + GRAVITY*dt
 
-		if map:collidePoint(self.x + self.dir*5, self.y - 9) == true then
-			self.x = oldx
+		if self:moveX(self.xspeed*dt) == true then
 			self.dir = self.dir*-1
 		end
+		if self:moveY(self.yspeed*dt) == true then
+			self.yspeed = 0 
+		end
 
-		for i,v in ipairs(map.objects) do
-			if self:collideBox(v:getBBox()) then
-				self.x = oldx
-				self.dir = self.dir*-1
-			end
+	elseif self.state == HS_FLY then
+		if self.xspeed < 0 then
+			self.xspeed = self.xspeed + dt*150
+		elseif self.xspeed > 0 then
+			self.xspeed = self.xspeed - dt*150
+		end
+		self.yspeed = self.yspeed + GRAVITY*dt
+
+		if self:moveX(self.xspeed*dt) == true then
+			self.xspeed = self.xspeed*-0.6
+		end
+		if self:moveY(self.yspeed*dt) == true then
+			self.yspeed = self.yspeed*-0.6
+		end
+		if math.abs(self.xspeed) < 10 then
+			self.state = HS_WALK
 		end
 	end
 
 	self.anim:update(dt)
 end
 
-function Human:putDown(x,y)
-	self.state = 1
-	self.x, self.y = x,y
+function Human:moveX(dist)
+	if self.xspeed == 0 then return end
+
+	local collision = false
+	self.x = self.x + dist
+	
+	-- Collide with solid tiles
+	for i=1,#COL_OFFSETS do
+		if map:collidePoint(self.x+COL_OFFSETS[i][1], self.y+COL_OFFSETS[i][2]) then
+			collision = true
+			local cx = math.floor((self.x+COL_OFFSETS[i][1])/16)*16
+			if self.xspeed > 0 then
+				self.x = cx-5.0001
+			else
+				self.x = cx+22
+			end
+		end
+	end
+
+	-- Collide with solid objects
+	for i,v in ipairs(map.objects) do
+		if v.solid == true then
+			if self:collideBox(v:getBBox()) then
+				collision = true
+				local bbox = v:getBBox()
+				if self.xspeed > 0 then
+					self.x = bbox.x-5.0001
+				else
+					self.x = bbox.x+bbox.w+5
+				end
+			end
+		end
+	end
+	
+	return collision
+end
+
+function Human:moveY(dist)
+	self.onGround = false
+	if self.yspeed == 0 then return end
+
+	local collision = false
+	self.y = self.y + dist
+
+	for i=1,#COL_OFFSETS do
+		if map:collidePoint(self.x+COL_OFFSETS[i][1], self.y+COL_OFFSETS[i][2]) then
+			collision = true
+			local cy = math.floor((self.y+COL_OFFSETS[i][2])/16)*16
+			if self.yspeed > 0 then
+				self.y = cy
+				self.onGround = true
+			else
+				self.y = cy+38
+			end
+		end
+	end
+
+	return collision
+end
+
+function Human:throw(x,y,dir)
+	self.state = HS_FLY
+	self.x = x
+	self.y = y
+	self.xspeed = THROW_SPEED*dir
+	self.yspeed = -100
+	self.dir = dir
 end
 
 function Human:grab()
-	self.state = 2
+	self.state = HS_CARRIED
 end
 
 function Human:draw()
 	self.flx = math.floor(self.x)
 	self.fly = math.floor(self.y)
 
-	if self.state == 1 then
+	if self.state == HS_WALK then
 		self.anim:draw(self.flx, self.fly, 0,self.dir,1, 10, 32)
+	elseif self.state == HS_FLY then
+		if math.abs(self.xspeed) > 50 then
+			if self.yspeed > -20 then
+				love.graphics.drawq(img.human_1_fly, quad.human_fly[0], self.flx, self.fly, 0, self.dir,1, 10, 32)
+			else
+				love.graphics.drawq(img.human_1_fly, quad.human_fly[1], self.flx, self.fly, 0, self.dir,1, 10, 32)
+			end
+		else
+			love.graphics.drawq(img.human_1_fly, quad.human_fly[2], self.flx, self.fly, 0, self.dir,1, 10, 32)
+		end
 	end
 end
 

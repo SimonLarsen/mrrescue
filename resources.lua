@@ -1,17 +1,21 @@
+local lg = love.graphics
+
 img = {}  	-- global Image objects
 quad = {}	-- global Quads
 
 IMAGE_FILES = {
 	-- Sprites
 	"tiles",
-	"player_gun",
-	"player_climb_down",
-	"player_climb_up",
-	"player_running",
 	"door",
 	"stream",
 	"water",
 	"shards",
+
+	"player_gun",
+	"player_throw",
+	"player_climb_down",
+	"player_climb_up",
+	"player_running",
 
 	"enemy_normal_run",
 	"enemy_normal_hit",
@@ -20,6 +24,7 @@ IMAGE_FILES = {
 	"human_1_run",
 	"human_1_carry_left",
 	"human_1_carry_right",
+	"human_1_fly"
 }
 
 BACKGROUND_FILES = {
@@ -36,50 +41,56 @@ end
 function loadResources()
 	-- Load all images
 	for i,v in ipairs(IMAGE_FILES) do
-		img[v] = love.graphics.newImage("data/"..v..".png")
+		img[v] = lg.newImage("data/"..v..".png")
 	end
 	for i,v in ipairs(BACKGROUND_FILES) do
-		img[v] = love.graphics.newImage("data/backgrounds/"..v..".png")
+		img[v] = lg.newImage("data/backgrounds/"..v..".png")
 	end
 
 	-- Set special image attributes
 	img.stream:setWrap("repeat", "clamp")
 
 	-- Create quads
-	quad.player_idle = love.graphics.newQuad(48,0,16,22, getSize(img.player_running))
-	quad.player_jump = love.graphics.newQuad(16,0,16,22, getSize(img.player_running))
+	quad.player_idle = lg.newQuad(48,0,16,22, getSize(img.player_running))
+	quad.player_jump = lg.newQuad(16,0,16,22, getSize(img.player_running))
+	quad.player_carry_idle = lg.newQuad(0,0,22,32, getSize(img.human_1_carry_left))
 
 	quad.player_gun = {}
 	for i=0,4 do
-		quad.player_gun[i] = love.graphics.newQuad(i*12,0,12,18, getSize(img.player_gun))
+		quad.player_gun[i] = lg.newQuad(i*12,0,12,18, getSize(img.player_gun))
 	end
 
-	quad.door_normal  = love.graphics.newQuad( 0,0, 8,48, getSize(img.door))
-	quad.door_damaged = love.graphics.newQuad(16,0, 8,48, getSize(img.door))
+	quad.human_fly = {}
+	for i=0,2 do
+		quad.human_fly[i] = lg.newQuad(i*20, 0, 20, 32, getSize(img.human_1_fly))
+	end
+
+	quad.door_normal  = lg.newQuad( 0,0, 8,48, getSize(img.door))
+	quad.door_damaged = lg.newQuad(16,0, 8,48, getSize(img.door))
 
 	quad.water_out = {}
-	quad.water_out[0] = love.graphics.newQuad(0,0, 8,15, getSize(img.water))
-	quad.water_out[1] = love.graphics.newQuad(16,0, 8,15, getSize(img.water))
+	quad.water_out[0] = lg.newQuad(0,0, 8,15, getSize(img.water))
+	quad.water_out[1] = lg.newQuad(16,0, 8,15, getSize(img.water))
 
 	quad.water_end = {}
-	quad.water_end[0] = love.graphics.newQuad(32,0, 16,15, getSize(img.water))
-	quad.water_end[1] = love.graphics.newQuad(48,0, 16,15, getSize(img.water))
+	quad.water_end[0] = lg.newQuad(32,0, 16,15, getSize(img.water))
+	quad.water_end[1] = lg.newQuad(48,0, 16,15, getSize(img.water))
 
 	quad.water_hit = {}
 	for i=0,2 do
-		quad.water_hit[i] = love.graphics.newQuad(i*16, 16, 16, 19, getSize(img.water))
+		quad.water_hit[i] = lg.newQuad(i*16, 16, 16, 19, getSize(img.water))
 	end
 
 	quad.shard = {}
 	for i=0,7 do
-		quad.shard[i] = love.graphics.newQuad(i*8,0,8,8, getSize(img.shards))
+		quad.shard[i] = lg.newQuad(i*8,0,8,8, getSize(img.shards))
 	end
 
 	quad.tile = {}
 	local id = 1
 	for iy = 0,15 do
 		for ix = 0,15 do
-			quad.tile[id] = love.graphics.newQuad(ix*16, iy*16, 16, 16, getSize(img.tiles))
+			quad.tile[id] = lg.newQuad(ix*16, iy*16, 16, 16, getSize(img.tiles))
 			id = id + 1
 		end
 	end
