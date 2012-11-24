@@ -14,3 +14,13 @@ end
 function table.random(t)
 	return t[math.random(#t)]
 end
+
+function math.sign(n)
+	if n < 0 then
+		return -1
+	elseif n > 0 then
+		return 1
+	else
+		return 0
+	end
+end

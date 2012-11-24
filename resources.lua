@@ -21,10 +21,10 @@ IMAGE_FILES = {
 	"enemy_normal_hit",
 	"enemy_normal_recover",
 
-	"human_1_run",
-	"human_1_carry_left",
-	"human_1_carry_right",
-	"human_1_fly"
+	"human_1_run", "human_2_run", "human_3_run", "human_4_run",
+	"human_1_carry_left", "human_2_carry_left", "human_3_carry_left", "human_4_carry_left",
+	"human_1_carry_right", "human_2_carry_right", "human_3_carry_right", "human_4_carry_right",
+	"human_1_fly", "human_2_fly", "human_3_fly", "human_4_fly"
 }
 
 BACKGROUND_FILES = {
@@ -46,6 +46,11 @@ function loadResources()
 	for i,v in ipairs(BACKGROUND_FILES) do
 		img[v] = lg.newImage("data/backgrounds/"..v..".png")
 	end
+
+	img.human_run = {img.human_1_run, img.human_2_run, img.human_3_run, img.human_4_run}
+	img.human_carry_left = {img.human_1_carry_left, img.human_2_carry_left, img.human_3_carry_left, img.human_4_carry_left}
+	img.human_carry_right = {img.human_1_carry_right, img.human_2_carry_right, img.human_3_carry_right, img.human_4_carry_right}
+	img.human_fly = {img.human_1_fly, img.human_2_fly, img.human_3_fly, img.human_4_fly}
 
 	-- Set special image attributes
 	img.stream:setWrap("repeat", "clamp")

@@ -40,7 +40,9 @@ function Map.create()
 
 	self.background = table.random(BACKGROUND_FILES)
 
-	table.insert(self.humans, Human.create(80,80,1))
+	for i=1,10 do
+		table.insert(self.humans, Human.create(math.random(80,500),80))
+	end
 	table.insert(self.enemies, NormalEnemy.create(160,80))
 
 	return self

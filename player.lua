@@ -70,8 +70,10 @@ function Player:update(dt)
 		self:updateRunning(dt)
 		if self.dir == -1 then
 			self.anim = self.animCarryLeft
+			self.anim.img = img.human_carry_left[self.grabbed.id]
 		else
 			self.anim = self.animCarryRight
+			self.anim.img = img.human_carry_right[self.grabbed.id]
 		end
 	elseif self.state == PS_THROW then
 		self:updateRunning(dt)
@@ -335,6 +337,7 @@ function Player:setState(state)
 		self.time = 0.4
 	end
 
+	self.streamLength = 0
 	self.anim:reset()
 end
 
@@ -471,9 +474,9 @@ function Player:draw()
 	elseif self.state == PS_CARRY then
 		if math.abs(self.xspeed) < 30 then
 			if self.dir == -1 then
-				lg.drawq(img.human_1_carry_left, quad.player_carry_idle, self.flx, self.fly, 0, 1,1, 11, 32)
+				lg.drawq(img.human_carry_left[self.grabbed.id],  quad.player_carry_idle, self.flx, self.fly, 0, 1,1, 11, 32)
 			else
-				lg.drawq(img.human_1_carry_right, quad.player_carry_idle, self.flx, self.fly, 0, 1,1, 11, 32)
+				lg.drawq(img.human_carry_right[self.grabbed.id], quad.player_carry_idle, self.flx, self.fly, 0, 1,1, 11, 32)
 			end
 		else
 			self.anim:draw(self.flx, self.fly, 0, 1,1, 12, 32)

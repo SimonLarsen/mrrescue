@@ -20,7 +20,7 @@ function Human.create(x,y,id)
 
 	self.state = HS_WALK
 
-	self.animRun = newAnimation(img.human_1_run, 20,32, 0.22, 4)
+	self.animRun = newAnimation(img.human_run[self.id], 20,32, 0.22, 4)
 	self.anim = self.animRun
 
 	return self
@@ -66,6 +66,8 @@ function Human:moveX(dist)
 
 	local collision = false
 	self.x = self.x + dist
+
+	self:collideWindows()
 	
 	-- Collide with solid tiles
 	for i=1,#COL_OFFSETS do
@@ -121,6 +123,17 @@ function Human:moveY(dist)
 	return collision
 end
 
+function Human:collideWindows()
+	for i=1,2 do
+		local cx = math.floor((self.x+COL_OFFSETS[i][1])/16)
+		local cy = math.floor((self.y+COL_OFFSETS[i][2])/16)
+		local tile = map:getPoint(self.x+COL_OFFSETS[i][1], self.y+COL_OFFSETS[i][2])
+		if tile == 38 or tile == 39 then
+			map:hitCell(cx,cy,math.sign(self.xspeed))
+		end
+	end
+end
+
 function Human:throw(x,y,dir)
 	self.state = HS_FLY
 	self.x = x
@@ -143,12 +156,12 @@ function Human:draw()
 	elseif self.state == HS_FLY then
 		if math.abs(self.xspeed) > 50 then
 			if self.yspeed > -20 then
-				love.graphics.drawq(img.human_1_fly, quad.human_fly[0], self.flx, self.fly, 0, self.dir,1, 10, 32)
+				love.graphics.drawq(img.human_fly[self.id], quad.human_fly[0], self.flx, self.fly, 0, self.dir,1, 10, 32)
 			else
-				love.graphics.drawq(img.human_1_fly, quad.human_fly[1], self.flx, self.fly, 0, self.dir,1, 10, 32)
+				love.graphics.drawq(img.human_fly[self.id], quad.human_fly[1], self.flx, self.fly, 0, self.dir,1, 10, 32)
 			end
 		else
-			love.graphics.drawq(img.human_1_fly, quad.human_fly[2], self.flx, self.fly, 0, self.dir,1, 10, 32)
+			love.graphics.drawq(img.human_fly[self.id], quad.human_fly[2], self.flx, self.fly, 0, self.dir,1, 10, 32)
 		end
 	end
 end
