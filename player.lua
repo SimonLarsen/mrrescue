@@ -29,6 +29,7 @@ function Player.create(x,y)
 	self.shooting = false
 	self.streamLength = 0
 	self.streamCollided = false
+	self.wquad = love.graphics.newQuad(0,0,10,10, 16,16) -- water stream quad
 
 	self.grabbed = nil -- grabbed human
 
@@ -495,12 +496,12 @@ end
 
 function Player:drawWater()
 	local quadx = 8-math.floor((self.waterFrame*8)%8)
-	local wquad = lg.newQuad(quadx, 0, math.floor(self.streamLength), 9, 16,16)
+	self.wquad:setViewport(quadx, 0, math.floor(self.streamLength), 9)
 	local frame = math.floor(self.waterFrame%2)
 
 	if self.gundir == 0 then -- up
 		if self.streamLength > 0 then
-			lg.drawq(img.stream, wquad, self.flx, self.fly, -math.pi/2, 1, self.dir, -19, 4)
+			lg.drawq(img.stream, self.wquad, self.flx, self.fly, -math.pi/2, 1, self.dir, -19, 4)
 			if self.streamCollided == false then
 				lg.drawq(img.water, quad.water_end[frame], self.flx+self.dir*0.5, self.fly-20-math.floor(self.streamLength), -math.pi/2, 1,1, 8, 7.5)
 			else
@@ -511,7 +512,7 @@ function Player:drawWater()
 
 	elseif self.gundir == 2 then -- horizontal
 		if self.streamLength > 0 then
-			lg.drawq(img.stream, wquad, self.flx+self.dir*11, self.fly-10, 0, self.dir, 1)
+			lg.drawq(img.stream, self.wquad, self.flx+self.dir*11, self.fly-10, 0, self.dir, 1)
 			if self.streamCollided == false then
 				lg.drawq(img.water, quad.water_end[frame], self.flx+self.dir*(11+math.floor(self.streamLength)), self.fly-5, 0, self.dir,1, 7.5, 8)
 			else
@@ -522,7 +523,7 @@ function Player:drawWater()
 	
 	elseif self.gundir == 4 then -- down
 		if self.streamLength > 0 then
-			lg.drawq(img.stream, wquad, self.flx, self.fly, -math.pi/2, -1, self.dir, -5, 4)
+			lg.drawq(img.stream, self.wquad, self.flx, self.fly, -math.pi/2, -1, self.dir, -5, 4)
 			if self.streamCollided == false then
 				lg.drawq(img.water, quad.water_end[frame], self.flx+self.dir*0.5, self.fly+math.floor(self.streamLength), math.pi/2, 1,1, 5, 7.5)
 			else
