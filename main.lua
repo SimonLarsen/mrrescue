@@ -44,6 +44,12 @@ function love.update(dt)
 
 	-- Update entities
 	player:update(dt)
+
+	-- Calculate translation offest
+	translate_x = math.min(math.max(0, player.x-WIDTH/2), MAPW-WIDTH)
+	translate_y = math.min(math.max(0, player.y-11-HEIGHT/2), MAPH-HEIGHT)
+
+	map:setDrawRange(translate_x, translate_y, WIDTH, HEIGHT)
 	map:update(dt)
 end
 
@@ -52,15 +58,11 @@ function love.draw()
 	lg.push()
 	-- Scale screen
 	lg.scale(SCALE,SCALE)
-
-	-- Calculate translation offest
-	translate_x = math.min(math.max(0, player.x-WIDTH/2), MAPW-WIDTH)
-	translate_y = math.min(math.max(0, player.y-11-HEIGHT/2), MAPH-HEIGHT)
 	lg.translate(-math.floor(translate_x), -math.floor(translate_y))
 
 	-- Draw map
-	map:setDrawRange(translate_x, translate_y, WIDTH, HEIGHT)
-	map:draw()
+	map:drawBack()
+	map:drawFront()
 
 	-- Draw player
 	player:draw()
@@ -80,6 +82,8 @@ function drawDebug()
 		lg.print("x: "..player.flx.."   y: "..player.fly,10+i,10+i)
 		lg.print("xspeed: "..math.floor(player.xspeed).."   yspeed: "..math.floor(player.yspeed),10+i,30+i)
 		lg.print("streamLength: "..math.floor(player.streamLength).."   streamCollided: ".. (player.streamCollided and "true" or "false"),10+i,50+i)
+		lg.print("enemies: "..#map.enemies.."  humans: "..#map.humans,10+i,70+i)
+		lg.print("objects: "..#map.objects.."  particles: "..#map.particles,10+i,90+i)
 	end
 end
 

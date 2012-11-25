@@ -24,7 +24,8 @@ function Map.create()
 	self.width = file.width
 	self.height = file.height
 
-	self.batch = lg.newSpriteBatch(img.tiles, 256)
+	self.front_batch = lg.newSpriteBatch(img.tiles, 256)
+	self.back_batch  = lg.newSpriteBatch(img.tiles, 256)
 	self.redraw = true
 
 	self.viewX, self.viewY, self.viewW, self.viewH = 0,0,0,0
@@ -40,8 +41,10 @@ function Map.create()
 
 	self.background = img.mountains
 
-	table.insert(self.humans, Human.create(160,80))
 	table.insert(self.enemies, NormalEnemy.create(160,80))
+	table.insert(self.humans, Human.create(160,80))
+	table.insert(self.humans, Human.create(160,160))
+	table.insert(self.humans, Human.create(160,240))
 
 	return self
 end
@@ -59,7 +62,7 @@ function Map:update(dt)
 	-- Update enemies
 	for i=#self.enemies,1,-1 do
 		if self.enemies[i].alive == false then
-			table.remove(self.objects, i)
+			table.remove(self.enemies, i)
 		else
 			self.enemies[i]:update(dt)
 		end
@@ -82,6 +85,13 @@ function Map:update(dt)
 			self.particles[i]:update(dt)
 		end
 	end
+
+	-- Recreate sprite batches if redraw is set
+	if self.redraw == true then
+		self:fillBatch(self.back_batch,  function(id) return id > 128 end)
+		self:fillBatch(self.front_batch, function(id) return id <= 128 end)
+		self.redraw = false
+	end
 end
 
 function Map:setDrawRange(x,y,w,h)
@@ -94,51 +104,47 @@ function Map:setDrawRange(x,y,w,h)
 	self.viewW, self.viewH = w,h
 end
 
-function Map:draw()
+function Map:drawBack()
 	-- Draw background
 	local xin = translate_x/(MAPW-WIDTH)
 	local yin = translate_y/(MAPH-HEIGHT)
 	lg.draw(self.background, translate_x-xin*(512-WIDTH), translate_y-yin*(228-HEIGHT))
 
-	-- Recreate sprite batch if redraw is set
-	if self.redraw == true then
-		self.batch:clear()
+	-- Draw back tiles
+	lg.draw(self.back_batch, 0,0)
+end
 
-		local sx = math.floor(self.viewX/16)
-		local sy = math.floor(self.viewY/16)
-		local ex = sx+math.ceil(self.viewW/16)
-		local ey = sy+math.ceil(self.viewH/16)
+function Map:drawFront()
+	-- Draw entities, enemies and particles
+	for i,v in ipairs(self.humans) do
+		v:draw() end
+	for i,v in ipairs(self.enemies) do
+		v:draw() end
 
-		for iy = sy, ex do
-			for ix = sx, ex do
-				local id = self:get(ix,iy)
-				if id and id > 0 then
-					self.batch:addq(quad.tile[self:get(ix,iy)], ix*16, iy*16)
-				end
+	-- Draw front tiles
+	lg.draw(self.front_batch, 0,0)
+
+	-- Draw objects and particles
+	for i,v in ipairs(self.objects) do
+		v:draw() end
+	for i,v in ipairs(self.particles) do
+		v:draw() end
+end
+
+function Map:fillBatch(batch, test)
+	batch:clear()
+	local sx = math.floor(self.viewX/16)
+	local sy = math.floor(self.viewY/16)
+	local ex = sx+math.ceil(self.viewW/16)
+	local ey = sy+math.ceil(self.viewH/16)
+
+	for iy = sy, ex do
+		for ix = sx, ex do
+			local id = self:get(ix,iy)
+			if id and id > 0 and test(id) == true then
+				batch:addq(quad.tile[self:get(ix,iy)], ix*16, iy*16)
 			end
 		end
-
-		self.redraw = false
-	end
-
-	-- Draw sprite batch
-	lg.draw(self.batch, 0,0)
-
-	-- Draw entities, enemies and particles
-	for i,v in ipairs(self.objects) do
-		v:draw()
-	end
-
-	for i,v in ipairs(self.humans) do
-		v:draw()
-	end
-
-	for i,v in ipairs(self.enemies) do
-		v:draw()
-	end
-
-	for i,v in ipairs(self.particles) do
-		v:draw()
 	end
 end
 
