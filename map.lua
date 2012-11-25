@@ -38,11 +38,9 @@ function Map.create()
 		self:addFloor(i)
 	end
 
-	self.background = table.random(BACKGROUND_FILES)
+	self.background = img.mountains
 
-	for i=1,10 do
-		table.insert(self.humans, Human.create(math.random(80,500),80))
-	end
+	table.insert(self.humans, Human.create(160,80))
 	table.insert(self.enemies, NormalEnemy.create(160,80))
 
 	return self
@@ -100,7 +98,7 @@ function Map:draw()
 	-- Draw background
 	local xin = translate_x/(MAPW-WIDTH)
 	local yin = translate_y/(MAPH-HEIGHT)
-	lg.draw(img[self.background], translate_x-xin*(512-WIDTH), translate_y-yin*(256-HEIGHT))
+	lg.draw(self.background, translate_x-xin*(512-WIDTH), translate_y-yin*(228-HEIGHT))
 
 	-- Recreate sprite batch if redraw is set
 	if self.redraw == true then
