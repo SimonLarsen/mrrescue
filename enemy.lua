@@ -12,7 +12,7 @@ function NormalEnemy.create(x,y)
 	self.x = x
 	self.y = y
 	self.dir = 1
-	self.health = 100
+	self.health = 1.2
 	self.state = EN_RUN
 
 	self.animRun = newAnimation(img.enemy_normal_run, 16, 26, 0.12, 4)
@@ -85,6 +85,11 @@ function NormalEnemy:shot(dt,dir)
 	self.state = EN_HIT
 	self.anim = self.animHit
 	self.hit = true
+
+	self.health = self.health - dt
+	if self.health <= 0 then
+		self.alive = false
+	end
 end
 
 function NormalEnemy:getBBox()
