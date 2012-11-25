@@ -223,7 +223,11 @@ function Map:destroyWindow(cx,cy,id,dir)
 end
 
 function Map:get(x,y)
-	return self.data[y*self.width+x+1]
+	if x < 0 or y < 0 or x > self.width or y > self.height then
+		return 0
+	else
+		return self.data[y*self.width+x+1]
+	end
 end
 
 function Map:getPoint(x,y)
@@ -233,6 +237,9 @@ function Map:getPoint(x,y)
 end
 
 function Map:set(x,y,val)
+	if x < 0 or y < 0 or x > self.width or y > self.height then
+		return
+	end
 	self.data[y*self.width+x+1] = val
 end
 
