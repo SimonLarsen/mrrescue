@@ -64,10 +64,11 @@ function love.draw()
 
 	-- Draw map
 	map:drawBack()
-	map:drawFront()
 
 	-- Draw player
 	player:draw()
+
+	map:drawFront()
 
 	-- Restore untransformed matrix
 	lg.pop()

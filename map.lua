@@ -34,6 +34,10 @@ function Map.create()
 	self.particles = {}
 	self.enemies = {}
 	self.humans = {}
+	self.fire = {}
+	for ix = 0,self.width-1 do
+		self.fire[ix] = {}
+	end
 
 	for i=1,3 do
 		self:addFloor(i)
@@ -42,7 +46,7 @@ function Map.create()
 	self.background = img.mountains
 
 	table.insert(self.enemies, NormalEnemy.create(160,80))
-	table.insert(self.humans, Human.create(160,80))
+	table.insert(self.humans, Human.create(MAPW-160,80))
 	table.insert(self.humans, Human.create(160,160))
 	table.insert(self.humans, Human.create(160,240))
 
@@ -86,6 +90,13 @@ function Map:update(dt)
 		end
 	end
 
+	-- Update fire
+	for ix = 0,self.width-1 do
+		for i,v in pairs(self.fire[ix]) do
+			v:update(dt)
+		end
+	end
+
 	-- Recreate sprite batches if redraw is set
 	if self.redraw == true then
 		self:fillBatch(self.back_batch,  function(id) return id > 128 end)
@@ -112,9 +123,16 @@ function Map:drawBack()
 
 	-- Draw back tiles
 	lg.draw(self.back_batch, 0,0)
-end
 
-function Map:drawFront()
+	-- Draw fire
+	for iy=0,self.height-1 do
+		for ix=0,self.width-1 do
+			if self.fire[ix][iy] then
+				self.fire[ix][iy]:drawBack()
+			end
+		end
+	end
+
 	-- Draw entities, enemies and particles
 	for i,v in ipairs(self.humans) do
 		v:draw() end
@@ -123,12 +141,23 @@ function Map:drawFront()
 
 	-- Draw front tiles
 	lg.draw(self.front_batch, 0,0)
+end
 
+function Map:drawFront()
 	-- Draw objects and particles
 	for i,v in ipairs(self.objects) do
 		v:draw() end
 	for i,v in ipairs(self.particles) do
 		v:draw() end
+	
+	-- Draw front fire
+	for iy=0,self.height-1 do
+		for ix=0,self.width-1 do
+			if self.fire[ix][iy] then
+				self.fire[ix][iy]:drawFront()
+			end
+		end
+	end
 end
 
 function Map:fillBatch(batch, test)
