@@ -4,12 +4,13 @@ img = {}  	-- global Image objects
 quad = {}	-- global Quads
 
 IMAGE_FILES = {
-	-- Sprites
 	"tiles",
 	"door",
 	"stream",
 	"water",
 	"shards",
+	"fire_wall",
+	"fire_floor",
 
 	"player_gun",
 	"player_throw",
@@ -98,5 +99,14 @@ function loadResources()
 			quad.tile[id] = lg.newQuad(ix*16, iy*16, 16, 16, getSize(img.tiles))
 			id = id + 1
 		end
+	end
+
+	quad.fire_wall = {}
+	for i=0,4 do
+		quad.fire_wall[i] = lg.newQuad(i*24, 0, 24, 32, getSize(img.fire_wall))
+	end
+	quad.fire_floor = {}
+	for i=0,3 do
+		quad.fire_floor[i] = lg.newQuad(i*16, 0, 16, 16, getSize(img.fire_floor))
 	end
 end

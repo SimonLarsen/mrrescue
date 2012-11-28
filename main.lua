@@ -7,6 +7,7 @@ require("entity")
 require("human")
 require("enemy")
 require("door")
+require("fire")
 require("particles")
 
 WIDTH = 256
@@ -31,6 +32,7 @@ function love.load()
 	loadResources()
 
 	map = Map.create()
+
 	player = Player.create(MAPW/2,70)
 end
 
