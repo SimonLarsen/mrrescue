@@ -8,7 +8,7 @@ local GRAVITY = 350
 local JUMP_POWER = 130 -- initial yspeed when jumping
 local CLIMB_SPEED = 60 -- climbing speed
 local STREAM_SPEED = 400 -- stream growth speed
-local MAX_STREAM = 200 -- maximum stream length
+local MAX_STREAM = 100 -- maximum stream length
 
 local COL_OFFSETS = {{-6,-0.0001}, {5,-0.0001}, {-6,-22}, {5,-22}} -- Collision point offsets
 
@@ -246,6 +246,19 @@ function Player:updateStream(dt)
 			self.streamCollided = true
 		end
 	end
+	for j,w in pairs(map.fire) do
+		for i,v in pairs(w) do
+			if v:collideBox(sbox) == true then
+				local dist = self:cutStream(v:getBBox())
+				if dist < min then
+					closestHit = v
+					min = dist
+				end
+				self.streamCollided = true
+			end
+		end
+	end
+
 	if closestHit ~= nil then
 		closestHit:shot(dt,self.dir)
 		self.streamLength = min
@@ -255,12 +268,16 @@ function Player:updateStream(dt)
 end
 
 function Player:cutStream(box)
-	if self.gundir == 2 then
+	if self.gundir == 2 then -- horizontal
 		if self.dir == -1 then -- left
 			return self.x - (box.x+box.w)-11
 		else
 			return box.x - self.x-9
 		end
+	elseif self.gundir == 0 then -- up
+		return self.y - (box.y+box.h+18)
+	elseif self.gundir == 4 then -- down
+		return box.y - self.y-4
 	else
 		return 0
 	end

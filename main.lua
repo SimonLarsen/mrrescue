@@ -32,6 +32,8 @@ function love.load()
 	loadResources()
 
 	map = Map.create()
+	map:addFire(6,4)
+	map:addFire(20,14)
 
 	player = Player.create(MAPW/2,70)
 end

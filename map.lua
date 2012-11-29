@@ -53,6 +53,9 @@ function Map.create()
 	return self
 end
 
+--- Updates all entities in the map and recreates
+--  sprite batches if necessary
+--  @param dt Time since last update in seconds
 function Map:update(dt)
 	-- Update entities
 	for i=#self.objects,1,-1 do
@@ -91,20 +94,36 @@ function Map:update(dt)
 	end
 
 	-- Update fire
-	for ix = 0,self.width-1 do
-		for i,v in pairs(self.fire[ix]) do
-			v:update(dt)
+	for ix=0,self.width-1 do
+		for iy=self.height-1,0,-1 do
+			if self.fire[ix][iy] then
+				if self.fire[ix][iy].alive == false then
+					self.fire[ix][iy] = nil
+				else
+					self.fire[ix][iy]:update(dt)
+				end
+			end
 		end
 	end
 
 	-- Recreate sprite batches if redraw is set
 	if self.redraw == true then
-		self:fillBatch(self.back_batch,  function(id) return id > 128 end)
-		self:fillBatch(self.front_batch, function(id) return id <= 128 end)
+		self:fillBatch(self.back_batch,  function(id) return id > 64 end)
+		self:fillBatch(self.front_batch, function(id) return id <= 64 end)
 		self.redraw = false
 	end
 end
 
+--- Adds a fire block if possible
+function Map:addFire(x,y)
+	self.fire[x][y] = Fire.create(x,y,self)
+end
+
+--- Sets the drawing range for the map
+-- @param x X coordinate of upper left corner
+-- @param y Y coordinate of upper left corner
+-- @param w Width of screen
+-- @param h Height of screen
 function Map:setDrawRange(x,y,w,h)
 	if x ~= self.viewX or y ~= self.viewY
 	or w ~= self.viewW or h ~= self.viewH then
@@ -115,6 +134,8 @@ function Map:setDrawRange(x,y,w,h)
 	self.viewW, self.viewH = w,h
 end
 
+--- Draws the background layer of the map.
+--  Includes background tiles, humans and enemies
 function Map:drawBack()
 	-- Draw background
 	local xin = translate_x/(MAPW-WIDTH)
@@ -143,6 +164,9 @@ function Map:drawBack()
 	lg.draw(self.front_batch, 0,0)
 end
 
+--- Draws the foreground layer of the map.
+--  Includes everything in front of the player
+--  like particles, objects and front tiles.
 function Map:drawFront()
 	-- Draw objects and particles
 	for i,v in ipairs(self.objects) do
@@ -160,6 +184,10 @@ function Map:drawFront()
 	end
 end
 
+--- Fills a given sprite batch with all tiles
+--  that pass a given test.
+--  @param batch Sprite batch to fill
+--  @param test Function on the id of a tile. Must return true or false.
 function Map:fillBatch(batch, test)
 	batch:clear()
 	local sx = math.floor(self.viewX/16)
@@ -182,6 +210,8 @@ function Map:forceRedraw()
 	self.redraw = true
 end
 
+--- Adds rooms to a floor
+-- @param floor Floor to fill. Value between 1 and 3.
 function Map:addFloor(floor)
 	local yoffset = 5*(floor-1) -- 0, 5 or 10
 
@@ -195,18 +225,46 @@ function Map:addFloor(floor)
 					self:set(ix,iy+yoffset, tile)
 				end
 			end
-
+		end
+	end
+	for i,v in ipairs(file.layers) do
 		-- Load objects
-		elseif v.name == "objects" then
+		if v.name == "objects" then
 			for j,o in ipairs(v.objects) do
 				if o.type == "door" then
 					table.insert(self.objects, Door.create(o.x, o.y+yoffset*16, o.properties.dir))
+				elseif o.type == "room" then
+					self:addRoom(o.x/16, o.y/16+yoffset, o.width/16)
 				end
 			end
 		end
 	end
 end
 
+--- Fills the inside of a room with the contents of a room file.
+-- @param x X position of room in tiles
+-- @param y Y position of room in tiles
+-- @param width Width of room in tiles
+function Map:addRoom(x,y,width)
+	local file = love.filesystem.load("maps/room/"..width.."/"..math.random(1,3)..".lua")()
+	for i,v in ipairs(file.layers) do
+		if v.name == "main" then
+			for iy = 0,file.height-1 do
+				for ix = 0,file.width-1 do
+					if self:collideCell(x+ix, y+iy) == false then
+						local tile = v.data[iy*file.width+ix+1]
+						self:set(x+ix, y+iy, tile)
+					end
+				end
+			end
+		end
+	end
+end
+
+--- Checks if a point is inside a solid block
+-- @param x X coordinate of point
+-- @param y Y coordinate of point
+-- @return True if the point is solid
 function Map:collidePoint(x,y)
 	local cx = math.floor(x/16)
 	local cy = math.floor(y/16)
@@ -214,16 +272,35 @@ function Map:collidePoint(x,y)
 	return self:collideCell(cx,cy)
 end
 
+--- Checks if a cell is solid
+-- @param cx X coordinate of cell in tiles
+-- @param cy Y coordinate of cell in tiles
 function Map:collideCell(cx,cy)
 	local tile = self:get(cx,cy)
-	if tile and tile > 0 and tile < 128 then
+	if tile and tile > 0 and tile < 64 then
 		return true
 	else
 		return false
 	end
 end
 
---- Called when stream is stopped by cell
+--- Checks whether a cell can burn or not
+-- @param cx X coordinate of cell
+-- @param cy Y coordinate of cell
+function Map:canBurnCell(cx,cy)
+	if self:collideCell(cx,cy) == true then
+		return false
+	end
+	local tile = self:get(cx,cy)
+	if tile >= 255 and tile <= 256
+	or tile >= 239 and tile <= 240 then
+		return false
+	end
+	return true
+end
+
+--- Called when some object (stream, flying NPC...) collides
+--  with a solid tile.
 -- @param cx X coordinate of the cell
 -- @param cy Y coordinate of the cell
 function Map:hitCell(cx,cy,dir)
@@ -251,6 +328,7 @@ function Map:destroyWindow(cx,cy,id,dir)
 	self:forceRedraw()
 end
 
+--- Returns the id of the tile (x,y)
 function Map:get(x,y)
 	if x < 0 or y < 0 or x > self.width or y > self.height then
 		return 0
@@ -259,12 +337,14 @@ function Map:get(x,y)
 	end
 end
 
+--- Returns the id of the tile the point (x,y) belongs to
 function Map:getPoint(x,y)
 	local cx = math.floor(x/16)
 	local cy = math.floor(y/16)
 	return self:get(cx,cy)
 end
 
+--- Sets the id of the tile (x,y)
 function Map:set(x,y,val)
 	if x < 0 or y < 0 or x > self.width or y > self.height then
 		return

@@ -10,6 +10,7 @@ IMAGE_FILES = {
 	"water",
 	"shards",
 	"fire_wall",
+	"fire_wall_small",
 	"fire_floor",
 
 	"player_gun",

@@ -29,5 +29,8 @@
     <property name="dir" value="left"/>
    </properties>
   </object>
+  <object type="room" x="32" y="16" width="160" height="64"/>
+  <object type="room" x="240" y="16" width="176" height="64"/>
+  <object type="room" x="464" y="16" width="160" height="64"/>
  </objectgroup>
 </map>
