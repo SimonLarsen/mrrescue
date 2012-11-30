@@ -34,13 +34,23 @@ function Fire:update(dt)
 		self.nextSpread = math.random(MIN_SPREAD_WAIT, MAX_SPREAD_WAIT)
 		local cx,cy = self.cx, self.cy
 		while (cx == self.cx and cy == self.cy) or map:canBurnCell(cx,cy) == false do
-			if math.random(0,2) == 0 then -- spread upwards
-				cx, cy = self.cx, self.cy-1
-			else
-				if math.random(0,1) == 0 then
-					cx, cy = self.cx-1, self.cy
+			if math.random(0,1) == 0 then -- vertically
+				if math.random(0,1) == 0 then -- up
+					cx, cy = self.cx, self.cy-1
+					if cy > 0 and map:canBurnCell(cx,cy) == false and math.random(0,4) == 0 then
+						cy = cy-1 -- burn through ceiling
+					end
 				else
-					cx, cy = self.cx+1, self.cy
+					cx, cy = self.cx, self.cy+1 -- down
+					if cy < 14 and map:canBurnCell(cx,cy) == false and math.random(0,4) == 0 then
+						cy = cy+1 -- burn through floor
+					end
+				end
+			else
+				if math.random(0,1) == 0 then -- horizontally
+					cx, cy = self.cx-1, self.cy -- left
+				else
+					cx, cy = self.cx+1, self.cy -- right
 				end
 			end
 		end
