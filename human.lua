@@ -47,8 +47,12 @@ function Human:update(dt)
 		end
 		self.yspeed = self.yspeed + GRAVITY*dt
 
-		if self:moveX(self.xspeed*dt) == true then
+		local col, last = self:moveX(self.xspeed*dt)
+		if col == true then
 			self.xspeed = self.xspeed*-0.6
+			if last then
+				last:shot(0.1, self.dir)
+			end
 		end
 		if self:moveY(self.yspeed*dt) == true then
 			self.buttHit = self.buttHit + 1
@@ -84,10 +88,12 @@ function Human:moveX(dist)
 	end
 
 	-- Collide with solid objects
+	local last
 	for i,v in ipairs(map.objects) do
 		if v.solid == true then
 			if self:collideBox(v:getBBox()) then
 				collision = true
+				last = v
 				local bbox = v:getBBox()
 				if self.xspeed > 0 then
 					self.x = bbox.x-5.0001
@@ -98,7 +104,7 @@ function Human:moveX(dist)
 		end
 	end
 	
-	return collision
+	return collision, last
 end
 
 function Human:moveY(dist)
