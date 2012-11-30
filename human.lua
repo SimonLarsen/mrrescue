@@ -51,9 +51,10 @@ function Human:update(dt)
 			self.xspeed = self.xspeed*-0.6
 		end
 		if self:moveY(self.yspeed*dt) == true then
+			self.buttHit = self.buttHit + 1
 			self.yspeed = self.yspeed*-0.6
 		end
-		if math.abs(self.xspeed) < 10 then
+		if self.buttHit >= 3 then
 			self.state = HS_WALK
 		end
 	end
@@ -141,6 +142,7 @@ function Human:throw(x,y,dir)
 	self.xspeed = THROW_SPEED*dir
 	self.yspeed = -100
 	self.dir = dir
+	self.buttHit = 0
 end
 
 function Human:grab()
@@ -154,7 +156,7 @@ function Human:draw()
 	if self.state == HS_WALK then
 		self.anim:draw(self.flx, self.fly, 0,self.dir,1, 10, 32)
 	elseif self.state == HS_FLY then
-		if math.abs(self.xspeed) > 50 then
+		if self.buttHit < 2 then
 			if self.yspeed > -20 then
 				love.graphics.drawq(img.human_fly[self.id], quad.human_fly[0], self.flx, self.fly, 0, self.dir,1, 10, 32)
 			else
