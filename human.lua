@@ -1,13 +1,14 @@
-Human = {}
+Human = { corners = {-5, 5, -18, -0.5} }
 Human.__index = Human
 
-local MOVE_SPEED = 60
+local MOVE_SPEED = 50
+local RUN_SPEED = 100
 local THROW_SPEED = 250
 local NUM_HUMANS = 4
 local GRAVITY = 350
 local COL_OFFSETS = {{-5,-0.9001}, {5,-0.9001}, {-5,-18}, {5,-18}} -- Collision point offsets
 
-local HS_WALK, HS_CARRIED, HS_FLY = 0,1,2
+HS_WALK, HS_CARRIED, HS_FLY, HS_BURN = 0,1,2,3
 
 function Human.create(x,y,id)
 	local self = setmetatable({}, Human)
@@ -20,8 +21,11 @@ function Human.create(x,y,id)
 
 	self.state = HS_WALK
 
-	self.animRun = newAnimation(img.human_run[self.id], 20,32, 0.22, 4)
-	self.anim = self.animRun
+	self.anims = {}
+	self.anims[HS_WALK] = newAnimation(img.human_run[self.id], 20,32, 0.22, 4)
+	self.anims[HS_BURN] = newAnimation(img.human_burn[self.id], 20, 32, 0.10, 4)
+
+	self.anim = self.anims[self.state]
 
 	return self
 end
@@ -32,10 +36,26 @@ function Human:update(dt)
 		self.xspeed = self.dir*MOVE_SPEED
 		self.yspeed = self.yspeed + GRAVITY*dt
 
-		if self:moveX(self.xspeed*dt) == true then
+		self.x = self.x + self.xspeed*dt
+		if collideX(self) == true then
 			self.dir = self.dir*-1
 		end
-		if self:moveY(self.yspeed*dt) == true then
+		self.y = self.y + self.yspeed*dt
+		if collideY(self) == true then
+			self.yspeed = 0 
+		end
+	
+	-- Burning panic state
+	elseif self.state == HS_BURN then
+		self.xspeed = self.dir*RUN_SPEED
+		self.yspeed = self.yspeed + GRAVITY*dt
+
+		self.x = self.x + self.xspeed*dt
+		if collideX(self) == true then
+			self.dir = self.dir*-1
+		end
+		self.y = self.y + self.yspeed*dt
+		if collideY(self) == true then
 			self.yspeed = 0 
 		end
 
@@ -47,87 +67,40 @@ function Human:update(dt)
 		end
 		self.yspeed = self.yspeed + GRAVITY*dt
 
-		local col, last = self:moveX(self.xspeed*dt)
+		self.x = self.x + self.xspeed*dt
+		self:collideWindows()
+		local col, last = collideX(self)
 		if col == true then
 			self.xspeed = self.xspeed*-0.6
 			if last then
 				last:shot(0.1, self.dir)
 			end
 		end
-		if self:moveY(self.yspeed*dt) == true then
+		self.y = self.y + self.yspeed*dt
+		if collideY(self) == true then
 			self.buttHit = self.buttHit + 1
 			self.yspeed = self.yspeed*-0.6
 		end
 		if self.buttHit >= 3 then
 			self.state = HS_WALK
+			self.anim = self.anims[self.state]
 		end
 	end
 
-	self.anim:update(dt)
+	if self.anim then
+		self.anim:update(dt)
+	end
 end
 
-function Human:moveX(dist)
-	if self.xspeed == 0 then return end
-
-	local collision = false
-	self.x = self.x + dist
-
-	self:collideWindows()
-	
-	-- Collide with solid tiles
-	for i=1,#COL_OFFSETS do
-		if map:collidePoint(self.x+COL_OFFSETS[i][1], self.y+COL_OFFSETS[i][2]) then
-			collision = true
-			local cx = math.floor((self.x+COL_OFFSETS[i][1])/16)*16
-			if self.xspeed > 0 then
-				self.x = cx-5.0001
-			else
-				self.x = cx+22
-			end
-		end
+function Human:shot(dt,dir)
+	if self.state == HS_BURN then
+		self.state = HS_WALK
+		self.anim = self.anims[self.state]
 	end
 
-	-- Collide with solid objects
-	local last
-	for i,v in ipairs(map.objects) do
-		if v.solid == true then
-			if self:collideBox(v:getBBox()) then
-				collision = true
-				last = v
-				local bbox = v:getBBox()
-				if self.xspeed > 0 then
-					self.x = bbox.x-5.0001
-				else
-					self.x = bbox.x+bbox.w+5
-				end
-			end
-		end
+	if self.state == HS_BURN or self.state == HS_WALK then
+		self:throw(self.x, self.y, dir)
 	end
-	
-	return collision, last
-end
-
-function Human:moveY(dist)
-	self.onGround = false
-	if self.yspeed == 0 then return end
-
-	local collision = false
-	self.y = self.y + dist
-
-	for i=1,#COL_OFFSETS do
-		if map:collidePoint(self.x+COL_OFFSETS[i][1], self.y+COL_OFFSETS[i][2]) then
-			collision = true
-			local cy = math.floor((self.y+COL_OFFSETS[i][2])/16)*16
-			if self.yspeed > 0 then
-				self.y = cy
-				self.onGround = true
-			else
-				self.y = cy+38
-			end
-		end
-	end
-
-	return collision
 end
 
 function Human:collideWindows()
@@ -151,6 +124,10 @@ function Human:throw(x,y,dir)
 	self.buttHit = 0
 end
 
+function Human:canGrab()
+	return self.state ~= HS_BURN
+end
+
 function Human:grab()
 	self.state = HS_CARRIED
 end
@@ -159,7 +136,7 @@ function Human:draw()
 	self.flx = math.floor(self.x)
 	self.fly = math.floor(self.y)
 
-	if self.state == HS_WALK then
+	if self.state == HS_WALK or self.state == HS_BURN then
 		self.anim:draw(self.flx, self.fly, 0,self.dir,1, 10, 32)
 	elseif self.state == HS_FLY then
 		if self.buttHit < 2 then
@@ -173,6 +150,7 @@ function Human:draw()
 		end
 	end
 end
+
 
 function Human:collideBox(bbox)
 	if self.x-5  > bbox.x+bbox.w or self.x+5 < bbox.x

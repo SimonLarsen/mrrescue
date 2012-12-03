@@ -95,3 +95,66 @@ end
 function NormalEnemy:getBBox()
 	return {x = self.x-5, y = self.y-15, w = 10, y = 15}
 end
+
+-- Jumper enemy
+JumperEnemy = { MOVE_SPEED = 100, JUMP_DELAY = 1 }
+JumperEnemy.__index = JumperEnemy
+
+local EJ_IDLE, EJ_JUMPING = 0,1
+
+function JumperEnemy.create(x,y)
+	local self = setmetatable({}, JumperEnemy)
+
+	self.alive = true
+	self.hit = false -- true if hit since last update
+	self.x = x
+	self.y = y
+	self.yspeed = 0
+	self.dir = 1
+	self.health = 1.2
+
+	self.state = EJ_IDLE
+	self.nextJump = Enemy.JUMP_DELAY
+
+	self.animJump = newAnimation(img.enemy_jumper_jump, 16, 32, 0.12, 3)
+
+	self.anim = self.animJump
+
+	return self
+end
+
+function JumperEnemy:update(dt)
+	if self.state == EJ_IDLE then
+		self.nextJump = self.nextJump - dt
+		if self.nextJump <= 0 then
+			self.nextJump = JUMP_DELAY
+			self.state = EJ_JUMP
+		end
+	elseif self.state == EJ_JUMPING then
+	end
+	self.anim:update(dt)
+end
+
+function JumperEnemy:draw()
+	self.flx = math.floor(self.x)
+	self.fly = math.floor(self.y)
+
+	self.anim:draw(self.flx, self.fly, 0, self.dir, 1,8, 32)
+end
+
+function JumperEnemy:collideBox(bbox)
+	if self.x-5  > bbox.x+bbox.w or self.x+5 < bbox.x
+	or self.y-23 > bbox.y+bbox.h or self.y   < bbox.y then
+		return false
+	else
+		return true
+	end
+end
+
+function JumperEnemy:shot(dt,dir)
+	
+end
+
+function JumperEnemy:getBBox()
+	return {x = self.x-5, y = self.y-23, w = 10, y = 23}
+end

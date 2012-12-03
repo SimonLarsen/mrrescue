@@ -2,7 +2,7 @@ Fire = {}
 Fire.__index = Fire
 
 local MIN_SPREAD_WAIT = 1
-local MAX_SPREAD_WAIT = 20
+local MAX_SPREAD_WAIT = 15
 local FIRE_HEALTH = 0.5
 local REGEN_RATE = 0.05
 
@@ -27,9 +27,10 @@ end
 function Fire:update(dt)
 	if self.health < FIRE_HEALTH then
 		self.health = math.min(self.health+dt*REGEN_RATE, FIRE_HEALTH)
+	else
+		self.nextSpread = self.nextSpread - dt
 	end
 
-	self.nextSpread = self.nextSpread - dt
 	if self.nextSpread <= 0 then
 		self.nextSpread = math.random(MIN_SPREAD_WAIT, MAX_SPREAD_WAIT)
 		local cx,cy = self.cx, self.cy

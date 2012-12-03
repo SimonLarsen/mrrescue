@@ -1,4 +1,4 @@
-Player = {}
+Player = { corners = {-6, 5, -22, -0.5} }
 Player.__index = Player
 
 local RUN_SPEED = 500 -- Run acceleration
@@ -10,9 +10,10 @@ local CLIMB_SPEED = 60 -- climbing speed
 local STREAM_SPEED = 400 -- stream growth speed
 local MAX_STREAM = 100 -- maximum stream length
 
-local COL_OFFSETS = {{-6,-0.0001}, {5,-0.0001}, {-6,-22}, {5,-22}} -- Collision point offsets
+local COL_OFFSETS = {{-6,-0.0001}, {5,-0.0001}, {-6,-11}, {5,-11}, {-6,-22}, {5,-22}} -- Collision point offsets
 
-local PS_RUN, PS_CLIMB, PS_CARRY, PS_THROW = 0,1,2,3
+local PS_RUN, PS_CLIMB, PS_CARRY, PS_THROW = 0,1,2,3 -- Player states
+local GD_UP, GD_HORIZONTAL, GD_DOWN = 0,2,4 -- Gun directions
 
 local lg = love.graphics
 
@@ -34,7 +35,7 @@ function Player.create(x,y)
 	self.grabbed = nil -- grabbed human
 
 	self.state = PS_RUN
-	self.gundir = 2 -- gun direction
+	self.gundir = GD_HORIZONTAL -- gun direction
 
 	self.dir = 1 -- -1 for left, 1 for right
 
@@ -116,6 +117,10 @@ function Player:updateRunning(dt)
 		if self.xspeed < -MAX_SPEED then self.xspeed = -MAX_SPEED end
 	end
 
+	if changedDir == true and self.gundir == GD_HORIZONTAL then
+		self.streamLength = 0
+	end
+
 	-- Cap speeds
 	if self.xspeed < 0 then
 		self.xspeed = self.xspeed + math.max(dt*BRAKE_SPEED, self.xspeed)
@@ -123,27 +128,34 @@ function Player:updateRunning(dt)
 		self.xspeed = self.xspeed - math.min(dt*BRAKE_SPEED, self.xspeed)
 	end
 
+	-- Move in x axis
+	self.x = self.x + self.xspeed*dt
+	if collideX(self) == true then
+		self.xspeed = -1.0*self.xspeed
+	end
 	-- Update gravity
 	self.yspeed = self.yspeed + GRAVITY*dt
-	-- Move in x axis
-	self:moveX(self.xspeed*dt)
 	-- Move in y axis
-	self:moveY(self.yspeed*dt)
+	self.y = self.y + self.yspeed*dt
+	if collideY(self,true) == true then
+		self.yspeed = 0
+	end
 
 	-- Set animation speeds
 	self.anim:setSpeed(math.abs(self.xspeed)/MAX_SPEED)
 end
 
+--- Updates gun direction and stream
 function Player:updateGun(dt)
 	-- Find gundirection
 	local old_gundir = self.gundir
-	self.gundir = 2
+	self.gundir = GD_HORIZONTAL
 	if love.keyboard.isDown(self.keys.up) then
-		self.gundir = 0
+		self.gundir = GD_UP
 	elseif love.keyboard.isDown(self.keys.down) then
-		self.gundir = 4
+		self.gundir = GD_DOWN
 	end
-	if self.gundir ~= old_gundir or changedDir and self.gundir == 2 then
+	if self.gundir ~= old_gundir or changedDir and self.gundir == HORIZONTAL then
 		self.streamLength = 0
 	end
 
@@ -171,7 +183,7 @@ function Player:updateStream(dt)
 	local cy = math.floor((self.y-6)/16)
 	self.streamCollided = false
 
-	if self.gundir == 0 then -- up
+	if self.gundir == GD_UP then -- up
 		for i = 1,span do
 			cy = cy - 1
 			if map:collideCell(cx,cy) == true then
@@ -181,7 +193,7 @@ function Player:updateStream(dt)
 				break
 			end
 		end
-	elseif self.gundir == 4 then -- down
+	elseif self.gundir == GD_DOWN then -- down
 		for i = 1,span do
 			cy = cy + 1
 			if map:collideCell(cx,cy) == true then
@@ -191,7 +203,7 @@ function Player:updateStream(dt)
 				break
 			end
 		end
-	elseif self.gundir == 2 then -- horizontal
+	elseif self.gundir == GD_HORIZONTAL then -- horizontal
 		--cx = cx - self.dir
 		for i = 1,span do
 			cx = cx + self.dir
@@ -211,41 +223,35 @@ function Player:updateStream(dt)
 	-- Collide with entities
 	-- Calculate stream's collision box (table creation each frame!)
 	local sbox
-	if self.gundir == 0 then -- up
+	if self.gundir == GD_UP then -- up
 		sbox = {x = self.x-4.5, y = self.y-17-self.streamLength, w = 9, h = self.streamLength}
-	elseif self.gundir == 2 then -- horizontal
+	elseif self.gundir == GD_HORIZONTAL then -- horizontal
 		if self.dir == -1 then
 			sbox = {x = self.x-9-self.streamLength, y = self.y-10, w = self.streamLength, h = 9}
 		else
 			sbox = {x = self.x+9, y = self.y-10, w = self.streamLength, h = 9}
 		end
-	elseif self.gundir == 4 then -- down
+	elseif self.gundir == GD_DOWN then -- down
 		sbox = {x = self.x-4.5, y = self.y+1, w = 9, h = self.streamLength}
 	end
+
 	-- Collide with enemies
 	local closestHit = nil
 	local min = 9999
-	-- Collide with objects
-	for i,v in ipairs(map.objects) do
-		if v:collideBox(sbox) == true then
-			local dist = self:cutStream(v:getBBox())
-			if dist < min then
-				closestHit = v
-				min = dist
+	-- Collide with objects and entities
+	for j,w in ipairs({map.humans, map.objects, map.enemies}) do
+		for i,v in ipairs(w) do
+			if v:collideBox(sbox) == true then
+				local dist = self:cutStream(v:getBBox())
+				if dist < min then 
+					closestHit = v
+					min = dist
+				end
+				self.streamCollided = true
 			end
-			self.streamCollided = true
 		end
 	end
-	for i,v in ipairs(map.enemies) do
-		if v:collideBox(sbox) == true then
-			local dist = self:cutStream(v:getBBox())
-			if dist < min then
-				closestHit = v
-				min = dist
-			end
-			self.streamCollided = true
-		end
-	end
+	-- Collide with fire
 	for j,w in pairs(map.fire) do
 		for i,v in pairs(w) do
 			if v:collideBox(sbox) == true then
@@ -258,7 +264,7 @@ function Player:updateStream(dt)
 			end
 		end
 	end
-
+	-- If an object was hit, cut stream and hit object
 	if closestHit ~= nil then
 		closestHit:shot(dt,self.dir)
 		self.streamLength = min
@@ -267,16 +273,18 @@ function Player:updateStream(dt)
 	self.streamLength = math.max(0, self.streamLength)
 end
 
+--- Cuts the stream off after colliding with a bounding box
+-- @param box Bounding box stream collided with
 function Player:cutStream(box)
-	if self.gundir == 2 then -- horizontal
+	if self.gundir == GD_HORIZONTAL then -- horizontal
 		if self.dir == -1 then -- left
 			return self.x - (box.x+box.w)-11
 		else
 			return box.x - self.x-9
 		end
-	elseif self.gundir == 0 then -- up
+	elseif self.gundir == GD_UP then -- up
 		return self.y - (box.y+box.h+18)
-	elseif self.gundir == 4 then -- down
+	elseif self.gundir == GD_HORIZONTAL then -- down
 		return box.y - self.y-4
 	else
 		return 0
@@ -337,16 +345,16 @@ function Player:keypressed(k)
 end
 
 --- Changes the current state and resets current animation
+-- @param state New state
 function Player:setState(state)
 	if state == PS_RUN then
 		self.state = PS_RUN
 		self.anim = self.animRun
-		--self.xspeed, self.yspeed = 0, 0
 	elseif state == PS_CLIMB then
 		self.state = PS_CLIMB
 		self.anim = self.animClimbDown
 		self.xspeed, self.yspeed = 0,0
-		self.x = math.floor(self.x/16)*16+8
+		self.x = math.floor(self.x/16)*16+8 -- Align with middle of ladder
 	elseif state == PS_CARRY then
 		self.state = PS_CARRY
 	elseif state == PS_THROW then
@@ -365,8 +373,10 @@ function Player:jump()
 	end
 end
 
+--- Called when player tries to grab a ladder
+-- @return True if a ladder was grabbed
 function Player:climb()
-	if self.gundir == 0 or self.gundir == 4 then -- UP
+	if self.gundir == GD_UP or self.gundir == GD_DOWN then
 		local below = map:getPoint(self.x, self.y+1)
 		local top    = map:getPoint(self.x, self.y-22)
 		if below == 5 or below == 137 or below == 153
@@ -380,77 +390,12 @@ end
 
 function Player:grab()
 	for i,v in ipairs(map.humans) do
-		if self:collideBox(v:getBBox()) then
+		if self:collideBox(v:getBBox()) and v:canGrab() == true then
 			self.grabbed = v
 			self:setState(PS_CARRY)
 			v:grab()
 			return
 		end
-	end
-end
-
-function Player:moveX(dist)
-	if self.xspeed == 0 then return end
-
-	local collision = false
-	self.x = self.x + dist
-	
-	-- Collide with solid tiles
-	for i=1,#COL_OFFSETS do
-		if map:collidePoint(self.x+COL_OFFSETS[i][1], self.y+COL_OFFSETS[i][2]) then
-			collision = true
-			local cx = math.floor((self.x+COL_OFFSETS[i][1])/16)*16
-			if self.xspeed > 0 then
-				self.x = cx-5.0001
-			else
-				self.x = cx+22
-			end
-		end
-	end
-
-	-- Collide with solid objects
-	for i,v in ipairs(map.objects) do
-		if v.solid == true then
-			if self:collideBox(v:getBBox()) then
-				collision = true
-				local bbox = v:getBBox()
-				if self.xspeed > 0 then
-					self.x = bbox.x-5.0001
-				else
-					self.x = bbox.x+bbox.w+6
-				end
-			end
-		end
-	end
-
-	-- Bounce off walls if collision
-	if collision == true then
-		self.xspeed = -1.0*self.xspeed
-	end
-end
-	
-function Player:moveY(dist)
-	self.onGround = false
-	if self.yspeed == 0 then return end
-
-	local collision = false
-	self.y = self.y + dist
-
-	for i=1,#COL_OFFSETS do
-		if map:collidePoint(self.x+COL_OFFSETS[i][1], self.y+COL_OFFSETS[i][2]) then
-			collision = true
-			local cy = math.floor((self.y+COL_OFFSETS[i][2])/16)*16
-			if self.yspeed > 0 then
-				self.y = cy
-				self.onGround = true
-			else
-				self.y = cy+38
-			end
-		end
-	end
-
-	if collision == true then
-		self.yspeed = 0
 	end
 end
 
@@ -516,7 +461,7 @@ function Player:drawWater()
 	self.wquad:setViewport(quadx, 0, math.floor(self.streamLength), 9)
 	local frame = math.floor(self.waterFrame%2)
 
-	if self.gundir == 0 then -- up
+	if self.gundir == GD_UP then -- up
 		if self.streamLength > 0 then
 			lg.drawq(img.stream, self.wquad, self.flx, self.fly, -math.pi/2, 1, self.dir, -19, 4)
 			if self.streamCollided == false then
@@ -527,7 +472,7 @@ function Player:drawWater()
 		end
 		lg.drawq(img.water, quad.water_out[frame], self.flx+self.dir*0.5, self.fly-16, -math.pi/2, 1,1, 0,7.5)
 
-	elseif self.gundir == 2 then -- horizontal
+	elseif self.gundir == GD_HORIZONTAL then -- horizontal
 		if self.streamLength > 0 then
 			lg.drawq(img.stream, self.wquad, self.flx+self.dir*11, self.fly-10, 0, self.dir, 1)
 			if self.streamCollided == false then
@@ -538,7 +483,7 @@ function Player:drawWater()
 		end
 		lg.drawq(img.water, quad.water_out[frame], self.flx, self.fly, 0, self.dir,1, -9,13)
 	
-	elseif self.gundir == 4 then -- down
+	elseif self.gundir == GD_DOWN then -- down
 		if self.streamLength > 0 then
 			lg.drawq(img.stream, self.wquad, self.flx, self.fly, -math.pi/2, -1, self.dir, -5, 4)
 			if self.streamCollided == false then

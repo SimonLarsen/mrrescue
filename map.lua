@@ -39,18 +39,15 @@ function Map.create()
 		self.fire[ix] = {}
 	end
 
+	self.background = img.mountains
+
+	return self
+end
+
+function Map:populate()
 	for i=1,3 do
 		self:addFloor(i)
 	end
-
-	self.background = img.mountains
-
-	table.insert(self.enemies, NormalEnemy.create(160,80))
-	table.insert(self.humans, Human.create(MAPW-160,80))
-	table.insert(self.humans, Human.create(160,160))
-	table.insert(self.humans, Human.create(160,240))
-
-	return self
 end
 
 --- Updates all entities in the map and recreates
@@ -220,7 +217,7 @@ function Map:addFloor(floor)
 		-- Load tiles
 		if v.name == "main" then
 			for iy = 0,file.height-1 do
-				for ix = 0,file.width-1 do
+				for ix = 3,file.width-4 do
 					local tile = v.data[iy*file.width+ix+1]
 					self:set(ix,iy+yoffset, tile)
 				end
@@ -258,6 +255,16 @@ function Map:addRoom(x,y,width)
 				end
 			end
 		end
+	end
+
+	local random = math.random(1,2)
+	if random == 1 then
+		local rx = math.random(x+1,x+width-2)
+		local ry = math.random(y+1,y+3)
+		self:addFire(rx,ry)
+	elseif random == 2 then
+		local rx = math.random(x+1,x+width-1)*16+8
+		table.insert(self.humans, Human.create(rx, (y+4)*16))
 	end
 end
 

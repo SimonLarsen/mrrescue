@@ -22,11 +22,15 @@ IMAGE_FILES = {
 	"enemy_normal_run",
 	"enemy_normal_hit",
 	"enemy_normal_recover",
+	"enemy_jumper_hit",
+	"enemy_jumper_jump",
+	"enemy_jumper_recover",
 
 	"human_1_run", "human_2_run", "human_3_run", "human_4_run",
 	"human_1_carry_left", "human_2_carry_left", "human_3_carry_left", "human_4_carry_left",
 	"human_1_carry_right", "human_2_carry_right", "human_3_carry_right", "human_4_carry_right",
-	"human_1_fly", "human_2_fly", "human_3_fly", "human_4_fly"
+	"human_1_fly", "human_2_fly", "human_3_fly", "human_4_fly",
+	"human_1_burn", "human_2_burn", "human_3_burn", "human_4_burn"
 }
 
 BACKGROUND_FILES = {
@@ -53,6 +57,7 @@ function loadResources()
 	img.human_carry_left = {img.human_1_carry_left, img.human_2_carry_left, img.human_3_carry_left, img.human_4_carry_left}
 	img.human_carry_right = {img.human_1_carry_right, img.human_2_carry_right, img.human_3_carry_right, img.human_4_carry_right}
 	img.human_fly = {img.human_1_fly, img.human_2_fly, img.human_3_fly, img.human_4_fly}
+	img.human_burn = { img.human_1_burn, img.human_2_burn, img.human_3_burn, img.human_4_burn}
 
 	-- Set special image attributes
 	img.stream:setWrap("repeat", "clamp")
@@ -109,5 +114,10 @@ function loadResources()
 	quad.fire_floor = {}
 	for i=0,3 do
 		quad.fire_floor[i] = lg.newQuad(i*16, 0, 16, 16, getSize(img.fire_floor))
+	end
+
+	quad.jumper_jump = {}
+	for i=0,2 do
+		quad.jumper_jump[i] = lg.newQuad(i*16, 0, 16, 32, getSize(img.enemy_jumper_jump))
 	end
 end
