@@ -41,8 +41,6 @@ function Player.create(x,y)
 
 	self.animRun 	    = newAnimation(img.player_running, 16, 22, 0.12, 4)
 	self.animThrow      = newAnimation(img.player_throw, 16,32, 0.12, 4)
---	self.animClimbUp    = newAnimation(img.player_climb_up,   14, 23, 0.12, 4)
---	self.animClimbDown  = newAnimation(img.player_climb_down, 14, 23, 0.12, 4)
 	self.animClimb      = newAnimation(img.player_climb_down, 14, 23, 0.12, 4)
 	self.animCarryLeft  = newAnimation(img.human_1_carry_left,  22, 32, 0.12, 4)
 	self.animCarryRight = newAnimation(img.human_1_carry_right, 22, 32, 0.12, 4)
