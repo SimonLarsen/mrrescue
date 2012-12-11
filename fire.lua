@@ -2,7 +2,7 @@ Fire = {}
 Fire.__index = Fire
 
 local MIN_SPREAD_WAIT = 1
-local MAX_SPREAD_WAIT = 15
+local MAX_SPREAD_WAIT = 10
 local FIRE_HEALTH = 0.5
 local REGEN_RATE = 0.05
 
@@ -10,7 +10,7 @@ function Fire.create(x,y,map)
 	local self = setmetatable({}, Fire)
 
 	self.alive = true
-	self.health = FIRE_HEALTH
+	self.health = FIRE_HEALTH/4
 	self.cx, self.cy = x,y
 	self.x, self.y = x*16, y*16
 	self.frame = math.random()*5

@@ -33,10 +33,8 @@ function collideX(self)
 	
 	local last -- Last object collision detected
 
-	local yoff = self.corners[3]
-	while yoff <= self.corners[4] do
-		local xoff = self.corners[1]
-		while xoff <= self.corners[2] do
+	for _, yoff in ipairs({self.corners[3], (self.corners[3]+self.corners[4])/2, self.corners[4]}) do
+		for _, xoff in ipairs({self.corners[1], self.corners[2]}) do
 			-- Collide with solid tiles
 			if map:collidePoint(self.x+xoff, self.y+yoff) then
 				collision = true
@@ -60,10 +58,7 @@ function collideX(self)
 					end
 				end
 			end
-
-			xoff = xoff + math.max(1, math.min(16, self.corners[2] - xoff))
 		end
-		yoff = yoff + math.max(1, math.min(16, self.corners[4] - yoff))
 	end
 	
 	return collision, last

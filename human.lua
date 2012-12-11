@@ -4,6 +4,7 @@ Human.__index = Human
 local MOVE_SPEED = 50
 local RUN_SPEED = 100
 local THROW_SPEED = 250
+local PUSH_SPEED  = 100
 local NUM_HUMANS = 4
 local GRAVITY = 350
 local COL_OFFSETS = {{-5,-0.9001}, {5,-0.9001}, {-5,-18}, {5,-18}} -- Collision point offsets
@@ -24,6 +25,7 @@ function Human.create(x,y,id)
 	self.anims = {}
 	self.anims[HS_WALK] = newAnimation(img.human_run[self.id], 20,32, 0.22, 4)
 	self.anims[HS_BURN] = newAnimation(img.human_burn[self.id], 20, 32, 0.10, 4)
+	self.anims[HS_FLY]  = newAnimation(img.human_fly[self.id], 20, 32, 0, 4)
 
 	self.anim = self.anims[self.state]
 
@@ -43,6 +45,14 @@ function Human:update(dt)
 		self.y = self.y + self.yspeed*dt
 		if collideY(self) == true then
 			self.yspeed = 0 
+		end
+
+		for j,w in pairs(map.fire) do
+			for i,v in pairs(w) do
+				if self:collideBox(v:getBBox()) == true then
+					self:setState(HS_BURN)
+				end
+			end
 		end
 	
 	-- Burning panic state
@@ -82,8 +92,7 @@ function Human:update(dt)
 			self.yspeed = self.yspeed*-0.6
 		end
 		if self.buttHit >= 3 then
-			self.state = HS_WALK
-			self.anim = self.anims[self.state]
+			self:setState(HS_WALK)
 		end
 	end
 
@@ -92,14 +101,18 @@ function Human:update(dt)
 	end
 end
 
+function Human:setState(state)
+	self.state = state
+	self.anim = self.anims[self.state]
+end
+
 function Human:shot(dt,dir)
 	if self.state == HS_BURN then
-		self.state = HS_WALK
-		self.anim = self.anims[self.state]
+		self:setState(HS_WALK)
 	end
 
 	if self.state == HS_BURN or self.state == HS_WALK then
-		self:throw(self.x, self.y, dir)
+		self:push(self.x, self.y, dir)
 	end
 end
 
@@ -115,7 +128,7 @@ function Human:collideWindows()
 end
 
 function Human:throw(x,y,dir)
-	self.state = HS_FLY
+	self:setState(HS_FLY)
 	self.x = x
 	self.y = y
 	self.xspeed = THROW_SPEED*dir
@@ -124,12 +137,21 @@ function Human:throw(x,y,dir)
 	self.buttHit = 0
 end
 
+function Human:push(x,y,dir,intensity)
+	self:setState(HS_FLY)
+	self.x = x
+	self.y = y
+	self.xspeed = PUSH_SPEED*dir
+	self.yspeed = -50
+	self.buttHit = 0
+end
+
 function Human:canGrab()
 	return self.state ~= HS_BURN
 end
 
 function Human:grab()
-	self.state = HS_CARRIED
+	self:setState(HS_CARRIED)
 end
 
 function Human:draw()
@@ -141,12 +163,12 @@ function Human:draw()
 	elseif self.state == HS_FLY then
 		if self.buttHit < 2 then
 			if self.yspeed > -20 then
-				love.graphics.drawq(img.human_fly[self.id], quad.human_fly[0], self.flx, self.fly, 0, self.dir,1, 10, 32)
+				self.anim:draw(self.flx, self.fly, 0, self.dir, 1,10,32, 1)
 			else
-				love.graphics.drawq(img.human_fly[self.id], quad.human_fly[1], self.flx, self.fly, 0, self.dir,1, 10, 32)
+				self.anim:draw(self.flx, self.fly, 0, self.dir, 1,10,32, 2)
 			end
 		else
-			love.graphics.drawq(img.human_fly[self.id], quad.human_fly[2], self.flx, self.fly, 0, self.dir,1, 10, 32)
+			self.anim:draw(self.flx, self.fly, 0, self.dir, 1,10,32, 3)
 		end
 	end
 end

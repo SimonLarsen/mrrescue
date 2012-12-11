@@ -45,7 +45,6 @@ function newAnimation(image, fw, fh, delay, frames)
 	a.fh = fh
 	a.playing = true
 	a.speed = 1
-	a.mode = 1
 	a.direction = 1
 	local imgw = image:getWidth()
 	local imgh = image:getHeight()
@@ -70,20 +69,11 @@ function animation:update(dt)
 	self.timer = self.timer + dt * self.speed
 	if self.timer > self.delays[self.position] then
 		self.timer = self.timer - self.delays[self.position]
-		self.position = self.position + 1 * self.direction
+		self.position = self.position + self.direction
 		if self.position > #self.frames then
-			if self.mode == 1 then
-				self.position = 1
-			elseif self.mode == 2 then
-				self.position = self.position - 1
-				self:stop()
-			elseif self.mode == 3 then
-				self.direction = -1
-				self.position = self.position - 1
-			end
-		elseif self.position < 1 and self.mode == 3 then
-			self.direction = 1
-			self.position = self.position + 1
+			self.position = 1
+		elseif self.position < 1 then
+			self.position = #self.frames
 		end
 	end
 end
@@ -96,8 +86,9 @@ end
 -- @param sy The scale on the Y axis
 -- @param ox The X coordinate of the origin
 -- @param oy The Y coordinate of the origin
-function animation:draw(x, y, angle, sx, sy, ox, oy)
-	love.graphics.drawq(self.img, self.frames[self.position], x, y, angle, sx, sy, ox, oy)
+-- @param frame Optional frame to draw instead of current position
+function animation:draw(x, y, angle, sx, sy, ox, oy, frame)
+	love.graphics.drawq(self.img, self.frames[frame or self.position], x, y, angle, sx, sy, ox, oy)
 end
 
 --- Add a frame
@@ -173,19 +164,6 @@ end
 -- @return The height of the current frame
 function animation:getHeight()
 	return self.frames[self.position]:getHeight()
-end
-
---- Set the play mode
--- Could be "loop" to loop it, "once" to play it once, or "bounce" to play it, reverse it, and play it again (looping)
--- @param mode The mode: one of the above
-function animation:setMode(mode)
-	if mode == "loop" then
-		self.mode = 1
-	elseif mode == "once" then
-		self.mode = 2
-	elseif mode == "bounce" then
-		self.mode = 3
-	end
 end
 
 --- Animations_legacy_support

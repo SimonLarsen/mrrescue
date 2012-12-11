@@ -259,9 +259,7 @@ function Map:addRoom(x,y,width)
 
 	local random = math.random(1,2)
 	if random == 1 then
-		local rx = math.random(x+1,x+width-2)
-		local ry = math.random(y+1,y+3)
-		self:addFire(rx,ry)
+		self:addFire(math.random(x+1,x+width-2),y+3)
 	elseif random == 2 then
 		local rx = math.random(x+1,x+width-1)*16+8
 		table.insert(self.humans, Human.create(rx, (y+4)*16))

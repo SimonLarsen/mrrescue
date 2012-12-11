@@ -62,19 +62,9 @@ function loadResources()
 	-- Set special image attributes
 	img.stream:setWrap("repeat", "clamp")
 
-	-- Create quads
-	quad.player_idle = lg.newQuad(48,0,16,22, getSize(img.player_running))
-	quad.player_jump = lg.newQuad(16,0,16,22, getSize(img.player_running))
-	quad.player_carry_idle = lg.newQuad(0,0,22,32, getSize(img.human_1_carry_left))
-
 	quad.player_gun = {}
 	for i=0,4 do
 		quad.player_gun[i] = lg.newQuad(i*12,0,12,18, getSize(img.player_gun))
-	end
-
-	quad.human_fly = {}
-	for i=0,2 do
-		quad.human_fly[i] = lg.newQuad(i*20, 0, 20, 32, getSize(img.human_1_fly))
 	end
 
 	quad.door_normal  = lg.newQuad( 0,0, 8,48, getSize(img.door))

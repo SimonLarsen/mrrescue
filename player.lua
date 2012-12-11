@@ -41,8 +41,9 @@ function Player.create(x,y)
 
 	self.animRun 	    = newAnimation(img.player_running, 16, 22, 0.12, 4)
 	self.animThrow      = newAnimation(img.player_throw, 16,32, 0.12, 4)
-	self.animClimbUp    = newAnimation(img.player_climb_up,   14, 23, 0.12, 4)
-	self.animClimbDown  = newAnimation(img.player_climb_down, 14, 23, 0.12, 4)
+--	self.animClimbUp    = newAnimation(img.player_climb_up,   14, 23, 0.12, 4)
+--	self.animClimbDown  = newAnimation(img.player_climb_down, 14, 23, 0.12, 4)
+	self.animClimb      = newAnimation(img.player_climb_down, 14, 23, 0.12, 4)
 	self.animCarryLeft  = newAnimation(img.human_1_carry_left,  22, 32, 0.12, 4)
 	self.animCarryRight = newAnimation(img.human_1_carry_right, 22, 32, 0.12, 4)
 
@@ -299,12 +300,12 @@ function Player:updateClimbing(dt)
 	local animSpeed = 0
 	if love.keyboard.isDown(self.keys.down) then
 		self.y = self.y + CLIMB_SPEED*dt
-		self.anim = self.animClimbDown
+		self.animClimb.direction = 1
 		animSpeed = 1
 	end
 	if love.keyboard.isDown(self.keys.up) then
 		self.y = self.y - CLIMB_SPEED*dt
-		self.anim = self.animClimbUp
+		self.animClimb.direction = -1
 		animSpeed = 1
 	end
 	self.anim:setSpeed(animSpeed)
@@ -313,18 +314,22 @@ function Player:updateClimbing(dt)
 	local idBottom = map:getPoint(self.x, self.y)
 	local idMid = map:getPoint(self.x, self.y-11)
 	local idTop = map:getPoint(self.x, self.y-22)
-	if idBottom == 2 then -- over ladder
+	if idBottom == 2 or idBottom == nil then -- over ladder
 		self.y = oldy
 		self:setState(PS_RUN)
-	elseif idBottom ~= 5 and idBottom ~= 137 and idBottom ~= 153 then -- hit bottom
+	elseif idBottom ~= 5 and idBottom ~= 8 and idBottom ~= 137
+	and idBottom ~= 153 and idBottom ~= 247 then
 		self:setState(PS_RUN)
 	end
+end
 
-	-- Check if player tries to move to a side
-	if love.keyboard.isDown(self.keys.left, self.keys.right, self.keys.jump) then
-		if idBottom ~= 5 and idMid ~= 5 and idTop ~= 5 then
-			self:setState(PS_RUN)
-		end
+function Player:leaveLadder()
+	local idBottom = map:getPoint(self.x, self.y)
+	local idMid = map:getPoint(self.x, self.y-11)
+	local idTop = map:getPoint(self.x, self.y-22)
+	if  idBottom ~= 5 and idMid ~= 5 and idTop ~= 5
+	and idBottom ~= 8 and idMid ~= 8 and idTop ~= 8 then
+		self:setState(PS_RUN)
 	end
 end
 
@@ -340,6 +345,12 @@ function Player:keypressed(k)
 			self:setState(PS_THROW)
 			self.grabbed:throw(self.x, self.y, self.dir)
 			self.grabbed = nil
+		elseif self.state == PS_CLIMB then
+			self:leaveLadder()
+		end
+	elseif k == self.keys.left or k == self.keys.right then
+		if self.state == PS_CLIMB then
+			self:leaveLadder()
 		end
 	end
 end
@@ -352,7 +363,7 @@ function Player:setState(state)
 		self.anim = self.animRun
 	elseif state == PS_CLIMB then
 		self.state = PS_CLIMB
-		self.anim = self.animClimbDown
+		self.anim = self.animClimb
 		self.xspeed, self.yspeed = 0,0
 		self.x = math.floor(self.x/16)*16+8 -- Align with middle of ladder
 	elseif state == PS_CARRY then
@@ -370,6 +381,8 @@ end
 function Player:jump()
 	if self.onGround == true then
 		self.yspeed = -JUMP_POWER
+	elseif self.state == PS_CLIMB then
+		self:leaveLadder()
 	end
 end
 
@@ -379,8 +392,8 @@ function Player:climb()
 	if self.gundir == GD_UP or self.gundir == GD_DOWN then
 		local below = map:getPoint(self.x, self.y+1)
 		local top    = map:getPoint(self.x, self.y-22)
-		if below == 5 or below == 137 or below == 153
-		or top == 5 or top == 137 or top == 153 then
+		if below == 5 or below == 137 or below == 153 or below == 8 or below == 247
+		or top == 5 or top == 137 or top == 153 or top == 8 or top == 247 then
 			self:setState(PS_CLIMB)
 			return true
 		end
@@ -416,9 +429,9 @@ function Player:draw()
 	if self.state == PS_RUN then
 		-- Draw player
 		if self.onGround == false then
-			lg.drawq(img.player_running, quad.player_jump, self.flx, self.fly, 0, self.dir, 1, 8, 22)
+			self.anim:draw(self.flx, self.fly, 0, self.dir, 1, 8, 22, 2)
 		elseif math.abs(self.xspeed) < 30 then
-			lg.drawq(img.player_running, quad.player_idle, self.flx, self.fly, 0, self.dir, 1, 8, 22)
+			self.anim:draw(self.flx, self.fly, 0, self.dir, 1, 8, 22, 4)
 		else
 			self.anim:draw(self.flx, self.fly, 0, self.dir, 1, 8, 22)
 		end
@@ -437,9 +450,9 @@ function Player:draw()
 	elseif self.state == PS_CARRY then
 		if math.abs(self.xspeed) < 30 then
 			if self.dir == -1 then
-				lg.drawq(img.human_carry_left[self.grabbed.id],  quad.player_carry_idle, self.flx, self.fly, 0, 1,1, 11, 32)
+				self.anim:draw(self.flx, self.fly, 0, 1,1, 12, 32, 1)
 			else
-				lg.drawq(img.human_carry_right[self.grabbed.id], quad.player_carry_idle, self.flx, self.fly, 0, 1,1, 11, 32)
+				self.anim:draw(self.flx, self.fly, 0, 1,1, 12, 32, 1)
 			end
 		else
 			self.anim:draw(self.flx, self.fly, 0, 1,1, 12, 32)
@@ -447,9 +460,9 @@ function Player:draw()
 	-- Throwing human
 	elseif self.state == PS_THROW then
 		if self.onGround == false then
-			lg.drawq(img.player_throw, quad.player_jump, self.flx, self.fly, 0,self.dir, 1, 8, 22)
+			self.anim:draw(self.flx, self.fly, 0,self.dir,1, 8, 22, 2)
 		elseif math.abs(self.xspeed) < 30 then
-			lg.drawq(img.player_throw, quad.player_idle, self.flx, self.fly, 0,self.dir, 1, 8, 22)
+			self.anim:draw(self.flx, self.fly, 0,self.dir,1, 8, 22, 4)
 		else
 			self.anim:draw(self.flx, self.fly, 0,self.dir,1, 8, 22)
 		end
