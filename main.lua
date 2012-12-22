@@ -50,17 +50,18 @@ function love.update(dt)
 
 	-- Calculate translation offest
 	translate_x = math.min(math.max(0, player.x-WIDTH/2), MAPW-WIDTH)
-	translate_y = math.min(math.max(0, player.y-11-HEIGHT/2), MAPH-HEIGHT)
+	translate_y = math.min(math.max(0, player.y-11-(HEIGHT+30)/2), MAPH-HEIGHT+30)
 
 	map:setDrawRange(translate_x, translate_y, WIDTH, HEIGHT)
 	map:update(dt)
 end
 
 function love.draw()
-	-- Push untransformed matrix
-	lg.push()
 	-- Scale screen
+	lg.push()
 	lg.scale(SCALE,SCALE)
+	-- Translate to center player
+	lg.push()
 	lg.translate(-math.floor(translate_x), -math.floor(translate_y))
 
 	-- Draw map
@@ -71,10 +72,12 @@ function love.draw()
 
 	map:drawFront()
 
-	-- Restore untransformed matrix
+	-- Draw hud
 	lg.pop()
+	lg.draw(img.hud, 0, HEIGHT-32)
 
 	-- Draw debug information
+	lg.pop()
 	if show_debug == true then
 		drawDebug()
 	end
@@ -96,6 +99,8 @@ function love.keypressed(k, uni)
 		love.event.quit()
 	elseif k == "f1" then
 		show_debug = not show_debug
+	elseif k == "i" then
+		map:addFire(math.floor(player.x/16), math.floor((player.y-8)/16))
 	else
 		player:keypressed(k)
 	end

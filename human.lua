@@ -9,7 +9,10 @@ local NUM_HUMANS = 4
 local GRAVITY = 350
 local COL_OFFSETS = {{-5,-0.9001}, {5,-0.9001}, {-5,-18}, {5,-18}} -- Collision point offsets
 
-HS_WALK, HS_CARRIED, HS_FLY, HS_BURN = 0,1,2,3
+local IDLE_TIME = 2
+local WALK_TIME = 3
+
+HS_WALK, HS_CARRIED, HS_FLY, HS_BURN, HS_IDLE = 0,1,2,3,4
 
 function Human.create(x,y,id)
 	local self = setmetatable({}, Human)
@@ -20,21 +23,30 @@ function Human.create(x,y,id)
 	self.dir = 1
 	self.id = id or math.random(1, NUM_HUMANS)
 
-	self.state = HS_WALK
-
 	self.anims = {}
 	self.anims[HS_WALK] = newAnimation(img.human_run[self.id], 20,32, 0.22, 4)
-	self.anims[HS_BURN] = newAnimation(img.human_burn[self.id], 20, 32, 0.10, 4)
 	self.anims[HS_FLY]  = newAnimation(img.human_fly[self.id], 20, 32, 0, 4)
+	self.anims[HS_BURN] = newAnimation(img.human_burn[self.id], 20, 32, 0.10, 4)
+	self.anims[HS_IDLE] = self.anims[HS_WALK]
 
-	self.anim = self.anims[self.state]
+	self:setState(HS_IDLE)
+	self.time = math.random()*4
 
 	return self
 end
 
 function Human:update(dt)
+	-- Idle state
+	if self.state == HS_IDLE then
+		self.time = self.time - dt
+		if self.time <= 0 then
+			self:setState(HS_WALK)
+		end
+
+		self:collideFire()
+
 	-- Walking state
-	if self.state == HS_WALK then
+	elseif self.state == HS_WALK then
 		self.xspeed = self.dir*MOVE_SPEED
 		self.yspeed = self.yspeed + GRAVITY*dt
 
@@ -47,13 +59,33 @@ function Human:update(dt)
 			self.yspeed = 0 
 		end
 
-		for j,w in pairs(map.fire) do
-			for i,v in pairs(w) do
-				if self:collideBox(v:getBBox()) == true then
-					self:setState(HS_BURN)
-				end
+		-- Avoid walking into fire
+		local lx = math.floor((self.x-10)/16)
+		local rx = math.floor((self.x+10)/16)
+		local cy = math.floor((self.y-8)/16)
+		local fire_left  = map:hasFire(lx, cy)
+		local fire_right = map:hasFire(rx, cy)
+
+		if fire_left == true then
+			if fire_right == true or map:collideCell(rx,cy) then
+				self:setState(HS_IDLE)
+			else
+				self.dir = 1
+			end
+		elseif fire_right == true then
+			if fire_left == true or map:collideCell(lx,cy) then
+				self:setState(HS_IDLE)
+			else
+				self.dir = -1
 			end
 		end
+
+		self.time = self.time - dt
+		if self.time <= 0 then
+			self:setState(HS_IDLE)
+		end
+
+		self:collideFire()
 	
 	-- Burning panic state
 	elseif self.state == HS_BURN then
@@ -101,9 +133,30 @@ function Human:update(dt)
 	end
 end
 
+function Human:collideFire()
+	-- Check collision with fire
+	for j,w in pairs(map.fire) do
+		for i,v in pairs(w) do
+			if self:collideBox(v:getBBox()) == true then
+				self:setState(HS_BURN)
+			end
+		end
+	end
+
+end
+
 function Human:setState(state)
 	self.state = state
 	self.anim = self.anims[self.state]
+	if self.anim then
+		self.anim:reset()
+	end
+
+	if state == HS_IDLE then
+		self.time = IDLE_TIME
+	elseif self.state == HS_WALK then
+		self.time = WALK_TIME
+	end
 end
 
 function Human:shot(dt,dir)
@@ -111,7 +164,7 @@ function Human:shot(dt,dir)
 		self:setState(HS_WALK)
 	end
 
-	if self.state == HS_BURN or self.state == HS_WALK then
+	if self.state == HS_IDLE or self.state == HS_BURN or self.state == HS_WALK then
 		self:push(self.x, self.y, dir)
 	end
 end
@@ -160,6 +213,8 @@ function Human:draw()
 
 	if self.state == HS_WALK or self.state == HS_BURN then
 		self.anim:draw(self.flx, self.fly, 0,self.dir,1, 10, 32)
+	elseif self.state == HS_IDLE then
+		self.anim:draw(self.flx, self.fly, 0,self.dir,1, 10, 32, 1)
 	elseif self.state == HS_FLY then
 		if self.buttHit < 2 then
 			if self.yspeed > -20 then

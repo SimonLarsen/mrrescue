@@ -1,8 +1,8 @@
 -- Normal enemy
-NormalEnemy = { MOVE_SPEED = 100 }
+NormalEnemy = { MOVE_SPEED = 80, FIRE_SPAWN_MIN = 10, FIRE_SPAWN_MAX = 30 }
 NormalEnemy.__index = NormalEnemy
 
-local EN_RUN, EN_HIT, EN_RECOVER = 0,1,2
+local EN_RUN, EN_HIT, EN_RECOVER, ED_IDLE, EN_JUMPING = 0,1,2,3,4
 
 function NormalEnemy.create(x,y)
 	local self = setmetatable({}, NormalEnemy)
@@ -14,8 +14,10 @@ function NormalEnemy.create(x,y)
 	self.dir = 1
 	self.health = 1.2
 	self.state = EN_RUN
+	self.time = math.random(1,2)
+	self.nextFire = math.random(self.FIRE_SPAWN_MIN, self.FIRE_SPAWN_MAX)
 
-	self.animRun = newAnimation(img.enemy_normal_run, 16, 26, 0.12, 4)
+	self.animRun = newAnimation(img.enemy_normal_run, 16, 26, 0.13, 4)
 	self.animHit = newAnimation(img.enemy_normal_hit, 16, 26, 0.12, 2)
 	self.animRecover = newAnimation(img.enemy_normal_recover, 16, 26, 0.07, 4)
 
@@ -25,13 +27,14 @@ function NormalEnemy.create(x,y)
 end
 
 function NormalEnemy:update(dt)
-	-- Normal state
+	-- Running state
 	if self.state == EN_RUN then
 		local oldx = self.x
 		self.x = self.x + self.dir*self.MOVE_SPEED*dt
 		
 		if map:collidePoint(self.x + self.dir*7, self.y-13) == true then
 			self.dir = self.dir*-1
+			self.x = oldx
 		end
 		
 		for i,v in ipairs(map.objects) do
@@ -43,17 +46,24 @@ function NormalEnemy:update(dt)
 				end
 			end
 		end
+
+		self.nextFire = self.nextFire - dt
+		if self.nextFire <= 0 then
+			map:addFire(math.floor(self.x/16), math.floor((self.y-4)/16))
+			self.nextFire = math.random(self.FIRE_SPAWN_MIN, self.FIRE_SPAWN_MAX)
+		end
+
 	-- Getting hit
 	elseif self.state == EN_HIT then
 		if self.hit == false then
 			self.state = EN_RECOVER
 			self.anim = self.animRecover
-			self.recoverTime = 0.7
+			self.time = 0.7
 		end
 	-- Recovering
 	elseif self.state == EN_RECOVER then
-		self.recoverTime = self.recoverTime - dt
-		if self.recoverTime < 0 then
+		self.time = self.time - dt
+		if self.time < 0 then
 			self.state = EN_RUN
 			self.anim = self.animRun
 		end
@@ -68,7 +78,11 @@ function NormalEnemy:draw()
 	self.flx = math.floor(self.x)
 	self.fly = math.floor(self.y)
 
-	self.anim:draw(self.flx, self.fly, 0, self.dir,1, 8, 26)
+	if self.state == EN_IDLE then
+		self.anim:draw(self.flx, self.fly, 0, self.dir,1, 8, 26, 2)
+	else
+		self.anim:draw(self.flx, self.fly, 0, self.dir,1, 8, 26)
+	end
 end
 
 function NormalEnemy:collideBox(bbox)
@@ -100,8 +114,6 @@ end
 JumperEnemy = { MOVE_SPEED = 100, JUMP_DELAY = 1 }
 JumperEnemy.__index = JumperEnemy
 
-local EJ_IDLE, EJ_JUMPING = 0,1
-
 function JumperEnemy.create(x,y)
 	local self = setmetatable({}, JumperEnemy)
 
@@ -113,7 +125,7 @@ function JumperEnemy.create(x,y)
 	self.dir = 1
 	self.health = 1.2
 
-	self.state = EJ_IDLE
+	self.state = EN_IDLE
 	self.nextJump = Enemy.JUMP_DELAY
 
 	self.animJump = newAnimation(img.enemy_jumper_jump, 16, 32, 0.12, 3)
@@ -124,13 +136,13 @@ function JumperEnemy.create(x,y)
 end
 
 function JumperEnemy:update(dt)
-	if self.state == EJ_IDLE then
+	if self.state == EN_IDLE then
 		self.nextJump = self.nextJump - dt
 		if self.nextJump <= 0 then
 			self.nextJump = JUMP_DELAY
-			self.state = EJ_JUMP
+			self.state = EN_JUMPING
 		end
-	elseif self.state == EJ_JUMPING then
+	elseif self.state == EN_JUMPING then
 	end
 	self.anim:update(dt)
 end

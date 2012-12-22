@@ -39,7 +39,7 @@ function Map.create()
 		self.fire[ix] = {}
 	end
 
-	self.background = img.mountains
+	self.background = img.night
 
 	return self
 end
@@ -113,7 +113,14 @@ end
 
 --- Adds a fire block if possible
 function Map:addFire(x,y)
-	self.fire[x][y] = Fire.create(x,y,self)
+	if self.fire[x][y] == nil then
+		self.fire[x][y] = Fire.create(x,y,self)
+	end
+end
+
+-- Checks if a tile is on fire
+function Map:hasFire(x,y)
+	return self.fire[x][y] ~= nil
 end
 
 --- Sets the drawing range for the map
@@ -257,12 +264,15 @@ function Map:addRoom(x,y,width)
 		end
 	end
 
-	local random = math.random(1,2)
+	local random = math.random(1,3)
 	if random == 1 then
 		self:addFire(math.random(x+1,x+width-2),y+3)
 	elseif random == 2 then
-		local rx = math.random(x+1,x+width-1)*16+8
+		local rx = math.random(x+1,x+width-2)*16+8
 		table.insert(self.humans, Human.create(rx, (y+4)*16))
+	else
+		local rx = math.random(x+1, x+width-2)*16+8
+		table.insert(self.enemies, NormalEnemy.create(rx, (y+4)*16))
 	end
 end
 

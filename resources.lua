@@ -6,6 +6,7 @@ quad = {}	-- global Quads
 IMAGE_FILES = {
 	"tiles",
 	"door",
+	"hud",
 	"stream",
 	"water",
 	"shards",
@@ -34,7 +35,7 @@ IMAGE_FILES = {
 }
 
 BACKGROUND_FILES = {
-	"mountains"
+	"mountains", "night"
 }
 
 --- Returns size of an Image as two return values
@@ -53,11 +54,11 @@ function loadResources()
 		img[v] = lg.newImage("data/backgrounds/"..v..".png")
 	end
 
-	img.human_run = {img.human_1_run, img.human_2_run, img.human_3_run, img.human_4_run}
-	img.human_carry_left = {img.human_1_carry_left, img.human_2_carry_left, img.human_3_carry_left, img.human_4_carry_left}
-	img.human_carry_right = {img.human_1_carry_right, img.human_2_carry_right, img.human_3_carry_right, img.human_4_carry_right}
-	img.human_fly = {img.human_1_fly, img.human_2_fly, img.human_3_fly, img.human_4_fly}
-	img.human_burn = { img.human_1_burn, img.human_2_burn, img.human_3_burn, img.human_4_burn}
+	img.human_run = { img.human_1_run, img.human_2_run, img.human_3_run, img.human_4_run }
+	img.human_carry_left = { img.human_1_carry_left, img.human_2_carry_left, img.human_3_carry_left, img.human_4_carry_left }
+	img.human_carry_right = { img.human_1_carry_right, img.human_2_carry_right, img.human_3_carry_right, img.human_4_carry_right }
+	img.human_fly = { img.human_1_fly, img.human_2_fly, img.human_3_fly, img.human_4_fly }
+	img.human_burn = { img.human_1_burn, img.human_2_burn, img.human_3_burn, img.human_4_burn }
 
 	-- Set special image attributes
 	img.stream:setWrap("repeat", "clamp")
