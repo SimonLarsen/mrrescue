@@ -4,15 +4,11 @@ img = {}  	-- global Image objects
 quad = {}	-- global Quads
 
 IMAGE_FILES = {
-	"tiles",
-	"door",
-	"hud",
-	"stream",
-	"water",
+	"tiles", "door",
+	"hud", "hud2", "water_bar",
+	"stream", "water",
 	"shards",
-	"fire_wall",
-	"fire_wall_small",
-	"fire_floor",
+	"fire_wall", "fire_wall_small", "fire_floor",
 
 	"player_gun",
 	"player_throw",
@@ -31,7 +27,8 @@ IMAGE_FILES = {
 	"human_1_carry_left", "human_2_carry_left", "human_3_carry_left", "human_4_carry_left",
 	"human_1_carry_right", "human_2_carry_right", "human_3_carry_right", "human_4_carry_right",
 	"human_1_fly", "human_2_fly", "human_3_fly", "human_4_fly",
-	"human_1_burn", "human_2_burn", "human_3_burn", "human_4_burn"
+	"human_1_burn", "human_2_burn", "human_3_burn", "human_4_burn",
+	"human_1_panic", "human_2_panic", "human_3_panic", "human_4_panic"
 }
 
 BACKGROUND_FILES = {
@@ -40,7 +37,7 @@ BACKGROUND_FILES = {
 
 --- Returns size of an Image as two return values
 -- Saves some typing when creating quads
-local function getSize(img)
+function getSize(img)
 	return img:getWidth(), img:getHeight()
 end
 
@@ -59,6 +56,7 @@ function loadResources()
 	img.human_carry_right = { img.human_1_carry_right, img.human_2_carry_right, img.human_3_carry_right, img.human_4_carry_right }
 	img.human_fly = { img.human_1_fly, img.human_2_fly, img.human_3_fly, img.human_4_fly }
 	img.human_burn = { img.human_1_burn, img.human_2_burn, img.human_3_burn, img.human_4_burn }
+	img.human_panic = { img.human_1_panic, img.human_2_panic, img.human_3_panic, img.human_4_panic }
 
 	-- Set special image attributes
 	img.stream:setWrap("repeat", "clamp")
@@ -111,4 +109,6 @@ function loadResources()
 	for i=0,2 do
 		quad.jumper_jump[i] = lg.newQuad(i*16, 0, 16, 32, getSize(img.enemy_jumper_jump))
 	end
+
+	quad.water_bar = lg.newQuad(0,0, 1,1, getSize(img.water_bar))
 end

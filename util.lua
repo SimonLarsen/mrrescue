@@ -64,7 +64,7 @@ function collideX(self)
 	return collision, last
 end
 
-function collideY(self,kalk)
+function collideY(self)
 	if self.yspeed == 0 then return end
 	self.onGround = false
 
@@ -85,27 +85,6 @@ function collideY(self,kalk)
 			end
 		end
 	end
-	--[[
-	local yoff = self.corners[3]
-	while yoff <= self.corners[4] do
-		local xoff = self.corners[1]
-		while xoff <= self.corners[2] do
-			-- Collide with solid tiles
-			if map:collidePoint(self.x+xoff, self.y+yoff) then
-				collision = true
-				local cy = math.floor((self.y+yoff)/16)*16
-				if self.yspeed > 0 then
-					self.y = cy+self.corners[4]-0.0001
-					self.onGround = true
-				else
-					self.y = cy+16-self.corners[3]
-				end
-			end
-			xoff = xoff + math.max(1, math.min(16, self.corners[2] - xoff))
-		end
-		yoff = yoff + math.max(1, math.min(16, self.corners[4] - yoff))
-	end
-	--]]
 
 	return collision
 end

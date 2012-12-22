@@ -8,11 +8,12 @@ local PUSH_SPEED  = 100
 local NUM_HUMANS = 4
 local GRAVITY = 350
 local COL_OFFSETS = {{-5,-0.9001}, {5,-0.9001}, {-5,-18}, {5,-18}} -- Collision point offsets
+local PANIC_RADIUS = 20
 
 local IDLE_TIME = 2
 local WALK_TIME = 3
 
-HS_WALK, HS_CARRIED, HS_FLY, HS_BURN, HS_IDLE = 0,1,2,3,4
+HS_WALK, HS_CARRIED, HS_FLY, HS_BURN, HS_IDLE, HS_PANIC = 0,1,2,3,4,5
 
 function Human.create(x,y,id)
 	local self = setmetatable({}, Human)
@@ -24,10 +25,11 @@ function Human.create(x,y,id)
 	self.id = id or math.random(1, NUM_HUMANS)
 
 	self.anims = {}
-	self.anims[HS_WALK] = newAnimation(img.human_run[self.id], 20,32, 0.22, 4)
-	self.anims[HS_FLY]  = newAnimation(img.human_fly[self.id], 20, 32, 0, 4)
-	self.anims[HS_BURN] = newAnimation(img.human_burn[self.id], 20, 32, 0.10, 4)
-	self.anims[HS_IDLE] = self.anims[HS_WALK]
+	self.anims[HS_WALK]  = newAnimation(img.human_run[self.id], 20,32, 0.22, 4)
+	self.anims[HS_FLY]   = newAnimation(img.human_fly[self.id], 20, 32, 0, 4)
+	self.anims[HS_BURN]  = newAnimation(img.human_burn[self.id], 20, 32, 0.10, 4)
+	self.anims[HS_IDLE]  = self.anims[HS_WALK]
+	self.anims[HS_PANIC] = newAnimation(img.human_panic[self.id], 20, 32, 0.10, 6)
 
 	self:setState(HS_IDLE)
 	self.time = math.random()*4
@@ -60,21 +62,21 @@ function Human:update(dt)
 		end
 
 		-- Avoid walking into fire
-		local lx = math.floor((self.x-10)/16)
-		local rx = math.floor((self.x+10)/16)
+		local lx = math.floor((self.x-PANIC_RADIUS)/16)
+		local rx = math.floor((self.x+PANIC_RADIUS)/16)
 		local cy = math.floor((self.y-8)/16)
 		local fire_left  = map:hasFire(lx, cy)
 		local fire_right = map:hasFire(rx, cy)
 
 		if fire_left == true then
 			if fire_right == true or map:collideCell(rx,cy) then
-				self:setState(HS_IDLE)
+				self:setState(HS_PANIC)
 			else
 				self.dir = 1
 			end
 		elseif fire_right == true then
 			if fire_left == true or map:collideCell(lx,cy) then
-				self:setState(HS_IDLE)
+				self:setState(HS_PANIC)
 			else
 				self.dir = -1
 			end
@@ -85,6 +87,10 @@ function Human:update(dt)
 			self:setState(HS_IDLE)
 		end
 
+		self:collideFire()
+	
+	-- Panic state
+	elseif self.state == HS_PANIC then
 		self:collideFire()
 	
 	-- Burning panic state
@@ -211,7 +217,7 @@ function Human:draw()
 	self.flx = math.floor(self.x)
 	self.fly = math.floor(self.y)
 
-	if self.state == HS_WALK or self.state == HS_BURN then
+	if self.state == HS_WALK or self.state == HS_BURN or self.state == HS_PANIC then
 		self.anim:draw(self.flx, self.fly, 0,self.dir,1, 10, 32)
 	elseif self.state == HS_IDLE then
 		self.anim:draw(self.flx, self.fly, 0,self.dir,1, 10, 32, 1)

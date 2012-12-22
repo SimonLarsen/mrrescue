@@ -118,7 +118,7 @@ function Map:addFire(x,y)
 	end
 end
 
--- Checks if a tile is on fire
+--- Checks if a tile is on fire
 function Map:hasFire(x,y)
 	return self.fire[x][y] ~= nil
 end
@@ -264,6 +264,7 @@ function Map:addRoom(x,y,width)
 		end
 	end
 
+	--[[
 	local random = math.random(1,3)
 	if random == 1 then
 		self:addFire(math.random(x+1,x+width-2),y+3)
@@ -274,6 +275,9 @@ function Map:addRoom(x,y,width)
 		local rx = math.random(x+1, x+width-2)*16+8
 		table.insert(self.enemies, NormalEnemy.create(rx, (y+4)*16))
 	end
+	]]
+	local rx = math.random(x+1, x+width-2)*16+8
+	table.insert(self.enemies, JumperEnemy.create(rx, (y+4)*16))
 end
 
 --- Checks if a point is inside a solid block

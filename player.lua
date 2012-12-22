@@ -9,8 +9,8 @@ local JUMP_POWER = 130 -- initial yspeed when jumping
 local CLIMB_SPEED = 60 -- climbing speed
 local STREAM_SPEED = 400 -- stream growth speed
 local MAX_STREAM = 100 -- maximum stream length
-
-local COL_OFFSETS = {{-6,-0.0001}, {5,-0.0001}, {-6,-11}, {5,-11}, {-6,-22}, {5,-22}} -- Collision point offsets
+local REGEN_RATE = 1.2
+local USE_RATE   = 2.0 + REGEN_RATE
 
 local PS_RUN, PS_CLIMB, PS_CARRY, PS_THROW = 0,1,2,3 -- Player states
 local GD_UP, GD_HORIZONTAL, GD_DOWN = 0,2,4 -- Gun directions
@@ -31,6 +31,9 @@ function Player.create(x,y)
 	self.streamLength = 0
 	self.streamCollided = false
 	self.wquad = love.graphics.newQuad(0,0,10,10, 16,16) -- water stream quad
+
+	self.water_capacity = 5
+	self.water = self.water_capacity
 
 	self.grabbed = nil -- grabbed human
 
@@ -84,6 +87,9 @@ function Player:update(dt)
 		end
 	end
 
+	-- Regen water
+	self.water = math.max(math.min(self.water+REGEN_RATE*dt, self.water_capacity), 0)
+
 	-- Update animations
 	self.anim:update(dt)
 	self.waterFrame = self.waterFrame + dt*10
@@ -136,7 +142,7 @@ function Player:updateRunning(dt)
 	self.yspeed = self.yspeed + GRAVITY*dt
 	-- Move in y axis
 	self.y = self.y + self.yspeed*dt
-	if collideY(self,true) == true then
+	if collideY(self) == true then
 		self.yspeed = 0
 	end
 
@@ -175,6 +181,8 @@ function Player:updateStream(dt)
 		self.streamLength = 0
 		return
 	end
+
+	self.water = self.water - USE_RATE*dt
 
 	-- Collide with walls
 	local span = math.ceil((self.streamLength+12)/16)

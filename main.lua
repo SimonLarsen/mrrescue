@@ -74,13 +74,23 @@ function love.draw()
 
 	-- Draw hud
 	lg.pop()
-	lg.draw(img.hud, 0, HEIGHT-32)
+	drawHUD()
 
 	-- Draw debug information
 	lg.pop()
 	if show_debug == true then
 		drawDebug()
 	end
+end
+
+function drawHUD()
+	lg.draw(img.hud, 0, HEIGHT-32)
+
+	local water_ratio = player.water / player.water_capacity
+	quad.water_bar:setViewport(0, 0, math.floor(water_ratio*55+0.5), 11)
+	lg.drawq(img.water_bar, quad.water_bar, 10, HEIGHT-22)
+
+	lg.draw(img.hud2, 0, HEIGHT-32)
 end
 
 function drawDebug()
