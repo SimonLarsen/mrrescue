@@ -43,3 +43,48 @@ function Shards:draw()
 		love.graphics.drawq(img.shards, quad.shard[i], v.x, v.y, v.rot, 1,1, 4,4)
 	end
 end
+
+BlackSmoke = {}
+BlackSmoke.__index = BlackSmoke
+
+function BlackSmoke.create(x,y)
+	local self = setmetatable({}, BlackSmoke)
+	self.x = math.floor(x)
+	self.y = math.floor(y)
+	self.alive = true
+	self.anim = newAnimation(img.black_smoke, 20, 20, 0.10, 6, function() self.alive = false end)
+	return self
+end
+
+function BlackSmoke:update(dt)
+	self.anim:update(dt)
+end
+
+function BlackSmoke:draw()
+	if self.alive == true then
+		self.anim:draw(self.x, self.y, 0, 1,1, 10, 10)
+	end
+end
+
+Ashes = {}
+Ashes.__index = Ashes
+
+function Ashes.create(x,y)
+	local self = setmetatable({}, Ashes)
+
+	self.alive = true
+	self.x = math.floor(x)
+	self.y = math.floor(y)
+	self.anim = newAnimation(img.ashes, 20, 20, 0.13, 8, function() self.alive = false end)
+	return self
+end
+
+function Ashes:update(dt)
+	self.anim:update(dt)
+end
+
+function Ashes:draw()
+	if self.alive == true then
+		self.anim:draw(self.x, self.y, 0, 1,1, 10, 20)
+	end
+end

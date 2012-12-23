@@ -76,6 +76,7 @@ function Map:update(dt)
 	for i=#self.humans,1,-1 do
 		if self.humans[i].alive == false then
 			table.remove(self.humans, i)
+			print("EJH DER VAR EN DER DØDE ØVØV BIlL BILL BILL...")
 		else
 			self.humans[i]:update(dt)
 		end
@@ -209,6 +210,22 @@ function Map:fillBatch(batch, test)
 	end
 end
 
+function Map:drawFireLight()
+	local sx = math.floor(self.viewX/16)
+	local sy = math.floor(self.viewY/16)
+	local ex = sx+math.ceil(self.viewW/16)
+	local ey = sy+math.ceil(self.viewH/16)
+
+	for iy = sy, ex do
+		for ix = sx, ex do
+			if self.fire[ix] and self.fire[ix][iy] then
+				local inst = self.fire[ix][iy]
+				lg.drawq(img.light_fire, quad.light_fire[inst.flframe%5], inst.x-34, inst.y-42)
+			end
+		end
+	end
+end
+
 --- Forces the map to redraw sprite batch next frame
 function Map:forceRedraw()
 	self.redraw = true
@@ -264,20 +281,19 @@ function Map:addRoom(x,y,width)
 		end
 	end
 
-	--[[
-	local random = math.random(1,3)
+	local random = math.random(1,4)
 	if random == 1 then
 		self:addFire(math.random(x+1,x+width-2),y+3)
 	elseif random == 2 then
 		local rx = math.random(x+1,x+width-2)*16+8
 		table.insert(self.humans, Human.create(rx, (y+4)*16))
-	else
+	elseif random == 3 then
 		local rx = math.random(x+1, x+width-2)*16+8
 		table.insert(self.enemies, NormalEnemy.create(rx, (y+4)*16))
+	else
+		local rx = math.random(x+1, x+width-2)*16+8
+		table.insert(self.enemies, JumperEnemy.create(rx, (y+4)*16))
 	end
-	]]
-	local rx = math.random(x+1, x+width-2)*16+8
-	table.insert(self.enemies, JumperEnemy.create(rx, (y+4)*16))
 end
 
 --- Checks if a point is inside a solid block
@@ -377,4 +393,8 @@ end
 
 function Map:getHeight()
 	return self.height
+end
+
+function Map:addParticle(particle)
+	table.insert(map.particles, particle)
 end

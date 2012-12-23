@@ -34,7 +34,7 @@ animation.__index = animation
 -- @param delay The delay between two frames
 -- @param frames The number of frames, 0 for autodetect
 -- @return The created animation
-function newAnimation(image, fw, fh, delay, frames)
+function newAnimation(image, fw, fh, delay, frames, callback)
 	local a = {}
 	a.img = image
 	a.frames = {}
@@ -46,6 +46,7 @@ function newAnimation(image, fw, fh, delay, frames)
 	a.playing = true
 	a.speed = 1
 	a.direction = 1
+	a.callback = callback
 	local imgw = image:getWidth()
 	local imgh = image:getHeight()
 	if frames == 0 then
@@ -71,8 +72,10 @@ function animation:update(dt)
 		self.timer = self.timer - self.delays[self.position]
 		self.position = self.position + self.direction
 		if self.position > #self.frames then
+			if self.callback then self.callback() end
 			self.position = 1
 		elseif self.position < 1 then
+			if self.callback then self.callback() end
 			self.position = #self.frames
 		end
 	end

@@ -9,8 +9,7 @@ local JUMP_POWER = 130 -- initial yspeed when jumping
 local CLIMB_SPEED = 60 -- climbing speed
 local STREAM_SPEED = 400 -- stream growth speed
 local MAX_STREAM = 100 -- maximum stream length
-local REGEN_RATE = 1.2
-local USE_RATE   = 2.0 + REGEN_RATE
+local USE_RATE   = 3.0
 
 local PS_RUN, PS_CLIMB, PS_CARRY, PS_THROW = 0,1,2,3 -- Player states
 local GD_UP, GD_HORIZONTAL, GD_DOWN = 0,2,4 -- Gun directions
@@ -32,8 +31,10 @@ function Player.create(x,y)
 	self.streamCollided = false
 	self.wquad = love.graphics.newQuad(0,0,10,10, 16,16) -- water stream quad
 
+	self.regen_rate = 3.0
 	self.water_capacity = 5
 	self.water = self.water_capacity
+	self.overloaded = false
 
 	self.grabbed = nil -- grabbed human
 
@@ -88,7 +89,14 @@ function Player:update(dt)
 	end
 
 	-- Regen water
-	self.water = math.max(math.min(self.water+REGEN_RATE*dt, self.water_capacity), 0)
+	if self.overloaded == true then
+		self.water = math.max(math.min(self.water+0.5*self.regen_rate*dt, self.water_capacity), 0)
+		if self.water >= self.water_capacity then
+			self.overloaded = false
+		end
+	else
+		self.water = math.max(math.min(self.water+self.regen_rate*dt, self.water_capacity), 0)
+	end
 
 	-- Update animations
 	self.anim:update(dt)
@@ -173,7 +181,7 @@ end
 -- and performs collision with walls and other entities
 function Player:updateStream(dt)
 	-- Shoot
-	if love.keyboard.isDown(self.keys.shoot) then
+	if love.keyboard.isDown(self.keys.shoot) and self.overloaded == false then
 		self.shooting = true
 		self.streamLength = math.min(self.streamLength + STREAM_SPEED*dt, MAX_STREAM)
 	else
@@ -182,7 +190,10 @@ function Player:updateStream(dt)
 		return
 	end
 
-	self.water = self.water - USE_RATE*dt
+	self.water = self.water - (USE_RATE+self.regen_rate)*dt
+	if self.water <= 0 then
+		self.overloaded = true
+	end
 
 	-- Collide with walls
 	local span = math.ceil((self.streamLength+12)/16)

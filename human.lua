@@ -8,7 +8,8 @@ local PUSH_SPEED  = 100
 local NUM_HUMANS = 4
 local GRAVITY = 350
 local COL_OFFSETS = {{-5,-0.9001}, {5,-0.9001}, {-5,-18}, {5,-18}} -- Collision point offsets
-local PANIC_RADIUS = 20
+local PANIC_RADIUS = 29
+local MAX_HEALTH = 15
 
 local IDLE_TIME = 2
 local WALK_TIME = 3
@@ -23,6 +24,7 @@ function Human.create(x,y,id)
 	self.xspeed, self.yspeed = 0,0
 	self.dir = 1
 	self.id = id or math.random(1, NUM_HUMANS)
+	self.health = MAX_HEALTH
 
 	self.anims = {}
 	self.anims[HS_WALK]  = newAnimation(img.human_run[self.id], 20,32, 0.22, 4)
@@ -105,6 +107,12 @@ function Human:update(dt)
 		self.y = self.y + self.yspeed*dt
 		if collideY(self) == true then
 			self.yspeed = 0 
+		end
+
+		self.health = self.health - dt
+		if self.health <= 0 then
+			self.alive = false
+			map:addParticle(Ashes.create(self.x, self.y))
 		end
 
 	elseif self.state == HS_FLY then

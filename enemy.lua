@@ -103,6 +103,7 @@ function NormalEnemy:shot(dt,dir)
 
 	self.health = self.health - dt
 	if self.health <= 0 then
+		map:addParticle(BlackSmoke.create(self.x, self.y-8))
 		self.alive = false
 	end
 end
@@ -113,7 +114,7 @@ end
 
 -- Jumper enemy
 JumperEnemy = { MOVE_SPEED = 100, JUMP_DELAY = 1, JUMP_POWER = 150, MAX_HEALTH = 1.0,
-				GRAVITY = 350, corners = {-6, 6, -24, -0.5 } }
+				GRAVITY = 350, corners = {-6, 6, -24, -0.5 }, MIN_FIRE_TIME = 3, MAX_FIRE_TIME = 16}
 JumperEnemy.__index = JumperEnemy
 
 function JumperEnemy.create(x,y)
@@ -130,6 +131,7 @@ function JumperEnemy.create(x,y)
 
 	self.state = EN_IDLE
 	self.nextJump = self.JUMP_DELAY*math.random()
+	self.nextFire = math.random(self.MIN_FIRE_TIME, self.MAX_FIRE_TIME)
 
 	self.anims = {}
 	self.anims[EN_JUMPING] = newAnimation(img.enemy_jumper_jump, 16, 32, 0.12, 3)
@@ -159,6 +161,11 @@ function JumperEnemy:update(dt)
 		self.y = self.y + self.yspeed*dt
 		if collideY(self) == true then
 			if self.yspeed > 0 then
+				self.nextFire = self.nextFire - 1
+				if self.nextFire <= 0 then
+					self.nextFire = math.random(self.MIN_FIRE_TIME, self.MAX_FIRE_TIME)
+					map:addFire(math.floor(self.x/16), math.floor((self.y-8)/16))
+				end
 				self.state = EN_IDLE
 				self.nextJump = self.JUMP_DELAY
 			end
@@ -199,6 +206,7 @@ function JumperEnemy:shot(dt,dir)
 	self.health = self.health - dt
 	if self.health <= 0 then
 		self.alive = false
+		map:addParticle(BlackSmoke.create(self.x, self.y-14))
 	end
 end
 

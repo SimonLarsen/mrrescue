@@ -5,10 +5,12 @@ quad = {}	-- global Quads
 
 IMAGE_FILES = {
 	"tiles", "door",
-	"hud", "hud2", "water_bar",
+	"hud", "hud2", "water_bar", "overloaded_bar",
 	"stream", "water",
 	"shards",
 	"fire_wall", "fire_wall_small", "fire_floor",
+	"black_smoke", "ashes",
+	"light_player", "light_fire",
 
 	"player_gun",
 	"player_throw",
@@ -16,12 +18,8 @@ IMAGE_FILES = {
 	"player_climb_up",
 	"player_running",
 
-	"enemy_normal_run",
-	"enemy_normal_hit",
-	"enemy_normal_recover",
-	"enemy_jumper_hit",
-	"enemy_jumper_jump",
-	"enemy_jumper_recover",
+	"enemy_normal_run", "enemy_normal_hit", "enemy_normal_recover", "enemy_jumper_hit",
+	"enemy_jumper_jump", "enemy_jumper_recover", 
 
 	"human_1_run", "human_2_run", "human_3_run", "human_4_run",
 	"human_1_carry_left", "human_2_carry_left", "human_3_carry_left", "human_4_carry_left",
@@ -43,6 +41,10 @@ end
 
 --- Load all resources including images, quads sound effects etc.
 function loadResources()
+	-- Create canvas for lighting effects
+	canvas = lg.newCanvas(256,256)
+	canvas:setFilter("nearest","nearest")
+
 	-- Load all images
 	for i,v in ipairs(IMAGE_FILES) do
 		img[v] = lg.newImage("data/"..v..".png")
@@ -105,9 +107,9 @@ function loadResources()
 		quad.fire_floor[i] = lg.newQuad(i*16, 0, 16, 16, getSize(img.fire_floor))
 	end
 
-	quad.jumper_jump = {}
-	for i=0,2 do
-		quad.jumper_jump[i] = lg.newQuad(i*16, 0, 16, 32, getSize(img.enemy_jumper_jump))
+	quad.light_fire = {}
+	for i=0,4 do
+		quad.light_fire[i] = lg.newQuad(i*85, 0, 85, 85, getSize(img.light_fire))
 	end
 
 	quad.water_bar = lg.newQuad(0,0, 1,1, getSize(img.water_bar))

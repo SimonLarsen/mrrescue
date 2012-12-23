@@ -50,7 +50,7 @@ function love.update(dt)
 
 	-- Calculate translation offest
 	translate_x = math.min(math.max(0, player.x-WIDTH/2), MAPW-WIDTH)
-	translate_y = math.min(math.max(0, player.y-11-(HEIGHT+30)/2), MAPH-HEIGHT+30)
+	translate_y = math.min(math.max(0, player.y-11-HEIGHT/2), MAPH-HEIGHT+30)
 
 	map:setDrawRange(translate_x, translate_y, WIDTH, HEIGHT)
 	map:update(dt)
@@ -64,16 +64,29 @@ function love.draw()
 	lg.push()
 	lg.translate(-math.floor(translate_x), -math.floor(translate_y))
 
-	-- Draw map
+	-- Draw back
 	map:drawBack()
-
 	-- Draw player
 	player:draw()
-
+	-- Draw front
 	map:drawFront()
 
-	-- Draw hud
+	-- Update lightmap
 	lg.pop()
+	lg.pop()	
+	lg.push()
+	lg.translate(-math.floor(translate_x), -math.floor(translate_y))
+	updateLightmap()
+	lg.pop()
+
+	-- Draw canvas with lighting
+	lg.push()
+	lg.scale(SCALE,SCALE)
+	lg.setBlendMode("multiplicative")
+	lg.draw(canvas, 0,0)
+	lg.setBlendMode("alpha")
+
+	-- Draw hud
 	drawHUD()
 
 	-- Draw debug information
@@ -88,9 +101,23 @@ function drawHUD()
 
 	local water_ratio = player.water / player.water_capacity
 	quad.water_bar:setViewport(0, 0, math.floor(water_ratio*55+0.5), 11)
-	lg.drawq(img.water_bar, quad.water_bar, 10, HEIGHT-22)
+	if player.overloaded == false then
+		lg.drawq(img.water_bar, quad.water_bar, 10, HEIGHT-22)
+	else
+		lg.drawq(img.overloaded_bar, quad.water_bar, 10, HEIGHT-22)
+	end
 
 	lg.draw(img.hud2, 0, HEIGHT-32)
+end
+
+function updateLightmap()
+	canvas:clear(0,0,0,255)
+	lg.setCanvas(canvas)
+	lg.setBlendMode("additive")
+	lg.draw(img.light_player, player.flx-128, player.fly-138)
+	map:drawFireLight()
+	lg.setBlendMode("alpha")
+	lg.setCanvas()
 end
 
 function drawDebug()
