@@ -15,6 +15,8 @@ function Door.create(x,y,dir)
 		self.x = self.x+12
 	end
 	self.y = y
+	self.cx = math.floor(x/16)
+	self.cy = math.floor(y/16)
 
 	self.state = 0 -- 0 = closed, 1 = off hinges
 	self.dir = dir
@@ -27,7 +29,19 @@ function Door.create(x,y,dir)
 end
 
 function Door:update(dt)
-	if self.state == 1 then
+	if self.state == 0 then
+		if map:hasFire(self.cx, self.cy) or map:hasFire(self.cx, self.cy+1)
+		or map:hasFire(self.cx, self.cy+2) then
+			self.health = self.health - dt*0.2
+		end
+
+		if self.health < 0 then
+			self.state = 1
+			self.xspeed = math.random(-50,50)
+			self.yspeed = -100
+		end
+
+	elseif self.state == 1 then
 		self.yspeed = self.yspeed + GRAVITY*dt
 
 		self.x = self.x + self.xspeed*dt
