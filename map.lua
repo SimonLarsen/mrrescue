@@ -76,7 +76,6 @@ function Map:update(dt)
 	for i=#self.humans,1,-1 do
 		if self.humans[i].alive == false then
 			table.remove(self.humans, i)
-			print("EJH DER VAR EN DER DØDE ØVØV BIlL BILL BILL...")
 		else
 			self.humans[i]:update(dt)
 		end

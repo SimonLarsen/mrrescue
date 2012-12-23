@@ -9,7 +9,7 @@ local JUMP_POWER = 130 -- initial yspeed when jumping
 local CLIMB_SPEED = 60 -- climbing speed
 local STREAM_SPEED = 400 -- stream growth speed
 local MAX_STREAM = 100 -- maximum stream length
-local USE_RATE   = 3.0
+local USE_RATE   = 2.5
 
 local PS_RUN, PS_CLIMB, PS_CARRY, PS_THROW = 0,1,2,3 -- Player states
 local GD_UP, GD_HORIZONTAL, GD_DOWN = 0,2,4 -- Gun directions
@@ -35,6 +35,7 @@ function Player.create(x,y)
 	self.water_capacity = 5
 	self.water = self.water_capacity
 	self.overloaded = false
+	self.temperature = 0
 
 	self.grabbed = nil -- grabbed human
 
@@ -63,6 +64,8 @@ end
 -- Called once once each love.update
 -- @param dt Time passed since last update
 function Player:update(dt)
+	self.temperature = math.min(self.temperature + dt*0.1, 1)
+
 	self.shooting = false
 
 	-- RUNNING STATE

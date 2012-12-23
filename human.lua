@@ -176,6 +176,7 @@ end
 function Human:shot(dt,dir)
 	if self.state == HS_BURN then
 		self:setState(HS_WALK)
+		self.health = MAX_HEALTH
 	end
 
 	if self.state == HS_IDLE or self.state == HS_BURN or self.state == HS_WALK then

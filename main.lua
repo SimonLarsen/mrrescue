@@ -107,6 +107,11 @@ function drawHUD()
 		lg.drawq(img.overloaded_bar, quad.water_bar, 10, HEIGHT-22)
 	end
 
+	local temp_length = math.floor(player.temperature*81+0.5)
+	quad.temperature_bar:setViewport(0,0, temp_length, 6)
+	lg.drawq(img.temperature_bar, quad.temperature_bar, 90, HEIGHT-20)
+	lg.drawq(img.temperature_bar, quad.temperature_bar_end, 90+temp_length, HEIGHT-20)
+
 	lg.draw(img.hud2, 0, HEIGHT-32)
 end
 
@@ -116,6 +121,8 @@ function updateLightmap()
 	lg.setBlendMode("additive")
 	lg.draw(img.light_player, player.flx-128, player.fly-138)
 	map:drawFireLight()
+	lg.rectangle("fill", 0,0, 32, MAPH)
+	lg.rectangle("fill", MAPW-32, 0, 32, MAPH)
 	lg.setBlendMode("alpha")
 	lg.setCanvas()
 end

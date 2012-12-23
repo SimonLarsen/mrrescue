@@ -5,7 +5,7 @@ quad = {}	-- global Quads
 
 IMAGE_FILES = {
 	"tiles", "door",
-	"hud", "hud2", "water_bar", "overloaded_bar",
+	"hud", "hud2", "water_bar", "overloaded_bar", "temperature_bar",
 	"stream", "water",
 	"shards",
 	"fire_wall", "fire_wall_small", "fire_floor",
@@ -113,4 +113,6 @@ function loadResources()
 	end
 
 	quad.water_bar = lg.newQuad(0,0, 1,1, getSize(img.water_bar))
+	quad.temperature_bar = lg.newQuad(0,0,1,1, getSize(img.temperature_bar))
+	quad.temperature_bar_end = lg.newQuad(81,0,2,6, getSize(img.temperature_bar))
 end
