@@ -119,8 +119,14 @@ function updateLightmap()
 	canvas:clear(0,0,0,255)
 	lg.setCanvas(canvas)
 	lg.setBlendMode("additive")
+
 	lg.draw(img.light_player, player.flx-128, player.fly-138)
 	map:drawFireLight()
+	for i,v in ipairs(map.enemies) do
+		v:drawLight()
+	end
+	
+	-- Light up outside building
 	lg.rectangle("fill", 0,0, 32, MAPH)
 	lg.rectangle("fill", MAPW-32, 0, 32, MAPH)
 	lg.setBlendMode("alpha")

@@ -1,8 +1,12 @@
--- Normal enemy
+-- %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+-- %           Normal enemy           %
+-- %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 NormalEnemy = { MOVE_SPEED = 80, FIRE_SPAWN_MIN = 10, FIRE_SPAWN_MAX = 30, MAX_HEALTH = 1.2 }
 NormalEnemy.__index = NormalEnemy
 
 local EN_RUN, EN_HIT, EN_RECOVER, EN_IDLE, EN_JUMPING = 0,1,2,3,4
+
+local lg = love.graphics
 
 function NormalEnemy.create(x,y)
 	local self = setmetatable({}, NormalEnemy)
@@ -86,6 +90,10 @@ function NormalEnemy:draw()
 	end
 end
 
+function NormalEnemy:drawLight()
+	lg.drawq(img.light_fire, quad.light_fire[(self.anim.position-1)%5], self.x-45, self.y-57)
+end
+
 function NormalEnemy:collideBox(bbox)
 	if self.x-5  > bbox.x+bbox.w or self.x+5 < bbox.x
 	or self.y-15 > bbox.y+bbox.h or self.y   < bbox.y then
@@ -112,7 +120,9 @@ function NormalEnemy:getBBox()
 	return {x = self.x-5, y = self.y-15, w = 10, y = 15}
 end
 
--- Jumper enemy
+-- %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+-- %           Jumper enemy           %
+-- %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 JumperEnemy = { MOVE_SPEED = 100, JUMP_DELAY = 1, JUMP_POWER = 150, MAX_HEALTH = 1.0,
 				GRAVITY = 350, corners = {-6, 6, -24, -0.5 }, MIN_FIRE_TIME = 3, MAX_FIRE_TIME = 16}
 JumperEnemy.__index = JumperEnemy
@@ -190,6 +200,10 @@ function JumperEnemy:draw()
 		self.anim:draw(self.flx, self.fly, 0, self.dir, 1,8, 32, 1, self.hit and img.enemy_jumper_hit)
 	end
 	self.hit = false
+end
+
+function JumperEnemy:drawLight()
+	lg.drawq(img.light_fire, quad.light_fire[(self.anim.position-1)%5], self.x-45, self.y-62)
 end
 
 function JumperEnemy:collideBox(bbox)
