@@ -31,10 +31,12 @@ function love.load()
 
 	loadResources()
 
-	map = Map.create()
-	map:populate()
+	nextLevel()
+end
 
-	player = Player.create(MAPW/2,70)
+function nextLevel()
+	map = Map.create()
+	player = Player.create(map:getStart())
 end
 
 function love.update(dt)
@@ -54,6 +56,10 @@ function love.update(dt)
 
 	map:setDrawRange(translate_x, translate_y, WIDTH, HEIGHT)
 	map:update(dt)
+
+	if player.y < 0 then
+		nextLevel()
+	end
 end
 
 function love.draw()

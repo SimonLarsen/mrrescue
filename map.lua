@@ -41,13 +41,25 @@ function Map.create()
 
 	self.background = img.night
 
+	self:populate()
+
 	return self
 end
 
 function Map:populate()
+	self.rooms = {}
+	self.starts = {}
+
 	for i=1,3 do
 		self:addFloor(i)
 	end
+
+	local start = table.random(self.starts)
+	self.startx = start.x + 8
+	self.starty = start.y + 173
+
+	self.rooms = nil
+	self.starts = nil
 end
 
 --- Updates all entities in the map and recreates
@@ -96,6 +108,7 @@ function Map:update(dt)
 			if self.fire[ix][iy] then
 				if self.fire[ix][iy].alive == false then
 					self.fire[ix][iy] = nil
+					self:addParticle(BlackSmoke.create(ix*16+8,iy*16+8))
 				else
 					self.fire[ix][iy]:update(dt)
 				end
@@ -113,6 +126,10 @@ end
 
 --- Adds a fire block if possible
 function Map:addFire(x,y)
+	if x < 3 or x > 37 then
+		return
+	end
+
 	if self.fire[x][y] == nil then
 		self.fire[x][y] = Fire.create(x,y,self)
 	end
@@ -210,10 +227,10 @@ function Map:fillBatch(batch, test)
 end
 
 function Map:drawFireLight()
-	local sx = math.floor(self.viewX/16)
-	local sy = math.floor(self.viewY/16)
-	local ex = sx+math.ceil(self.viewW/16)
-	local ey = sy+math.ceil(self.viewH/16)
+	local sx = math.floor(self.viewX/16)-2
+	local sy = math.floor(self.viewY/16)-2
+	local ex = sx+math.ceil(self.viewW/16)+2
+	local ey = sy+math.ceil(self.viewH/16)+2
 
 	for iy = sy, ex do
 		for ix = sx, ex do
@@ -254,7 +271,10 @@ function Map:addFloor(floor)
 				if o.type == "door" then
 					table.insert(self.objects, Door.create(o.x, o.y+yoffset*16, o.properties.dir))
 				elseif o.type == "room" then
+					table.insert(self.rooms, o)
 					self:addRoom(o.x/16, o.y/16+yoffset, o.width/16)
+				elseif o.type == "start" and floor == 3 then
+					table.insert(self.starts, o)
 				end
 			end
 		end
@@ -280,19 +300,23 @@ function Map:addRoom(x,y,width)
 		end
 	end
 
-	local random = math.random(1,4)
+	local random = math.random(1,3)
 	if random == 1 then
-		self:addFire(math.random(x+1,x+width-2),y+3)
-	elseif random == 2 then
 		local rx = math.random(x+1,x+width-2)*16+8
 		table.insert(self.humans, Human.create(rx, (y+4)*16))
-	elseif random == 3 then
+	elseif random == 2 then
 		local rx = math.random(x+1, x+width-2)*16+8
 		table.insert(self.enemies, NormalEnemy.create(rx, (y+4)*16))
 	else
 		local rx = math.random(x+1, x+width-2)*16+8
 		table.insert(self.enemies, JumperEnemy.create(rx, (y+4)*16))
 	end
+end
+
+--- Adds a particle to the map
+-- @param particle Particle to add
+function Map:addParticle(particle)
+	table.insert(map.particles, particle)
 end
 
 --- Checks if a point is inside a solid block
@@ -394,6 +418,6 @@ function Map:getHeight()
 	return self.height
 end
 
-function Map:addParticle(particle)
-	table.insert(map.particles, particle)
+function Map:getStart()
+	return self.startx, self.starty
 end

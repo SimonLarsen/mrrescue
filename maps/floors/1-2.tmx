@@ -21,5 +21,6 @@
   </object>
   <object type="room" x="32" y="16" width="160" height="64"/>
   <object type="room" x="240" y="16" width="384" height="64"/>
+  <object type="start" x="208" y="64" width="16" height="16"/>
  </objectgroup>
 </map>
