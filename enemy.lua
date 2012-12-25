@@ -225,5 +225,5 @@ function JumperEnemy:shot(dt,dir)
 end
 
 function JumperEnemy:getBBox()
-	return {x = self.x-5, y = self.y-23, w = 10, y = 23}
+	return {x = self.x-5, y = self.y-23, w = 10, h = 23}
 end
