@@ -88,3 +88,7 @@ function collideY(self)
 
 	return collision
 end
+
+function cap(val, min, max)
+	return math.max(math.min(val, max), min)
+end

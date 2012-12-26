@@ -52,8 +52,8 @@ function love.update(dt)
 	player:update(dt)
 
 	-- Calculate translation offest
-	translate_x = math.min(math.max(0, player.x-WIDTH/2), MAPW-WIDTH)
-	translate_y = math.min(math.max(0, player.y-11-HEIGHT/2), MAPH-HEIGHT+30)
+	translate_x = cap(player.x-WIDTH/2, 0, MAPW-WIDTH)
+	translate_y = cap(player.y-11-HEIGHT/2, 0, MAPH-HEIGHT+30)
 
 	map:setDrawRange(translate_x, translate_y, WIDTH, HEIGHT)
 	map:update(dt)

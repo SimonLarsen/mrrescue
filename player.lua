@@ -101,12 +101,12 @@ function Player:update(dt)
 
 	-- Regen water
 	if self.overloaded == true then
-		self.water = math.max(math.min(self.water+0.5*self.regen_rate*dt, self.water_capacity), 0)
+		self.water = cap(self.water+0.5*self.regen_rate*dt, 0, self.water_capacity)
 		if self.water >= self.water_capacity then
 			self.overloaded = false
 		end
 	else
-		self.water = math.max(math.min(self.water+self.regen_rate*dt, self.water_capacity), 0)
+		self.water = cap(self.water+self.regen_rate*dt, 0, self.water_capacity)
 	end
 
 	-- Update animations
@@ -115,6 +115,8 @@ function Player:update(dt)
 
 	-- Collide fire
 	self:collideFire(dt)
+	self.temperature = self.temperature + TIME_DAMAGE*dt
+	self.temperature = cap(self.temperature, 0, 1)
 end
 
 --- Called each update if current state is PS_RUN
@@ -143,9 +145,9 @@ function Player:updateRunning(dt)
 	end
 
 	if self.state == PS_CARRY then
-		self.xspeed = math.min(math.max(-MAX_SPEED_CARRY, self.xspeed), MAX_SPEED_CARRY)
+		self.xspeed = cap(self.xspeed, -MAX_SPEED_CARRY, MAX_SPEED_CARRY)
 	else
-		self.xspeed = math.min(math.max(-MAX_SPEED, self.xspeed), MAX_SPEED)
+		self.xspeed = cap(self.xspeed, -MAX_SPEED, MAX_SPEED)
 	end
 
 	if changedDir == true and self.gundir == GD_HORIZONTAL then
@@ -177,25 +179,34 @@ function Player:updateRunning(dt)
 end
 
 function Player:collideFire(dt)
-	self.hit = false
+	self.heat = 0
 	for i,v in ipairs(map.enemies) do
 		if self:collideBox(v:getBBox()) == true then
-			self.hit = true
+			self.heat = 1
 			break
 		end
 	end
 
 	local cx = math.floor(self.x/16)
-	local cy1 = math.floor((self.y-5)/16)
-	local cy2 = math.floor((self.y-13)/16)
+	local cy = math.floor((self.y-11)/16)
 
-	if map:hasFire(cx,cy1) == true or map:hasFire(cx,cy2) == true then
-		self.hit = true
+	local fireHeat = 0
+	for ix = cx-2,cx+2 do
+		for iy = cy-2,cy+2 do
+			if map:hasFire(ix,iy) == true then
+				local fx, fy = ix*16+8, iy*16+8
+				local dist = math.pow(self.x-fx,2) + math.pow(self.y-fy-11,2)
+
+				if dist <= FIRE_DIST then
+					local contrib = math.pow((0.5*math.cos((dist/FIRE_DIST)*math.pi)+0.5), 3)
+					fireHeat = fireHeat + contrib
+				end
+			end
+		end
 	end
 
-	if self.hit == true then
-		self.temperature = math.min(self.temperature + BURN_DAMAGE*dt, 1)
-	end
+	self.heat = cap(self.heat + fireHeat, 0, 1)
+	self.temperature = self.temperature + self.heat*BURN_DAMAGE*dt
 end
 
 --- Updates gun direction and stream
