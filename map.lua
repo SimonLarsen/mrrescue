@@ -137,7 +137,7 @@ end
 
 --- Checks if a tile is on fire
 function Map:hasFire(x,y)
-	return self.fire[x][y] ~= nil
+	return self.fire[x] and self.fire[x][y] ~= nil
 end
 
 --- Sets the drawing range for the map
