@@ -3,6 +3,7 @@ Player.__index = Player
 
 local RUN_SPEED = 500 -- Run acceleration
 local MAX_SPEED = 160 -- Maximum running speed
+local MAX_SPEED_CARRY = 100 -- Maximum running speed when carrying human
 local BRAKE_SPEED = 250
 local GRAVITY = 350
 local JUMP_POWER = 130 -- initial yspeed when jumping
@@ -10,6 +11,7 @@ local CLIMB_SPEED = 60 -- climbing speed
 local STREAM_SPEED = 400 -- stream growth speed
 local MAX_STREAM = 100 -- maximum stream length
 local USE_RATE   = 2.5
+local BURN_DAMAGE = 0.5
 
 local PS_RUN, PS_CLIMB, PS_CARRY, PS_THROW = 0,1,2,3 -- Player states
 local GD_UP, GD_HORIZONTAL, GD_DOWN = 0,2,4 -- Gun directions
@@ -25,6 +27,7 @@ function Player.create(x,y)
 	self.yspeed = 0
 	self.onGround = false
 	self.time = 0
+	self.lastDir = 1
 
 	self.shooting = false
 	self.streamLength = 0
@@ -35,7 +38,9 @@ function Player.create(x,y)
 	self.water_capacity = 5
 	self.water = self.water_capacity
 	self.overloaded = false
+
 	self.temperature = 0
+	self.hit = false
 
 	self.grabbed = nil -- grabbed human
 
@@ -60,12 +65,15 @@ function Player.create(x,y)
 	return self
 end
 
+function Player:warp(x,y)
+	self.x, self.y = x,y
+	self.xspeed, self.yspeed = 0,0
+end
+
 --- Updates the player
 -- Called once once each love.update
 -- @param dt Time passed since last update
 function Player:update(dt)
-	self.temperature = math.min(self.temperature + dt*0.1, 1)
-
 	self.shooting = false
 
 	-- RUNNING STATE
@@ -104,6 +112,9 @@ function Player:update(dt)
 	-- Update animations
 	self.anim:update(dt)
 	self.waterFrame = self.waterFrame + dt*10
+
+	-- Collide fire
+	self:collideFire(dt)
 end
 
 --- Called each update if current state is PS_RUN
@@ -111,8 +122,10 @@ end
 function Player:updateRunning(dt)
 	local changedDir = false -- true if player changed horizontal direction
 
-	-- Handle input
-	if love.keyboard.isDown(self.keys.right)  then
+	-- Check if both directions are held for handling conflicts
+	local both = love.keyboard.isDown(self.keys.right) and love.keyboard.isDown(self.keys.left)
+
+	if (both == false and love.keyboard.isDown(self.keys.right)) or (both == true and self.lastDir == 1) then
 		self.xspeed = self.xspeed + RUN_SPEED*dt
 
 		if self.dir == -1 then
@@ -120,17 +133,19 @@ function Player:updateRunning(dt)
 			changedDir = true
 		end
 
-		if self.xspeed > MAX_SPEED then self.xspeed = MAX_SPEED end
-
-	elseif love.keyboard.isDown(self.keys.left) then
+	elseif (both == false and love.keyboard.isDown(self.keys.left)) or (both == true and self.lastDir == -1) then
 		self.xspeed = self.xspeed - RUN_SPEED*dt
 
 		if self.dir == 1 then
 			self.dir = -1
 			changedDir = true
 		end
+	end
 
-		if self.xspeed < -MAX_SPEED then self.xspeed = -MAX_SPEED end
+	if self.state == PS_CARRY then
+		self.xspeed = math.min(math.max(-MAX_SPEED_CARRY, self.xspeed), MAX_SPEED_CARRY)
+	else
+		self.xspeed = math.min(math.max(-MAX_SPEED, self.xspeed), MAX_SPEED)
 	end
 
 	if changedDir == true and self.gundir == GD_HORIZONTAL then
@@ -159,6 +174,28 @@ function Player:updateRunning(dt)
 
 	-- Set animation speeds
 	self.anim:setSpeed(math.abs(self.xspeed)/MAX_SPEED)
+end
+
+function Player:collideFire(dt)
+	self.hit = false
+	for i,v in ipairs(map.enemies) do
+		if self:collideBox(v:getBBox()) == true then
+			self.hit = true
+			break
+		end
+	end
+
+	local cx = math.floor(self.x/16)
+	local cy1 = math.floor((self.y-5)/16)
+	local cy2 = math.floor((self.y-13)/16)
+
+	if map:hasFire(cx,cy1) == true or map:hasFire(cx,cy2) == true then
+		self.hit = true
+	end
+
+	if self.hit == true then
+		self.temperature = math.min(self.temperature + BURN_DAMAGE*dt, 1)
+	end
 end
 
 --- Updates gun direction and stream
@@ -369,6 +406,13 @@ function Player:keypressed(k)
 			self:leaveLadder()
 		end
 	elseif k == self.keys.left or k == self.keys.right then
+		-- Save last direction for conflicts
+		if k == self.keys.left then
+			self.lastDir = -1
+		else
+			self.lastDir = 1
+		end
+
 		if self.state == PS_CLIMB then
 			self:leaveLadder()
 		end
