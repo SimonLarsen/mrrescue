@@ -11,6 +11,7 @@ IMAGE_FILES = {
 	"fire_wall", "fire_wall_small", "fire_floor",
 	"black_smoke", "ashes",
 	"light_player", "light_fire",
+	"red_screen",
 
 	"player_gun",
 	"player_throw",
@@ -115,4 +116,6 @@ function loadResources()
 	quad.water_bar = lg.newQuad(0,0, 1,1, getSize(img.water_bar))
 	quad.temperature_bar = lg.newQuad(0,0,1,1, getSize(img.temperature_bar))
 	quad.temperature_bar_end = lg.newQuad(81,0,2,6, getSize(img.temperature_bar))
+
+	quad.red_screen = lg.newQuad(0,0, 256,169, 256,256)
 end

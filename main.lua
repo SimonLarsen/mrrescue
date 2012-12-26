@@ -31,12 +31,13 @@ function love.load()
 
 	loadResources()
 
-	nextLevel()
+	map = Map.create()
+	player = Player.create(map:getStart())
 end
 
 function nextLevel()
 	map = Map.create()
-	player = Player.create(map:getStart())
+	player.x, player.y = map.startx, map.starty
 end
 
 function love.update(dt)
@@ -91,6 +92,13 @@ function love.draw()
 	lg.setBlendMode("multiplicative")
 	lg.draw(canvas, 0,0)
 	lg.setBlendMode("alpha")
+
+	-- Draw red screen if hit
+	if player.hit == true then
+		lg.setColor(255,255,255,128)
+		lg.drawq(img.red_screen, quad.red_screen, 0,0)
+		lg.setColor(255,255,255,255)
+	end
 
 	-- Draw hud
 	drawHUD()
