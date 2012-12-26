@@ -11,7 +11,9 @@ local CLIMB_SPEED = 60 -- climbing speed
 local STREAM_SPEED = 400 -- stream growth speed
 local MAX_STREAM = 100 -- maximum stream length
 local USE_RATE   = 2.5
-local BURN_DAMAGE = 0.5
+local BURN_DAMAGE = 0.5 -- Damage over time when touching enemies
+local TIME_DAMAGE = 0.01
+local FIRE_DIST = 1600
 
 local PS_RUN, PS_CLIMB, PS_CARRY, PS_THROW = 0,1,2,3 -- Player states
 local GD_UP, GD_HORIZONTAL, GD_DOWN = 0,2,4 -- Gun directions
@@ -40,7 +42,7 @@ function Player.create(x,y)
 	self.overloaded = false
 
 	self.temperature = 0
-	self.hit = false
+	self.heat = 0
 
 	self.grabbed = nil -- grabbed human
 

@@ -94,8 +94,8 @@ function love.draw()
 	lg.setBlendMode("alpha")
 
 	-- Draw red screen if hit
-	if player.hit == true then
-		lg.setColor(255,255,255,128)
+	if player.heat > 0 then
+		lg.setColor(255,255,255,player.heat*255)
 		lg.drawq(img.red_screen, quad.red_screen, 0,0)
 		lg.setColor(255,255,255,255)
 	end
