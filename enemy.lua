@@ -1,7 +1,7 @@
 -- %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 -- %           Normal enemy           %
 -- %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-NormalEnemy = { MOVE_SPEED = 80, FIRE_SPAWN_MIN = 10, FIRE_SPAWN_MAX = 30, MAX_HEALTH = 1.2 }
+NormalEnemy = { MOVE_SPEED = 80, FIRE_SPAWN_MIN = 7, FIRE_SPAWN_MAX = 25, MAX_HEALTH = 1.2 }
 NormalEnemy.__index = NormalEnemy
 
 local EN_RUN, EN_HIT, EN_RECOVER, EN_IDLE, EN_JUMPING = 0,1,2,3,4
@@ -117,14 +117,14 @@ function NormalEnemy:shot(dt,dir)
 end
 
 function NormalEnemy:getBBox()
-	return {x = self.x-5, y = self.y-15, w = 10, y = 15}
+	return {x = self.x-5, y = self.y-15, w = 10, h = 15}
 end
 
 -- %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 -- %           Jumper enemy           %
 -- %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 JumperEnemy = { MOVE_SPEED = 100, JUMP_DELAY = 1, JUMP_POWER = 150, MAX_HEALTH = 1.0,
-				GRAVITY = 350, corners = {-6, 6, -24, -0.5 }, MIN_FIRE_TIME = 3, MAX_FIRE_TIME = 16}
+				GRAVITY = 350, corners = {-6, 6, -24, -0.5 }, MIN_FIRE_TIME = 3, MAX_FIRE_TIME = 13}
 JumperEnemy.__index = JumperEnemy
 
 function JumperEnemy.create(x,y)
