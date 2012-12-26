@@ -34,6 +34,7 @@ function Map.create()
 	self.particles = {}
 	self.enemies = {}
 	self.humans = {}
+	self.items = {}
 	self.fire = {}
 	for ix = 0,self.width-1 do
 		self.fire[ix] = {}
@@ -90,6 +91,15 @@ function Map:update(dt)
 			table.remove(self.humans, i)
 		else
 			self.humans[i]:update(dt)
+		end
+	end
+
+	-- Update items
+	for i=#self.items,1,-1 do
+		if self.items[i].alive == false then
+			table.remove(self.items, i)
+		else
+			self.items[i]:update(dt)
 		end
 	end
 
@@ -191,6 +201,8 @@ end
 function Map:drawFront()
 	-- Draw objects and particles
 	for i,v in ipairs(self.objects) do
+		v:draw() end
+	for i,v in ipairs(self.items) do
 		v:draw() end
 	for i,v in ipairs(self.particles) do
 		v:draw() end

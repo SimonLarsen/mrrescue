@@ -7,6 +7,7 @@ require("entity")
 require("human")
 require("enemy")
 require("door")
+require("item")
 require("fire")
 require("particles")
 
@@ -113,15 +114,21 @@ end
 function drawHUD()
 	lg.draw(img.hud, 0, HEIGHT-32)
 
+	-- Draw water tank bar
 	local water_ratio = player.water / player.water_capacity
 	quad.water_bar:setViewport(0, 0, math.floor(water_ratio*55+0.5), 11)
 	if player.overloaded == false then
-		lg.drawq(img.water_bar, quad.water_bar, 10, HEIGHT-22)
+		if player.hasReserve == true then
+			lg.drawq(img.reserve_bar, quad.water_bar, 10, HEIGHT-22)
+		else
+			lg.drawq(img.water_bar, quad.water_bar, 10, HEIGHT-22)
+		end
 	else
 		lg.drawq(img.overloaded_bar, quad.water_bar, 10, HEIGHT-22)
 	end
 
-	local temp_length = math.floor(player.temperature*81+0.5)
+	-- Draw temperature bar
+	local temp_length = math.floor((player.temperature/player.max_temperature)*81+0.5)
 	quad.temperature_bar:setViewport(0,0, temp_length, 6)
 	lg.drawq(img.temperature_bar, quad.temperature_bar, 90, HEIGHT-20)
 	lg.drawq(img.temperature_bar, quad.temperature_bar_end, 90+temp_length, HEIGHT-20)

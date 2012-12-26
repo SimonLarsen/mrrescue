@@ -3,21 +3,18 @@ local lg = love.graphics
 img = {}  	-- global Image objects
 quad = {}	-- global Quads
 
-IMAGE_FILES = {
+local IMAGE_FILES = {
 	"tiles", "door",
-	"hud", "hud2", "water_bar", "overloaded_bar", "temperature_bar",
-	"stream", "water",
-	"shards",
+	"hud", "hud2", "water_bar", "reserve_bar", "overloaded_bar", "temperature_bar",
+	"stream", "water", "shards",
 	"fire_wall", "fire_wall_small", "fire_floor",
 	"black_smoke", "ashes",
 	"light_player", "light_fire",
 	"red_screen",
+	"item_coolant", "item_reserve", "item_suit", "item_tank",
 
-	"player_gun",
-	"player_throw",
-	"player_climb_down",
-	"player_climb_up",
-	"player_running",
+	"player_gun", "player_throw", "player_climb_down",
+	"player_climb_up", "player_running",
 
 	"enemy_normal_run", "enemy_normal_hit", "enemy_normal_recover", "enemy_jumper_hit",
 	"enemy_jumper_jump", "enemy_jumper_recover", 
@@ -30,7 +27,7 @@ IMAGE_FILES = {
 	"human_1_panic", "human_2_panic", "human_3_panic", "human_4_panic"
 }
 
-BACKGROUND_FILES = {
+local BACKGROUND_FILES = {
 	"mountains", "night"
 }
 

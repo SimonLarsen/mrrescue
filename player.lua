@@ -14,6 +14,8 @@ local USE_RATE   = 2.5
 local BURN_DAMAGE = 0.5 -- Damage over time when touching enemies
 local TIME_DAMAGE = 0.01
 local FIRE_DIST = 1600
+local MAX_MAX_TEMPERATURE = 1.2
+local MAX_WATER_CAPACITY = 9
 
 local PS_RUN, PS_CLIMB, PS_CARRY, PS_THROW = 0,1,2,3 -- Player states
 local GD_UP, GD_HORIZONTAL, GD_DOWN = 0,2,4 -- Gun directions
@@ -40,8 +42,10 @@ function Player.create(x,y)
 	self.water_capacity = 5
 	self.water = self.water_capacity
 	self.overloaded = false
+	self.hasReserve = false
 
 	self.temperature = 0
+	self.max_temperature = 1
 	self.heat = 0
 
 	self.grabbed = nil -- grabbed human
@@ -115,10 +119,18 @@ function Player:update(dt)
 	self.anim:update(dt)
 	self.waterFrame = self.waterFrame + dt*10
 
+	-- Collide items
+	for i,v in ipairs(map.items) do
+		if self:collideBox(v:getBBox()) == true then
+			self:applyItem(v)
+			v.alive = false
+		end
+	end
+
 	-- Collide fire
 	self:collideFire(dt)
 	self.temperature = self.temperature + TIME_DAMAGE*dt
-	self.temperature = cap(self.temperature, 0, 1)
+	self.temperature = cap(self.temperature, 0, self.max_temperature)
 end
 
 --- Called each update if current state is PS_RUN
@@ -200,14 +212,14 @@ function Player:collideFire(dt)
 				local dist = math.pow(self.x-fx,2) + math.pow(self.y-fy-11,2)
 
 				if dist <= FIRE_DIST then
-					local contrib = math.pow((0.5*math.cos((dist/FIRE_DIST)*math.pi)+0.5), 3)
+					local contrib = math.pow(1-dist/FIRE_DIST, 2)/2
 					fireHeat = fireHeat + contrib
 				end
 			end
 		end
 	end
 
-	self.heat = cap(self.heat + fireHeat, 0, 1)
+	self.heat = cap(self.heat + fireHeat, 0, self.max_temperature)
 	self.temperature = self.temperature + self.heat*BURN_DAMAGE*dt
 end
 
@@ -245,7 +257,12 @@ function Player:updateStream(dt)
 
 	self.water = self.water - (USE_RATE+self.regen_rate)*dt
 	if self.water <= 0 then
-		self.overloaded = true
+		if self.hasReserve == true then
+			self.hasReserve = false
+			self.water = self.water_capacity
+		else
+			self.overloaded = true
+		end
 	end
 
 	-- Collide with walls
@@ -455,6 +472,21 @@ function Player:setState(state)
 	self.anim:reset()
 end
 
+--- Applies the effect of a given item
+-- @param item The item to apply
+function Player:applyItem(item)
+	if item.id == "coolant" then
+		self.temperature = cap(self.temperature - 0.25, 0, self.max_temperature)
+	elseif item.id == "suit" then
+		self.max_temperature = cap(self.max_temperature + 0.2, 0, MAX_MAX_TEMPERATURE)
+	elseif item.id == "tank" then
+		self.water_capacity = cap(self.water_capacity + 1, 0, MAX_WATER_CAPACITY)
+	elseif item.id == "reserve" then
+		self.hasReserve = true
+	end
+end
+
+--- Makes the player jump
 function Player:jump()
 	if self.onGround == true then
 		self.yspeed = -JUMP_POWER
