@@ -7,7 +7,7 @@ function Item.create(x,y,id)
 	self.alive = true
 	self.x, self.y = x,y
 	self.id = id
-	self.bbox = {x = x+4, y = y, w = 7, h = 16}
+	self.bbox = {x = x+4, y = y, w = 7, h = 20}
 
 	if id == "coolant" then
 		self.anim = newAnimation(img.item_coolant, 16, 20, 0.12, 6)
@@ -17,6 +17,8 @@ function Item.create(x,y,id)
 		self.anim = newAnimation(img.item_tank,    16, 20, 0.12, 6)
 	elseif id == "reserve" then
 		self.anim = newAnimation(img.item_reserve, 16, 20, 0.12, 6)
+	elseif id == "regen" then
+		self.anim = newAnimation(img.item_regen,   16, 20, 0.12, 6)
 	end
 
 	return self

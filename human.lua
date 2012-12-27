@@ -112,9 +112,10 @@ function Human:update(dt)
 		self.health = self.health - dt
 		if self.health <= 0 then
 			self.alive = false
+			casualties = casualties + 1
 			map:addParticle(Ashes.create(self.x, self.y))
 		end
-
+	-- Flying state
 	elseif self.state == HS_FLY then
 		if self.xspeed < 0 then
 			self.xspeed = self.xspeed + dt*150
@@ -142,6 +143,13 @@ function Human:update(dt)
 		end
 	end
 
+	-- Check if thrown out of window
+	if self.y > MAPH+64 then
+		saved = saved + 1
+		self.alive = false
+	end
+
+	-- Update animation
 	if self.anim then
 		self.anim:update(dt)
 	end

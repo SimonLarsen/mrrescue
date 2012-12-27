@@ -1,16 +1,16 @@
-Fire = {}
+Fire = { max_health = 0.4 }
 Fire.__index = Fire
 
 local MIN_SPREAD_WAIT = 1
 local MAX_SPREAD_WAIT = 10
-local FIRE_HEALTH = 0.4
+--local FIRE_HEALTH = 0.4
 local REGEN_RATE = 0.05
 
 function Fire.create(x,y,map)
 	local self = setmetatable({}, Fire)
 
 	self.alive = true
-	self.health = FIRE_HEALTH/4
+	self.health = Fire.max_health/4
 	self.cx, self.cy = x,y
 	self.x, self.y = x*16, y*16
 	self.frame = math.random()*5
@@ -25,8 +25,8 @@ function Fire.create(x,y,map)
 end
 
 function Fire:update(dt)
-	if self.health < FIRE_HEALTH then
-		self.health = math.min(self.health+dt*REGEN_RATE, FIRE_HEALTH)
+	if self.health < Fire.max_health then
+		self.health = math.min(self.health+dt*REGEN_RATE, Fire.max_health)
 	else
 		self.nextSpread = self.nextSpread - dt
 	end
@@ -80,7 +80,7 @@ end
 
 function Fire:drawBack()
 	self.flframe = math.floor(self.frame)
-	if self.health < FIRE_HEALTH/2 then
+	if self.health < Fire.max_health/2 then
 		love.graphics.drawq(img.fire_wall_small, quad.fire_wall[self.flframe%5], self.x, self.y, 0,1,1,4,16)
 	else
 		love.graphics.drawq(img.fire_wall, quad.fire_wall[self.flframe%5], self.x, self.y, 0,1,1,4,16)

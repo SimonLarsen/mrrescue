@@ -5,13 +5,14 @@ quad = {}	-- global Quads
 
 local IMAGE_FILES = {
 	"tiles", "door",
-	"hud", "hud2", "water_bar", "reserve_bar", "overloaded_bar", "temperature_bar",
+	"hud", "hud2", "hud_people",
+	"water_bar", "reserve_bar", "overloaded_bar", "temperature_bar",
 	"stream", "water", "shards",
 	"fire_wall", "fire_wall_small", "fire_floor",
 	"black_smoke", "ashes",
 	"light_player", "light_fire",
 	"red_screen",
-	"item_coolant", "item_reserve", "item_suit", "item_tank",
+	"item_coolant", "item_reserve", "item_suit", "item_tank", "item_regen",
 
 	"player_gun", "player_throw", "player_climb_down",
 	"player_climb_up", "player_running",
@@ -27,9 +28,9 @@ local IMAGE_FILES = {
 	"human_1_panic", "human_2_panic", "human_3_panic", "human_4_panic"
 }
 
-local BACKGROUND_FILES = {
-	"mountains", "night"
-}
+local BACKGROUND_FILES = { "mountains", "night" }
+
+NUM_ROOMS = { [10] = 6, [11] = 6, [17] = 6, [24] = 6 }
 
 --- Returns size of an Image as two return values
 -- Saves some typing when creating quads
@@ -115,4 +116,7 @@ function loadResources()
 	quad.temperature_bar_end = lg.newQuad(81,0,2,6, getSize(img.temperature_bar))
 
 	quad.red_screen = lg.newQuad(0,0, 256,169, 256,256)
+
+	quad.hud_people_red = lg.newQuad(0,0, 4,8, 8,8)
+	quad.hud_people_green = lg.newQuad(4,0,4,8, 8,8)
 end

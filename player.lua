@@ -16,6 +16,7 @@ local TIME_DAMAGE = 0.01
 local FIRE_DIST = 1600
 local MAX_MAX_TEMPERATURE = 1.2
 local MAX_WATER_CAPACITY = 9
+local MAX_REGEN_RATE = 5
 
 local PS_RUN, PS_CLIMB, PS_CARRY, PS_THROW = 0,1,2,3 -- Player states
 local GD_UP, GD_HORIZONTAL, GD_DOWN = 0,2,4 -- Gun directions
@@ -131,6 +132,11 @@ function Player:update(dt)
 	self:collideFire(dt)
 	self.temperature = self.temperature + TIME_DAMAGE*dt
 	self.temperature = cap(self.temperature, 0, self.max_temperature)
+
+	-- Detect death
+	if self.temperature >= self.max_temperature then
+		self.y = self.y - 1000
+	end
 end
 
 --- Called each update if current state is PS_RUN
@@ -194,6 +200,7 @@ end
 
 function Player:collideFire(dt)
 	self.heat = 0
+	-- Check collision with enemies
 	for i,v in ipairs(map.enemies) do
 		if self:collideBox(v:getBBox()) == true then
 			self.heat = 1
@@ -204,6 +211,7 @@ function Player:collideFire(dt)
 	local cx = math.floor(self.x/16)
 	local cy = math.floor((self.y-11)/16)
 
+	-- Calculate heat contribution from nearby flames
 	local fireHeat = 0
 	for ix = cx-2,cx+2 do
 		for iy = cy-2,cy+2 do
@@ -212,8 +220,12 @@ function Player:collideFire(dt)
 				local dist = math.pow(self.x-fx,2) + math.pow(self.y-fy-11,2)
 
 				if dist <= FIRE_DIST then
-					local contrib = math.pow(1-dist/FIRE_DIST, 2)/2
-					fireHeat = fireHeat + contrib
+					-- Calculate damage based on flame's health
+					local damage = map:getFire(ix,iy).health/Fire.max_health
+					if damage > 0 then
+						local contrib = math.pow(1-dist/FIRE_DIST, 2)*damage*0.5
+						fireHeat = fireHeat + contrib
+					end
 				end
 			end
 		end
@@ -443,6 +455,7 @@ function Player:keypressed(k)
 			self.lastDir = 1
 		end
 
+		-- Leave ladder if currently climbing
 		if self.state == PS_CLIMB then
 			self:leaveLadder()
 		end
@@ -483,6 +496,8 @@ function Player:applyItem(item)
 		self.water_capacity = cap(self.water_capacity + 1, 0, MAX_WATER_CAPACITY)
 	elseif item.id == "reserve" then
 		self.hasReserve = true
+	elseif item.id == "regen" then
+		self.regen_rate = cap(self.regen_rate + 0.5, 0, MAX_REGEN_RATE)
 	end
 end
 

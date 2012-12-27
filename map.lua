@@ -59,6 +59,16 @@ function Map:populate()
 	self.startx = start.x + 8
 	self.starty = start.y + 173
 
+	-- Add coolants
+	for i=1,2 do
+		local roomindex = math.random(#self.rooms)
+		local room = self.rooms[roomindex]
+		local pos = table.random(room.objects)
+
+		table.insert(self.items, Item.create(room.x+pos.x, pos.y+room.y, "coolant"))
+		table.remove(self.rooms, roomindex)
+	end
+
 	self.rooms = nil
 	self.starts = nil
 end
@@ -148,6 +158,10 @@ end
 --- Checks if a tile is on fire
 function Map:hasFire(x,y)
 	return self.fire[x] and self.fire[x][y] ~= nil
+end
+
+function Map:getFire(x,y)
+	return self.fire[x] and self.fire[x][y]
 end
 
 --- Sets the drawing range for the map
@@ -276,15 +290,16 @@ function Map:addFloor(floor)
 			end
 		end
 	end
+	-- Load objects
 	for i,v in ipairs(file.layers) do
-		-- Load objects
 		if v.name == "objects" then
 			for j,o in ipairs(v.objects) do
 				if o.type == "door" then
 					table.insert(self.objects, Door.create(o.x, o.y+yoffset*16, o.properties.dir))
 				elseif o.type == "room" then
+					o.y = o.y+yoffset*16
 					table.insert(self.rooms, o)
-					self:addRoom(o.x/16, o.y/16+yoffset, o.width/16)
+					self:addRoom(o.x/16, o.y/16, o.width/16, o)
 				elseif o.type == "start" and floor == 3 then
 					table.insert(self.starts, o)
 				end
@@ -297,8 +312,8 @@ end
 -- @param x X position of room in tiles
 -- @param y Y position of room in tiles
 -- @param width Width of room in tiles
-function Map:addRoom(x,y,width)
-	local file = love.filesystem.load("maps/room/"..width.."/"..math.random(1,3)..".lua")()
+function Map:addRoom(x,y,width,room)
+	local file = love.filesystem.load("maps/room/"..width.."/"..math.random(NUM_ROOMS[width])..".lua")()
 	for i,v in ipairs(file.layers) do
 		if v.name == "main" then
 			for iy = 0,file.height-1 do
@@ -309,6 +324,8 @@ function Map:addRoom(x,y,width)
 					end
 				end
 			end
+		elseif v.name == "objects" then
+			room.objects = v.objects
 		end
 	end
 

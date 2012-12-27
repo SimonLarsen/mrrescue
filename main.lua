@@ -32,11 +32,16 @@ function love.load()
 
 	loadResources()
 
+	max_casualties = 3
+	casualties = 0
+	saved = 0
+
 	map = Map.create()
 	player = Player.create(map:getStart())
 end
 
 function nextLevel()
+	casualties = casualties + #map.humans
 	map = Map.create()
 	player.x, player.y = map.startx, map.starty
 end
@@ -96,7 +101,7 @@ function love.draw()
 
 	-- Draw red screen if hit
 	if player.heat > 0 then
-		lg.setColor(255,255,255,player.heat*255)
+		lg.setColor(255,255,255,cap(player.heat*255, 16, 255))
 		lg.drawq(img.red_screen, quad.red_screen, 0,0)
 		lg.setColor(255,255,255,255)
 	end
@@ -130,8 +135,17 @@ function drawHUD()
 	-- Draw temperature bar
 	local temp_length = math.floor((player.temperature/player.max_temperature)*81+0.5)
 	quad.temperature_bar:setViewport(0,0, temp_length, 6)
-	lg.drawq(img.temperature_bar, quad.temperature_bar, 90, HEIGHT-20)
-	lg.drawq(img.temperature_bar, quad.temperature_bar_end, 90+temp_length, HEIGHT-20)
+	lg.drawq(img.temperature_bar, quad.temperature_bar, 90, HEIGHT-25)
+	lg.drawq(img.temperature_bar, quad.temperature_bar_end, 90+temp_length, HEIGHT-25)
+
+	-- Draw casualty count
+	for i=1,max_casualties do
+		if i<= casualties then
+			lg.drawq(img.hud_people, quad.hud_people_red, 92+(i-1)*5, HEIGHT-15)
+		else
+			lg.drawq(img.hud_people, quad.hud_people_green, 92+(i-1)*5, HEIGHT-15)
+		end
+	end
 
 	lg.draw(img.hud2, 0, HEIGHT-32)
 end
