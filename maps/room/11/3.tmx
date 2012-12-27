@@ -8,4 +8,8 @@
    gwAAAIMAAACDAAAAgwAAAIMAAACDAAAAgwAAAIMAAACDAAAAgwAAAIMAAADGAAAAxwAAAJMAAACTAAAAlgAAAJcAAACTAAAAkwAAAJgAAACTAAAAxQAAANYAAADXAAAAkwAAAJMAAACmAAAApwAAAN8AAADgAAAAqAAAAJMAAADVAAAA5gAAAKMAAADfAAAA4AAAALYAAAC3AAAA3wAAAOAAAAD+AAAAowAAAOUAAAA=
   </data>
  </layer>
+ <objectgroup name="objects" width="11" height="4">
+  <object type="item" x="32" y="32" width="16" height="16"/>
+  <object type="item" x="128" y="32" width="16" height="16"/>
+ </objectgroup>
 </map>

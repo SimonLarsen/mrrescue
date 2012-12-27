@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<map version="1.0" orientation="orthogonal" width="24" height="4" tilewidth="16" tileheight="16">
+ <tileset firstgid="1" name="tiles" tilewidth="16" tileheight="16">
+  <image source="../../../data/tiles.png" trans="000000" width="256" height="256"/>
+ </tileset>
+ <layer name="main" width="24" height="4">
+  <data encoding="base64">
+   gwAAAIMAAACDAAAAgwAAAIMAAACDAAAAgwAAAIMAAACDAAAAgwAAAIMAAACDAAAAgwAAAIMAAACDAAAAgwAAAIMAAACDAAAAgwAAAIMAAACDAAAAgwAAAIMAAACDAAAAxgAAAJMAAAD0AAAAkwAAAJMAAACTAAAAkwAAAJMAAACTAAAAxwAAAJMAAACTAAAAkwAAAJMAAADfAAAA4AAAAJgAAACTAAAAsQAAALIAAACzAAAAkwAAAJMAAADFAAAA1gAAAJMAAACTAAAAkwAAALgAAAC5AAAAugAAAJMAAACpAAAA1wAAAJMAAAB0AAAA3wAAAOAAAADfAAAA4AAAAKgAAACTAAAAkwAAALgAAAC5AAAAugAAAJMAAADVAAAA5gAAAKMAAACjAAAAowAAAMgAAADJAAAAygAAAKMAAAD+AAAAowAAAKMAAACEAAAA3wAAAOAAAADfAAAA4AAAAN8AAADgAAAAowAAAMgAAADJAAAAygAAAKMAAADlAAAA
+  </data>
+ </layer>
+ <objectgroup name="objects" width="24" height="4">
+  <object type="item" x="128" y="32" width="16" height="16"/>
+  <object type="item" x="272" y="32" width="16" height="16"/>
+  <object type="item" x="80" y="48" width="16" height="16"/>
+ </objectgroup>
+</map>

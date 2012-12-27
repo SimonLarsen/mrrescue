@@ -5,11 +5,11 @@
  </tileset>
  <layer name="main" width="10" height="4">
   <data encoding="base64">
-   ggAAAIIAAACCAAAAggAAAIIAAACCAAAAggAAAIIAAACCAAAAggAAAMQAAADYAAAA2QAAANoAAACSAAAAbwAAAHAAAACSAAAAkgAAAMMAAADUAAAA6AAAAOkAAADqAAAAkgAAAH8AAACAAAAAuwAAAJIAAADTAAAA5AAAAKIAAACiAAAAogAAAKIAAACPAAAAkAAAAMsAAACiAAAA4wAAAA==
+   ggAAAIIAAACCAAAAggAAAIIAAACCAAAAggAAAIIAAACCAAAAggAAAMQAAACSAAAAkgAAAJIAAAD1AAAAkgAAAJIAAACSAAAAkgAAAMMAAADUAAAAkgAAAGYAAACSAAAAkgAAAJIAAACSAAAAkgAAAJIAAADTAAAA5AAAAKIAAAB2AAAAogAAAKIAAACGAAAAhwAAAIgAAABrAAAA4wAAAA==
   </data>
  </layer>
  <objectgroup name="objects" width="10" height="4">
-  <object type="item" x="112" y="32" width="16" height="16"/>
-  <object type="item" x="32" y="48" width="16" height="16"/>
+  <object type="item" x="96" y="32" width="16" height="16"/>
+  <object type="item" x="128" y="32" width="16" height="16"/>
  </objectgroup>
 </map>
