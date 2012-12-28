@@ -1,7 +1,7 @@
 Fire = { max_health = 0.4 }
 Fire.__index = Fire
 
-local MIN_SPREAD_WAIT = 1
+local MIN_SPREAD_WAIT = 4
 local MAX_SPREAD_WAIT = 10
 --local FIRE_HEALTH = 0.4
 local REGEN_RATE = 0.05
