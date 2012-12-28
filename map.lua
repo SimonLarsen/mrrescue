@@ -329,16 +329,30 @@ function Map:addRoom(x,y,width,room)
 		end
 	end
 
-	local random = math.random(1,3)
+	local random = math.random(1,2)
+	-- Human room
 	if random == 1 then
-		local rx = math.random(x+1,x+width-2)*16+8
-		table.insert(self.humans, Human.create(rx, (y+4)*16))
+		local count = math.floor(width/5)
+		local sep = math.floor(width/(count+1))
+		for i=1,count do
+			--local rx = math.random(x+1,x+width-2)*16+8
+			--table.insert(self.humans, Human.create(rx, (y+4)*16))
+			if math.random(1,2) == 1 then
+				table.insert(self.humans, Human.create((x+i*sep)*16+8, (y+4)*16))
+			else
+				self:addFire(x+i*sep, y+3)
+			end
+		end
+
+	-- Enemy room
 	elseif random == 2 then
-		local rx = math.random(x+1, x+width-2)*16+8
-		table.insert(self.enemies, NormalEnemy.create(rx, (y+4)*16))
-	else
-		local rx = math.random(x+1, x+width-2)*16+8
-		table.insert(self.enemies, JumperEnemy.create(rx, (y+4)*16))
+		if math.random(2) == 1 then
+			local rx = math.random(x+1, x+width-2)*16+8
+			table.insert(self.enemies, NormalEnemy.create(rx, (y+4)*16))
+		else
+			local rx = math.random(x+1, x+width-2)*16+8
+			table.insert(self.enemies, JumperEnemy.create(rx, (y+4)*16))
+		end
 	end
 end
 
