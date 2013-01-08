@@ -1,6 +1,8 @@
 Item = {}
 Item.__index = Item
 
+ITEM_IDS = {"coolant","suit","tank","reserve","regen"}
+
 function Item.create(x,y,id)
 	local self = setmetatable({}, Item)
 

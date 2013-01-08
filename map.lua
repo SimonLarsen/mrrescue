@@ -69,6 +69,14 @@ function Map:populate()
 		table.remove(self.rooms, roomindex)
 	end
 
+	-- Add powerup
+	local roomindex = math.random(#self.rooms)
+	local room = self.rooms[roomindex]
+	local pos = table.random(room.objects)
+
+	table.insert(self.items, Item.create(room.x+pos.x, room.y+pos.y, table.random(ITEM_IDS)))
+	table.remove(self.rooms, roomindex)
+
 	self.rooms = nil
 	self.starts = nil
 end
