@@ -190,3 +190,7 @@ function love.keypressed(k, uni)
 		player:keypressed(k)
 	end
 end
+
+function love.joystickpressed(joy, k)
+	player:joystickpressed(joy,k)
+end

@@ -65,16 +65,80 @@ function Player.create(x,y)
 	self.anim = self.animRun
 	self.waterFrame = 0
 	
+	-- Keyboard key binds
 	self.keys = {
 		up = "w", down = "s", left = "a", right = "d", jump = " ", shoot = "j", action = "k"
 	}
+	-- Joystick to used
+	self.joystick = 1
+	-- Joystick key binds
+	self.joykeys = {
+		jump = 3, shoot = 4, action = 2
+	}
+	-- Key states (keyboard and joystick combined)
+	self.key_state = {
+		up = false, down = false, left = false, right = false,
+		jump = false, shoot = false, action = false
+	}
+	-- Old axis values, used for checking rapid change
+	self.oldaxis1, self.oldaxis2 = 0,0
 
 	return self
 end
 
+--- Moves the player to position x,y
+--  and resets velocity in both axes
 function Player:warp(x,y)
 	self.x, self.y = x,y
 	self.xspeed, self.yspeed = 0,0
+end
+
+--- Updates key states in self.key_state from
+--  keyboard and joystick keys
+function Player:updateKeys()
+	-- Reset states
+	for i,v in pairs(self.key_state) do
+		self.key_state[i] = false
+	end
+	-- Check keyboard keys
+	for action, key in pairs(self.keys) do
+		if love.keyboard.isDown(key) then
+			self.key_state[action] = true
+		end
+	end
+	-- Check joystick axes
+	local axis1, axis2 = love.joystick.getAxes(self.joystick)
+	if axis1 then
+		if axis1 < 0 then
+			self.key_state.left = true
+		elseif axis1 > 0 then
+			self.key_state.right = true
+		end
+	end
+	if axis2 then
+		if axis2 < 0 then
+			self.key_state.up = true
+		elseif axis2 > 0 then
+			self.key_state.down = true
+		end
+	end
+	-- Check sudden movements (for ladders)
+	if self.oldaxis1 == 0 and axis1 then
+		if axis1 < 0 then self:action("left")
+		elseif axis1 > 0 then self:action("right") end
+	end
+	if self.oldaxis2 == 0 and axis2 then
+		if axis2 < 0 then self:action("up")
+		elseif axis2 > 0 then self:action("down") end
+	end
+	self.oldaxis1 = axis1
+	self.oldaxis2 = axis2
+	-- Check joystick keys
+	for action, key in pairs(self.joykeys) do
+		if love.joystick.isDown(self.joystick, key) then
+			self.key_state[action] = true
+		end
+	end
 end
 
 --- Updates the player
@@ -83,12 +147,17 @@ end
 function Player:update(dt)
 	self.shooting = false
 
+	-- Update keystate array
+	self:updateKeys()
+
 	-- RUNNING STATE
 	if self.state == PS_RUN then
 		self:updateRunning(dt)
 		self:updateGun(dt)
+	-- CLIMBING STATE
 	elseif self.state == PS_CLIMB then
 		self:updateClimbing(dt)
+	-- CARRYING STATE
 	elseif self.state == PS_CARRY then
 		self:updateRunning(dt)
 		if self.dir == -1 then
@@ -98,6 +167,7 @@ function Player:update(dt)
 			self.anim = self.animCarryRight
 			self.anim.img = img.human_carry_right[self.grabbed.id]
 		end
+	-- THROWING STATE
 	elseif self.state == PS_THROW then
 		self:updateRunning(dt)
 		self.time = self.time - dt
@@ -145,17 +215,17 @@ function Player:updateRunning(dt)
 	local changedDir = false -- true if player changed horizontal direction
 
 	-- Check if both directions are held for handling conflicts
-	local both = love.keyboard.isDown(self.keys.right) and love.keyboard.isDown(self.keys.left)
-
-	if (both == false and love.keyboard.isDown(self.keys.right)) or (both == true and self.lastDir == 1) then
+	local both = self.key_state.right and self.key_state.left
+	-- Walk left
+	if (both == false and self.key_state.right) or (both == true and self.lastDir == 1) then
 		self.xspeed = self.xspeed + RUN_SPEED*dt
 
 		if self.dir == -1 then
 			self.dir = 1
 			changedDir = true
 		end
-
-	elseif (both == false and love.keyboard.isDown(self.keys.left)) or (both == true and self.lastDir == -1) then
+	-- Walk right
+	elseif (both == false and self.key_state.left) or (both == true and self.lastDir == -1) then
 		self.xspeed = self.xspeed - RUN_SPEED*dt
 
 		if self.dir == 1 then
@@ -164,12 +234,14 @@ function Player:updateRunning(dt)
 		end
 	end
 
+	-- Slow speed if carring human
 	if self.state == PS_CARRY then
 		self.xspeed = cap(self.xspeed, -MAX_SPEED_CARRY, MAX_SPEED_CARRY)
 	else
 		self.xspeed = cap(self.xspeed, -MAX_SPEED, MAX_SPEED)
 	end
 
+	-- Cut stream if direction has changed
 	if changedDir == true and self.gundir == GD_HORIZONTAL then
 		self.streamLength = 0
 	end
@@ -240,9 +312,9 @@ function Player:updateGun(dt)
 	-- Find gundirection
 	local old_gundir = self.gundir
 	self.gundir = GD_HORIZONTAL
-	if love.keyboard.isDown(self.keys.up) then
+	if self.key_state.up then
 		self.gundir = GD_UP
-	elseif love.keyboard.isDown(self.keys.down) then
+	elseif self.key_state.down then
 		self.gundir = GD_DOWN
 	end
 	if self.gundir ~= old_gundir or changedDir and self.gundir == HORIZONTAL then
@@ -258,7 +330,7 @@ end
 -- and performs collision with walls and other entities
 function Player:updateStream(dt)
 	-- Shoot
-	if love.keyboard.isDown(self.keys.shoot) and self.overloaded == false then
+	if self.key_state.shoot and self.overloaded == false then
 		self.shooting = true
 		self.streamLength = math.min(self.streamLength + STREAM_SPEED*dt, MAX_STREAM)
 	else
@@ -397,12 +469,12 @@ function Player:updateClimbing(dt)
 	local oldy = self.y
 	-- Move up and down ladder
 	local animSpeed = 0
-	if love.keyboard.isDown(self.keys.down) then
+	if self.key_state.down then
 		self.y = self.y + CLIMB_SPEED*dt
 		self.animClimb.direction = 1
 		animSpeed = 1
 	end
-	if love.keyboard.isDown(self.keys.up) then
+	if self.key_state.up then
 		self.y = self.y - CLIMB_SPEED*dt
 		self.animClimb.direction = -1
 		animSpeed = 1
@@ -432,10 +504,10 @@ function Player:leaveLadder()
 	end
 end
 
-function Player:keypressed(k)
-	if k == self.keys.jump then
+function Player:action(action)
+	if action == "jump" then
 		self:jump()
-	elseif k == self.keys.action then
+	elseif action == "action" then
 		if self.state == PS_RUN then
 			if self:climb() == false then
 				self:grab()
@@ -447,9 +519,9 @@ function Player:keypressed(k)
 		elseif self.state == PS_CLIMB then
 			self:leaveLadder()
 		end
-	elseif k == self.keys.left or k == self.keys.right then
+	elseif action == "left" or action == "right" then
 		-- Save last direction for conflicts
-		if k == self.keys.left then
+		if action == "left" then
 			self.lastDir = -1
 		else
 			self.lastDir = 1
@@ -458,6 +530,24 @@ function Player:keypressed(k)
 		-- Leave ladder if currently climbing
 		if self.state == PS_CLIMB then
 			self:leaveLadder()
+		end
+	end
+end
+
+function Player:keypressed(k)
+	for a, key in pairs(self.keys) do
+		if k == key then
+			self:action(a)
+		end
+	end
+end
+
+function Player:joystickpressed(joy, k)
+	if joy == self.joystick then
+		for a, key in pairs(self.joykeys) do
+			if k == key then
+				self:action(a)
+			end
 		end
 	end
 end
