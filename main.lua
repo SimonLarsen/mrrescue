@@ -19,7 +19,8 @@ translate_x, translate_y = 0,0
 show_debug = false
 
 local SCALE = 3
-local FRAMERATE_CAP = 1/15
+local MIN_FRAMERATE = 1/15
+local MAX_FRAMERATE = 1/200
 
 local lg = love.graphics
 
@@ -48,7 +49,11 @@ end
 
 function love.update(dt)
 	-- Cap framerate
-	if dt > FRAMERATE_CAP then dt = FRAMERATE_CAP end
+	if dt > MIN_FRAMERATE then dt = MIN_FRAMERATE end
+	if dt < MAX_FRAMERATE then
+		love.timer.sleep(MAX_FRAMERATE - dt)
+		dt = MAX_FRAMERATE
+	end
 
 	if love.keyboard.isDown("l") then
 		dt = dt/4

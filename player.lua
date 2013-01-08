@@ -56,6 +56,7 @@ function Player.create(x,y)
 
 	self.dir = 1 -- -1 for left, 1 for right
 
+	-- Animations
 	self.animRun 	    = newAnimation(img.player_running, 16, 22, 0.12, 4)
 	self.animThrow      = newAnimation(img.player_throw, 16,32, 0.12, 4)
 	self.animClimb      = newAnimation(img.player_climb_down, 14, 23, 0.12, 4)
