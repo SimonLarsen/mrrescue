@@ -4,7 +4,7 @@
 NormalEnemy = { MOVE_SPEED = 80, FIRE_SPAWN_MIN = 7, FIRE_SPAWN_MAX = 25, MAX_HEALTH = 1.2 }
 NormalEnemy.__index = NormalEnemy
 
-local EN_RUN, EN_HIT, EN_RECOVER, EN_IDLE, EN_JUMPING = 0,1,2,3,4
+local EN_RUN, EN_HIT, EN_RECOVER, EN_IDLE, EN_JUMPING, EN_SHOOT = 0,1,2,3,4,5
 
 local lg = love.graphics
 
@@ -18,7 +18,7 @@ function NormalEnemy.create(x,y)
 	self.dir = 1
 	self.health = self.MAX_HEALTH
 	self.state = EN_RUN
-	self.time = math.random(1,2)
+	self.time = 0
 	self.nextFire = math.random(self.FIRE_SPAWN_MIN, self.FIRE_SPAWN_MAX)
 
 	self.anims = {}
@@ -37,11 +37,13 @@ function NormalEnemy:update(dt)
 		local oldx = self.x
 		self.x = self.x + self.dir*self.MOVE_SPEED*dt
 		
+		-- Collide with walls
 		if map:collidePoint(self.x + self.dir*7, self.y-13) == true then
 			self.dir = self.dir*-1
 			self.x = oldx
 		end
 		
+		-- Collide with objects
 		for i,v in ipairs(map.objects) do
 			if v.solid == true then
 				if self:collideBox(v:getBBox()) then
@@ -52,6 +54,7 @@ function NormalEnemy:update(dt)
 			end
 		end
 
+		-- Check if it can spawn a fire
 		self.nextFire = self.nextFire - dt
 		if self.nextFire <= 0 then
 			map:addFire(math.floor(self.x/16), math.floor((self.y-4)/16))
@@ -83,11 +86,7 @@ function NormalEnemy:draw()
 	self.flx = math.floor(self.x)
 	self.fly = math.floor(self.y)
 
-	if self.state == EN_IDLE then
-		self.anim:draw(self.flx, self.fly, 0, self.dir,1, 8, 26, 2)
-	else
-		self.anim:draw(self.flx, self.fly, 0, self.dir,1, 8, 26)
-	end
+	self.anim:draw(self.flx, self.fly, 0, self.dir,1, 8, 26)
 end
 
 function NormalEnemy:drawLight()
@@ -226,4 +225,190 @@ end
 
 function JumperEnemy:getBBox()
 	return {x = self.x-5, y = self.y-23, w = 10, h = 23}
+end
+
+-- %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+-- %          Volcano enemy          %
+-- %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+VolcanoEnemy = { MOVE_SPEED = 60, MAX_HEALTH = 1.2, SHOOT_DELAY = 2, SHOT_COUNT = 4 }
+VolcanoEnemy.__index = VolcanoEnemy
+
+function VolcanoEnemy.create(x,y)
+	local self = setmetatable({}, VolcanoEnemy)
+
+	self.alive = true
+	self.hit = false -- true if hit since last update
+	self.x = x
+	self.y = y
+	self.dir = 1
+	self.nextShot = math.random()*2*self.SHOOT_DELAY
+	self.health = self.MAX_HEALTH
+	self.state = EN_RUN
+
+	self.anims = {}
+	self.anims[EN_RUN]   = newAnimation(img.enemy_volcano_run,   16, 32, 0.17, 4)
+
+	self.anim = self.anims[self.state]
+
+	return self
+end
+
+function VolcanoEnemy:update(dt)
+	-- Running state
+	local oldx = self.x
+	self.x = self.x + self.dir*self.MOVE_SPEED*dt
+	
+	if map:collidePoint(self.x + self.dir*7, self.y-13) == true then
+		self.dir = self.dir*-1
+		self.x = oldx
+	end
+	
+	for i,v in ipairs(map.objects) do
+		if v.solid == true then
+			if self:collideBox(v:getBBox()) then
+				self.x = oldx
+				self.dir = self.dir*-1
+				break
+			end
+		end
+	end
+
+	self.nextShot = self.nextShot - dt
+	if self.nextShot < 0 then
+		self.nextShot = self.SHOOT_DELAY
+		for i=0,self.SHOT_COUNT-1 do
+			local xsp = self.dir*self.MOVE_SPEED - 60+i*40
+			table.insert(map.enemies, Fireball.create(self.x, self.y-27, xsp))
+		end
+	end
+
+	self.anim:update(dt)
+end
+
+function VolcanoEnemy:draw()
+	self.flx = math.floor(self.x)
+	self.fly = math.floor(self.y)
+
+	if self.nextShot < 0.05 or self.nextShot > self.SHOOT_DELAY-0.5 then
+		self.anim:draw(self.flx, self.fly, 0, self.dir,1, 8, 32, nil, img.enemy_volcano_shoot)
+	else
+		if self.hit == false then
+			self.anim:draw(self.flx, self.fly, 0, self.dir,1, 8, 32)
+		else
+			self.anim:draw(self.flx, self.fly, 0, self.dir,1, 8, 32, nil, img.enemy_volcano_hit)
+		end
+	end
+	self.hit = false
+end
+
+function VolcanoEnemy:drawLight()
+	lg.drawq(img.light_fire, quad.light_fire[(self.anim.position-1)%5], self.x-45, self.y-60)
+end
+
+function VolcanoEnemy:shot(dt,dir)
+	self.hit = true
+	self.health = self.health - dt
+	if self.health <= 0 then
+		map:addParticle(BlackSmoke.create(self.x, self.y-8))
+		self.alive = false
+	end
+end
+
+function VolcanoEnemy:collideBox(bbox)
+	if self.x-5  > bbox.x+bbox.w or self.x+5 < bbox.x
+	or self.y-15 > bbox.y+bbox.h or self.y   < bbox.y then
+		return false
+	else
+		return true
+	end
+end
+
+function VolcanoEnemy:getBBox()
+	return {x = self.x-5, y = self.y-15, w = 10, h = 15}
+end
+
+-- %%%%%%%%%%%%%%%%%%%%%%%%%%
+-- %        Fireball        %
+-- %%%%%%%%%%%%%%%%%%%%%%%%%%
+Fireball = { FIRE_ODDS = 25 }
+Fireball.__index = Fireball
+
+function Fireball.create(x,y,xspeed)
+	local self = setmetatable({}, Fireball)
+	self.alive = true
+	self.x = x
+	self.y = y
+	self.flx = math.floor(self.x)
+	self.fly = math.floor(self.y)
+	self.frame = math.random(0,3)
+	self.frametime = math.random()*0.10
+	self.xspeed = xspeed or math.random(-60,60)
+	self.yspeed = yspeed or -math.random(100,150)
+
+	return self
+end
+
+function Fireball:update(dt)
+	-- Update position
+	self.yspeed = self.yspeed + 350*dt
+
+	self.x = self.x + self.xspeed*dt
+	self.y = self.y + self.yspeed*dt
+
+	-- Check collision with walls/floor and bounds
+	local cx, cy = math.floor(self.x/16), math.floor(self.y/16)
+	if self.y > MAPH+32 or map:collideCell(cx, cy) == true then
+		if self.yspeed > 0 then
+			local id = map:get(cx, cy)
+			if id >= 1 and id <= 5 and math.random(self.FIRE_ODDS) == 1 then
+				map:addFire(cx, cy-1)
+			end
+		end
+		self.alive = false
+		map:addParticle(SmallBlackSmoke.create(self.x, self.y-1))
+	end
+
+	-- Check collision with objects
+	for i,v in ipairs(map.objects) do
+		if v.solid == true then
+			if self:collideBox(v:getBBox()) then
+				self.alive = false
+				map:addParticle(SmallBlackSmoke.create(self.x, self.y))
+			end
+		end
+	end
+
+	-- Update frame
+	self.frametime = self.frametime + dt
+	if self.frametime > 0.10 then
+		self.frametime = self.frametime % 0.10
+		self.frame = (self.frame + 1) % 4
+	end
+end
+
+function Fireball:shot()
+	
+end
+
+function Fireball:draw()
+	self.flx = math.floor(self.x)
+	self.fly = math.floor(self.y)
+	lg.drawq(img.enemy_fireball, quad.fireball[self.frame], self.x, self.y, 0, 1, 1, 4, 4)
+end
+
+function Fireball:drawLight()
+	lg.drawq(img.light_fireball, quad.light_fireball[self.frame], self.x, self.y, 0, 1,1, 16, 16)
+end
+
+function Fireball:collideBox(bbox)
+	if self.x-3 > bbox.x+bbox.w or self.x+3 < bbox.x
+	or self.y-3 > bbox.y+bbox.h or self.y+3 < bbox.y then
+		return false
+	else
+		return true
+	end
+end
+
+function Fireball:getBBox()
+	return {x = self.x-3, y = self.y-3, w = 6, h = 6}
 end

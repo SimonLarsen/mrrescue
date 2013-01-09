@@ -9,8 +9,8 @@ local IMAGE_FILES = {
 	"water_bar", "reserve_bar", "overloaded_bar", "temperature_bar",
 	"stream", "water", "shards",
 	"fire_wall", "fire_wall_small", "fire_floor",
-	"black_smoke", "ashes",
-	"light_player", "light_fire",
+	"black_smoke", "black_smoke_small", "ashes",
+	"light_player", "light_fire", "light_fireball",
 	"red_screen",
 	"item_coolant", "item_reserve", "item_suit", "item_tank", "item_regen",
 
@@ -19,6 +19,7 @@ local IMAGE_FILES = {
 
 	"enemy_normal_run", "enemy_normal_hit", "enemy_normal_recover", "enemy_jumper_hit",
 	"enemy_jumper_jump", "enemy_jumper_recover", 
+	"enemy_volcano_run", "enemy_volcano_shoot", "enemy_volcano_hit", "enemy_fireball",
 
 	"human_1_run", "human_2_run", "human_3_run", "human_4_run",
 	"human_1_carry_left", "human_2_carry_left", "human_3_carry_left", "human_4_carry_left",
@@ -109,6 +110,13 @@ function loadResources()
 	quad.light_fire = {}
 	for i=0,4 do
 		quad.light_fire[i] = lg.newQuad(i*85, 0, 85, 85, getSize(img.light_fire))
+	end
+
+	quad.fireball = {}
+	quad.light_fireball = {}
+	for i=0,3 do
+		quad.fireball[i] = lg.newQuad(i*8, 0, 8, 8, getSize(img.enemy_fireball))
+		quad.light_fireball[i] = lg.newQuad(i*32, 0, 32, 32, getSize(img.light_fireball))
 	end
 
 	quad.water_bar = lg.newQuad(0,0, 1,1, getSize(img.water_bar))

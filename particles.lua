@@ -66,6 +66,28 @@ function BlackSmoke:draw()
 	end
 end
 
+SmallBlackSmoke = {}
+SmallBlackSmoke.__index = SmallBlackSmoke
+
+function SmallBlackSmoke.create(x,y)
+	local self = setmetatable({}, SmallBlackSmoke)
+	self.x = math.floor(x)
+	self.y = math.floor(y)
+	self.alive = true
+	self.anim = newAnimation(img.black_smoke_small, 8, 8, 0.12, 4, function() self.alive = false end)
+	return self
+end
+
+function SmallBlackSmoke:update(dt)
+	self.anim:update(dt)
+end
+
+function SmallBlackSmoke:draw()
+	if self.alive == true then
+		self.anim:draw(self.x, self.y, 0, 1,1, 4, 4)
+	end
+end
+
 Ashes = {}
 Ashes.__index = Ashes
 

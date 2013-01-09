@@ -130,7 +130,7 @@ function Human:update(dt)
 		if col == true then
 			self.xspeed = self.xspeed*-0.6
 			if last then
-				last:shot(0.1, self.dir)
+				last:shot(0.16, self.dir)
 			end
 		end
 		self.y = self.y + self.yspeed*dt
