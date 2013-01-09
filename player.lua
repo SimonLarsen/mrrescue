@@ -110,30 +110,31 @@ function Player:updateKeys()
 	-- Check joystick axes
 	local axis1, axis2 = love.joystick.getAxes(self.joystick)
 	if axis1 then
-		if axis1 < 0 then
+		if axis1 < -0.5 then
 			self.key_state.left = true
-		elseif axis1 > 0 then
+		elseif axis1 > 0.5 then
 			self.key_state.right = true
 		end
 	end
 	if axis2 then
-		if axis2 < 0 then
+		if axis2 < -0.5 then
 			self.key_state.up = true
-		elseif axis2 > 0 then
+		elseif axis2 > 0.5 then
 			self.key_state.down = true
 		end
 	end
 	-- Check sudden movements (for ladders)
-	if self.oldaxis1 == 0 and axis1 then
-		if axis1 < 0 then self:action("left")
-		elseif axis1 > 0 then self:action("right") end
+	if math.abs(self.oldaxis1) < 0.05 and axis1 then
+		if axis1 < -0.5 then self:action("left")
+		elseif axis1 > 0.5 then self:action("right") end
 	end
-	if self.oldaxis2 == 0 and axis2 then
-		if axis2 < 0 then self:action("up")
-		elseif axis2 > 0 then self:action("down") end
+	if math.abs(self.oldaxis2) < 0.05 and axis2 then
+		if axis2 < -0.5 then self:action("up")
+		elseif axis2 > 0.5 then self:action("down") end
 	end
-	self.oldaxis1 = axis1
-	self.oldaxis2 = axis2
+	self.oldaxis1 = axis1 or 0
+	self.oldaxis2 = axis2 or 0
+
 	-- Check joystick keys
 	for action, key in pairs(self.joykeys) do
 		if love.joystick.isDown(self.joystick, key) then
