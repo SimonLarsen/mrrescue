@@ -7,9 +7,9 @@ function Item.create(x,y,id)
 	local self = setmetatable({}, Item)
 
 	self.alive = true
-	self.x, self.y = x,y
+	self.x, self.y = x, y-2
 	self.id = id
-	self.bbox = {x = x+4, y = y, w = 7, h = 20}
+	self.bbox = {x = x+4, y = y-2, w = 7, h = 20}
 
 	if id == "coolant" then
 		self.anim = newAnimation(img.item_coolant, 16, 20, 0.12, 6)
