@@ -146,13 +146,26 @@ function drawHUD()
 	-- Draw casualty count
 	for i=1,max_casualties do
 		if i<= casualties then
-			lg.drawq(img.hud_people, quad.hud_people_red, 92+(i-1)*5, HEIGHT-15)
+			lg.drawq(img.hud_people, quad.hud_people_red, 189+(i-1)*5, HEIGHT-25)
 		else
-			lg.drawq(img.hud_people, quad.hud_people_green, 92+(i-1)*5, HEIGHT-15)
+			lg.drawq(img.hud_people, quad.hud_people_green, 189+(i-1)*5, HEIGHT-25)
 		end
 	end
 
 	lg.draw(img.hud2, 0, HEIGHT-32)
+
+	-- Draw item slots
+	for i=1,3 do
+		if i <= player.num_regens then
+			lg.drawq(img.item_slots, quad.item_slot_regen, 93+(i-1)*6, HEIGHT-14)
+		end
+		if i <= player.num_tanks then
+			lg.drawq(img.item_slots, quad.item_slot_tank, 115+(i-1)*6, HEIGHT-14)
+		end
+		if i <= player.num_suits then
+			lg.drawq(img.item_slots, quad.item_slot_suit, 137+(i-1)*6, HEIGHT-14)
+		end
+	end
 end
 
 function updateLightmap()

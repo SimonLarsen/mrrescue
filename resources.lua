@@ -5,7 +5,7 @@ quad = {}	-- global Quads
 
 local IMAGE_FILES = {
 	"tiles", "door",
-	"hud", "hud2", "hud_people",
+	"hud", "hud2", "hud_people", "item_slots",
 	"water_bar", "reserve_bar", "overloaded_bar", "temperature_bar",
 	"stream", "water", "shards",
 	"fire_wall", "fire_wall_small", "fire_floor",
@@ -127,4 +127,8 @@ function loadResources()
 
 	quad.hud_people_red = lg.newQuad(0,0, 4,8, 8,8)
 	quad.hud_people_green = lg.newQuad(4,0,4,8, 8,8)
+
+	quad.item_slot_regen = lg.newQuad(0,0,3,6, getSize(img.item_slots))
+	quad.item_slot_tank  = lg.newQuad(3,0,3,6, getSize(img.item_slots))
+	quad.item_slot_suit  = lg.newQuad(6,0,3,6, getSize(img.item_slots))
 end

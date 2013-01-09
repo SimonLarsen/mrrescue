@@ -14,9 +14,6 @@ local USE_RATE   = 2.5
 local BURN_DAMAGE = 0.5 -- Damage over time when touching enemies
 local TIME_DAMAGE = 0.008
 local FIRE_DIST = 1600
-local MAX_MAX_TEMPERATURE = 1.2
-local MAX_WATER_CAPACITY = 9
-local MAX_REGEN_RATE = 5
 
 local PS_RUN, PS_CLIMB, PS_CARRY, PS_THROW = 0,1,2,3 -- Player states
 local GD_UP, GD_HORIZONTAL, GD_DOWN = 0,2,4 -- Gun directions
@@ -44,6 +41,10 @@ function Player.create(x,y)
 	self.water = self.water_capacity
 	self.overloaded = false
 	self.hasReserve = false
+
+	self.num_regens = 0
+	self.num_suits = 0
+	self.num_tanks = 0
 
 	self.temperature = 0
 	self.max_temperature = 1
@@ -582,14 +583,17 @@ end
 function Player:applyItem(item)
 	if item.id == "coolant" then
 		self.temperature = cap(self.temperature - 0.25, 0, self.max_temperature)
-	elseif item.id == "suit" then
-		self.max_temperature = cap(self.max_temperature + 0.2, 0, MAX_MAX_TEMPERATURE)
-	elseif item.id == "tank" then
-		self.water_capacity = cap(self.water_capacity + 1, 0, MAX_WATER_CAPACITY)
 	elseif item.id == "reserve" then
 		self.hasReserve = true
-	elseif item.id == "regen" then
-		self.regen_rate = cap(self.regen_rate + 0.5, 0, MAX_REGEN_RATE)
+	elseif item.id == "suit" and self.num_suits < 3 then
+		self.num_suits = self.num_suits + 1
+		self.max_temperature = self.max_temperature + 0.2
+	elseif item.id == "tank" and self.num_tanks < 3 then
+		self.num_tanks = self.num_tanks + 1
+		self.water_capacity = self.water_capacity + 1
+	elseif item.id == "regen" and self.num_regens < 3 then
+		self.num_regens = self.num_regens + 1
+		self.regen_rate = self.regen_rate + 0.5
 	end
 end
 
