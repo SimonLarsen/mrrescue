@@ -122,7 +122,7 @@ function Sparkles.create(x,y,count,time)
 	if count == nil then count = 8 end
 
 	for i=1,count do
-		table.insert(self.particles, {x=x, y=y, xspeed=math.random(-100,100), yspeed=math.random(-50,-200), size=i%3})
+		table.insert(self.particles, {x=x, y=y, xspeed=math.random(-100,100), yspeed=math.random(-200,-50), size=i%3})
 	end
 
 	return self
