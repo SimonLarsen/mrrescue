@@ -387,7 +387,8 @@ function Fireball:update(dt)
 end
 
 function Fireball:shot()
-	
+	self.alive = false
+	map:addParticle(SmallBlackSmoke.create(self.x, self.y-1))
 end
 
 function Fireball:draw()

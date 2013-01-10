@@ -293,6 +293,7 @@ function updateLightmap()
 	lg.setCanvas()
 end
 
+--- Draws some simple debug information to the screen
 function drawDebug()
 	for i,v in ipairs({{0,0,0,255},{255,255,255,255}}) do
 		lg.setColor(v)

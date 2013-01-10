@@ -88,7 +88,7 @@ function SmallBlackSmoke:draw()
 	end
 end
 
-Ashes = {}
+Ashes = { isAshes = true }
 Ashes.__index = Ashes
 
 function Ashes.create(x,y)
@@ -97,7 +97,7 @@ function Ashes.create(x,y)
 	self.alive = true
 	self.x = math.floor(x)
 	self.y = math.floor(y)
-	self.anim = newAnimation(img.ashes, 20, 20, 0.16, 8, function() self.alive = false end)
+	self.anim = newAnimation(img.ashes, 20, 20, 0.17, 8, function() self.alive = false end)
 	return self
 end
 
