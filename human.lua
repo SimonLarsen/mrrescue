@@ -9,7 +9,7 @@ local NUM_HUMANS = 4
 local GRAVITY = 350
 local COL_OFFSETS = {{-5,-0.9001}, {5,-0.9001}, {-5,-18}, {5,-18}} -- Collision point offsets
 local PANIC_RADIUS = 29
-local MAX_HEALTH = 15
+local MAX_HEALTH = 10
 
 local IDLE_TIME = 2
 local WALK_TIME = 3

@@ -11,7 +11,7 @@ local IMAGE_FILES = {
 	"fire_wall", "fire_wall_small", "fire_floor",
 	"black_smoke", "black_smoke_small", "ashes", "sparkles",
 	"light_player", "light_fire", "light_fireball",
-	"red_screen", "circles",
+	"red_screen", "circles", "warning_icons",
 	"item_coolant", "item_reserve", "item_suit", "item_tank", "item_regen",
 
 	"player_gun", "player_throw", "player_climb_down",
@@ -140,5 +140,10 @@ function loadResources()
 	quad.circles = {}
 	for i=0,6 do
 		quad.circles[i] = lg.newQuad(i*32, 0, 32, 32, getSize(img.circles))
+	end
+
+	quad.warning_icons = {}
+	for i=0,4 do
+		quad.warning_icons[i] = lg.newQuad(i*22, 0, 22, 20, getSize(img.warning_icons))
 	end
 end

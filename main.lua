@@ -218,6 +218,35 @@ function drawHUD()
 			lg.drawq(img.item_slots, quad.item_slot_suit, 137+(i-1)*6, HEIGHT-14)
 		end
 	end
+
+	-- Draw panic/burning human icons
+	drawIcons()
+end
+
+function drawIcons()
+	for i,v in ipairs(map.humans) do
+		if (v.state == HS_BURN or v.state == HS_PANIC) and
+		(v.x < translate_x or v.x > translate_x+WIDTH or v.y < translate_y or v.y > translate_y+174) then
+			local deltax = v.x - (translate_x+WIDTH/2)
+			local deltay = v.y - 12 - (translate_y+84)
+
+			local xt,yt
+			if deltax > 0 then xt = 114/deltax
+			else xt = -114/deltax end
+			if deltay > 0 then yt = 72/deltay
+			else yt = -72/deltay end
+
+			local t
+			if xt > yt then t = yt
+			else t = xt end
+			
+			if v.state == HS_BURN then
+				lg.drawq(img.warning_icons, quad.warning_icons[1], WIDTH/2+t*deltax, 84+t*deltay, 0,1,1,11,10)
+			else
+				lg.drawq(img.warning_icons, quad.warning_icons[2], WIDTH/2+t*deltax, 84+t*deltay, 0,1,1,11,10)
+			end
+		end
+	end
 end
 
 function updateLightmap()
