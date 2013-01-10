@@ -41,6 +41,7 @@ function love.load()
 
 	state = STATE_NEXTLEVEL_IN
 	transition_time = 0
+	warning_frame = 0
 
 	map = Map.create()
 	player = Player.create(map:getStart())
@@ -82,6 +83,10 @@ function love.update(dt)
 			state = STATE_NEXTLEVEL_OUT
 			transition_time = 0
 		end
+
+		-- Update warning icon frame
+		warning_frame = (warning_frame + dt*2) % 2
+
 	-- Transition TO or FROM next level
 	elseif state == STATE_NEXTLEVEL_OUT or state == STATE_NEXTLEVEL_IN then
 		transition_time = transition_time + dt*15
@@ -223,32 +228,53 @@ function drawHUD()
 	drawIcons()
 end
 
+--- Draws warning icons for panicing/burning/dead enemies
 function drawIcons()
+	-- Draw for panicing/burning humans
 	for i,v in ipairs(map.humans) do
 		if (v.state == HS_BURN or v.state == HS_PANIC) and
 		(v.x < translate_x or v.x > translate_x+WIDTH or v.y < translate_y or v.y > translate_y+174) then
-			local deltax = v.x - (translate_x+WIDTH/2)
-			local deltay = v.y - 12 - (translate_y+84)
-
-			local xt,yt
-			if deltax > 0 then xt = 114/deltax
-			else xt = -114/deltax end
-			if deltay > 0 then yt = 72/deltay
-			else yt = -72/deltay end
-
-			local t
-			if xt > yt then t = yt
-			else t = xt end
-			
 			if v.state == HS_BURN then
-				lg.drawq(img.warning_icons, quad.warning_icons[1], WIDTH/2+t*deltax, 84+t*deltay, 0,1,1,11,10)
+				drawIcon(v.x, v.y-12, 0)
 			else
-				lg.drawq(img.warning_icons, quad.warning_icons[2], WIDTH/2+t*deltax, 84+t*deltay, 0,1,1,11,10)
+				drawIcon(v.x, v.y-12, 2)
 			end
+		end
+	end
+	-- Draw for ashes particles (dead humans)
+	for i,v in ipairs(map.particles) do
+		if v.isAshes == true and
+		(v.x < translate_x or v.x > translate_x+WIDTH or v.y < translate_y or v.y > translate_y+174) then
+			drawIcon(v.x, v.y-12, 4)
 		end
 	end
 end
 
+--- Draws a warning icon for an entity.
+--  Does not check if entity is actually outside screen.
+--  @param x X position of entity
+--  @param y Y position of entity
+--  @param frame_offset Offset into warning icon quad array
+function drawIcon(x,y,frame_offset)
+	local frame = cap(frame_offset + math.floor(warning_frame), 0, 4)
+	local deltax = x - (translate_x+WIDTH/2)
+	local deltay = y - (translate_y+84)
+
+	local xt,yt
+	if deltax > 0 then xt = 114/deltax
+	else xt = -114/deltax end
+	if deltay > 0 then yt = 72/deltay
+	else yt = -72/deltay end
+
+	local t
+	if xt > yt then t = yt
+	else t = xt end
+	
+	lg.drawq(img.warning_icons, quad.warning_icons[frame], WIDTH/2+t*deltax, 84+t*deltay, 0,1,1,11,10)
+end
+
+--- Updates the light map canvas
+--  Assumes the view matrix is translated but not scaled
 function updateLightmap()
 	canvas:clear(0,0,0,255)
 	lg.setCanvas(canvas)
