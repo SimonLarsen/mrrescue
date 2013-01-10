@@ -24,7 +24,7 @@ local MAX_FRAMERATE = 1/200
 
 local lg = love.graphics
 
-local STATE_INGAME, STATE_NEXTLEVEL_OUT, STATE_NEXTLEVEL_IN = 0,1,2
+local STATE_INGAME, STATE_FADE_IN, STATE_NEXTLEVEL_OUT, STATE_FALL_OUT = 0,1,2,3
 
 function love.load()
 	lg.setBackgroundColor(82,117,176)
@@ -39,7 +39,7 @@ function love.load()
 	casualties = 0
 	saved = 0
 
-	state = STATE_NEXTLEVEL_IN
+	state = STATE_FADE_IN
 	transition_time = 0
 	warning_frame = 0
 
@@ -50,7 +50,7 @@ end
 function nextLevel()
 	casualties = casualties + #map.humans
 	map = Map.create()
-	player.x, player.y = map.startx, map.starty
+	player:warp(map:getStart())
 end
 
 function love.update(dt)
@@ -82,13 +82,17 @@ function love.update(dt)
 		if player.y < 0 then
 			state = STATE_NEXTLEVEL_OUT
 			transition_time = 0
+		-- Set out of screen transition if player has fallen out of screen
+		elseif player.y > MAPH+32 then
+			state = STATE_FALL_OUT
+			transition_time = 0
 		end
 
 		-- Update warning icon frame
 		warning_frame = (warning_frame + dt*2) % 2
 
 	-- Transition TO or FROM next level
-	elseif state == STATE_NEXTLEVEL_OUT or state == STATE_NEXTLEVEL_IN then
+	elseif state == STATE_NEXTLEVEL_OUT or state == STATE_FALL_OUT or state == STATE_FADE_IN then
 		transition_time = transition_time + dt*15
 
 		-- Calculate translation offest
@@ -101,12 +105,14 @@ function love.update(dt)
 		if transition_time > 20 then
 			if state == STATE_NEXTLEVEL_OUT then
 				nextLevel()
-				state = STATE_NEXTLEVEL_IN
-				transition_time = 0
-			else -- STATE_NEXTLEVEL_IN
+				state = STATE_FADE_IN
+			elseif state == STATE_FALL_OUT then
+				player:warp(map:getStart())
+				state = STATE_FADE_IN
+			elseif state == STATE_FADE_IN then
 				state = STATE_INGAME
-				transition_time = 0
 			end
+			transition_time = 0
 		end
 	end
 end
@@ -149,7 +155,7 @@ function love.draw()
 	end
 
 	-- Draw transition if eligible
-	if state == STATE_NEXTLEVEL_OUT then
+	if state == STATE_NEXTLEVEL_OUT or state == STATE_FALL_OUT then
 		local frame = math.floor(transition_time)
 
 		for ix = 0,7 do
@@ -158,7 +164,7 @@ function love.draw()
 			end
 		end
 	end
-	if state == STATE_NEXTLEVEL_IN then
+	if state == STATE_FADE_IN then
 		local frame = math.floor(transition_time)
 
 		for ix = 0,7 do

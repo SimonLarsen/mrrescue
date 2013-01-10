@@ -42,13 +42,15 @@ function Player.create(x,y)
 	self.overloaded = false
 	self.hasReserve = false
 
+	-- Number of powerups collected
 	self.num_regens = 0
 	self.num_suits = 0
 	self.num_tanks = 0
 
-	self.temperature = 0
-	self.max_temperature = 1
-	self.heat = 0
+	-- Temperature stats
+	self.temperature = 0 -- current temperature
+	self.max_temperature = 1 -- temperature player can withstand
+	self.heat = 0 -- how much heat is currently taken
 
 	self.grabbed = nil -- grabbed human
 
@@ -65,7 +67,7 @@ function Player.create(x,y)
 	self.animCarryRight = newAnimation(img.human_1_carry_right, 22, 32, 0.12, 4)
 
 	self.anim = self.animRun
-	self.waterFrame = 0
+	self.waterFrame = 0 -- water stream's frame
 	
 	-- Keyboard key binds
 	self.keys = {
@@ -133,6 +135,7 @@ function Player:updateKeys()
 		if axis2 < -0.5 then self:action("up")
 		elseif axis2 > 0.5 then self:action("down") end
 	end
+	-- Write axis values for next update
 	self.oldaxis1 = axis1 or 0
 	self.oldaxis2 = axis2 or 0
 
@@ -204,6 +207,7 @@ function Player:update(dt)
 
 	-- Collide fire
 	self:collideFire(dt)
+	-- Add temperature over time
 	self.temperature = self.temperature + TIME_DAMAGE*dt
 	self.temperature = cap(self.temperature, 0, self.max_temperature)
 
