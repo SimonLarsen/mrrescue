@@ -110,3 +110,40 @@ function Ashes:draw()
 		self.anim:draw(self.x, self.y, 0, 1,1, 10, 20)
 	end
 end
+
+Sparkles = {}
+Sparkles.__index = Sparkles
+
+function Sparkles.create(x,y,count,time)
+	local self = setmetatable({}, Sparkles)
+	self.alive = true
+	self.particles = {}
+	self.time = time or 2
+	if count == nil then count = 8 end
+
+	for i=1,count do
+		table.insert(self.particles, {x=x, y=y, xspeed=math.random(-100,100), yspeed=math.random(-50,-200), size=i%3})
+	end
+
+	return self
+end
+
+function Sparkles:update(dt)
+	self.time = self.time - dt
+	if self.time < 0 then
+		self.alive = false
+		return
+	end
+
+	for i,v in ipairs(self.particles) do
+		v.yspeed = v.yspeed + 500*dt
+		v.x = v.x + v.xspeed*dt
+		v.y = v.y + v.yspeed*dt
+	end
+end
+
+function Sparkles:draw()
+	for i,v in ipairs(self.particles) do
+		love.graphics.drawq(img.sparkles, quad.sparkles[v.size], v.x, v.y, 0,1,1, 3.5, 3.5)
+	end
+end

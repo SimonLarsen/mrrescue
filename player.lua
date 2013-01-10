@@ -197,6 +197,7 @@ function Player:update(dt)
 	for i,v in ipairs(map.items) do
 		if self:collideBox(v:getBBox()) == true then
 			self:applyItem(v)
+			map:addParticle(Sparkles.create(v.x+6, v.y+10, 10, 2))
 			v.alive = false
 		end
 	end

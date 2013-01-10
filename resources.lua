@@ -131,4 +131,14 @@ function loadResources()
 	quad.item_slot_regen = lg.newQuad(0,0,3,6, getSize(img.item_slots))
 	quad.item_slot_tank  = lg.newQuad(3,0,3,6, getSize(img.item_slots))
 	quad.item_slot_suit  = lg.newQuad(6,0,3,6, getSize(img.item_slots))
+
+	quad.sparkles = {}
+	for i=0,2 do
+		quad.sparkles[i] = lg.newQuad(i*8, 0, 7, 7, getSize(img.sparkles))
+	end
+
+	quad.circles = {}
+	for i=0,6 do
+		quad.circles[i] = lg.newQuad(i*32, 0, 32, 32, getSize(img.circles))
+	end
 end
