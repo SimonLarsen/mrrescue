@@ -24,6 +24,8 @@ local MAX_FRAMERATE = 1/200
 
 local lg = love.graphics
 
+local STATE_INGAME, STATE_NEXTLEVEL_OUT, STATE_NEXTLEVEL_IN = 0,1,2
+
 function love.load()
 	lg.setBackgroundColor(82,117,176)
 	lg.setMode(WIDTH*SCALE, HEIGHT*SCALE, false, true)
@@ -36,6 +38,9 @@ function love.load()
 	max_casualties = 3
 	casualties = 0
 	saved = 0
+
+	state = STATE_NEXTLEVEL_IN
+	transition_time = 0
 
 	map = Map.create()
 	player = Player.create(map:getStart())
@@ -59,18 +64,45 @@ function love.update(dt)
 		dt = dt/4
 	end
 
-	-- Update entities
-	player:update(dt)
+	-- INGAME STATE
+	if state == STATE_INGAME then
 
-	-- Calculate translation offest
-	translate_x = cap(player.x-WIDTH/2, 0, MAPW-WIDTH)
-	translate_y = cap(player.y-11-HEIGHT/2, 0, MAPH-HEIGHT+30)
+		-- Update entities
+		player:update(dt)
 
-	map:setDrawRange(translate_x, translate_y, WIDTH, HEIGHT)
-	map:update(dt)
+		-- Calculate translation offest
+		translate_x = cap(player.x-WIDTH/2, 0, MAPW-WIDTH)
+		translate_y = cap(player.y-11-HEIGHT/2, 0, MAPH-HEIGHT+30)
 
-	if player.y < 0 then
-		nextLevel()
+		map:setDrawRange(translate_x, translate_y, WIDTH, HEIGHT)
+		map:update(dt)
+
+		-- Set next level transition state if player has climbed out of the screen
+		if player.y < 0 then
+			state = STATE_NEXTLEVEL_OUT
+			transition_time = 0
+		end
+	-- Transition TO or FROM next level
+	elseif state == STATE_NEXTLEVEL_OUT or state == STATE_NEXTLEVEL_IN then
+		transition_time = transition_time + dt*15
+
+		-- Calculate translation offest
+		translate_x = cap(player.x-WIDTH/2, 0, MAPW-WIDTH)
+		translate_y = cap(player.y-11-HEIGHT/2, 0, MAPH-HEIGHT+30)
+
+		map:setDrawRange(translate_x, translate_y, WIDTH, HEIGHT)
+		map:update(dt)
+
+		if transition_time > 20 then
+			if state == STATE_NEXTLEVEL_OUT then
+				nextLevel()
+				state = STATE_NEXTLEVEL_IN
+				transition_time = 0
+			else -- STATE_NEXTLEVEL_IN
+				state = STATE_INGAME
+				transition_time = 0
+			end
+		end
 	end
 end
 
@@ -109,6 +141,26 @@ function love.draw()
 		lg.setColor(255,255,255,cap(player.heat*255, 16, 255))
 		lg.drawq(img.red_screen, quad.red_screen, 0,0)
 		lg.setColor(255,255,255,255)
+	end
+
+	-- Draw transition if eligible
+	if state == STATE_NEXTLEVEL_OUT then
+		local frame = math.floor(transition_time)
+
+		for ix = 0,7 do
+			for iy = 0,5 do
+				lg.drawq(img.circles, quad.circles[math.max(0,math.min(frame-13+ix+iy,6))], ix*32, iy*32)
+			end
+		end
+	end
+	if state == STATE_NEXTLEVEL_IN then
+		local frame = math.floor(transition_time)
+
+		for ix = 0,7 do
+			for iy = 0,5 do
+				lg.drawq(img.circles, quad.circles[6-math.max(0,math.min(frame-13+ix+iy,6))], ix*32, iy*32)
+			end
+		end
 	end
 
 	-- Draw hud

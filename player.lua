@@ -208,7 +208,7 @@ function Player:update(dt)
 
 	-- Detect death
 	if self.temperature >= self.max_temperature then
-		self.y = self.y - 1000
+		self.y = 10000
 	end
 end
 

@@ -57,7 +57,7 @@ function Map:populate()
 
 	local start = table.random(self.starts)
 	self.startx = start.x + 8
-	self.starty = start.y + 173
+	self.starty = start.y + 176
 
 	-- Add coolants
 	for i=1,2 do
@@ -144,12 +144,18 @@ function Map:update(dt)
 		end
 	end
 
+	-- Recreate sprite batches
+	self:recreateSpriteBatches()
+end
+
+function Map:recreateSpriteBatches()
 	-- Recreate sprite batches if redraw is set
 	if self.redraw == true then
 		self:fillBatch(self.back_batch,  function(id) return id > 64 end)
 		self:fillBatch(self.front_batch, function(id) return id <= 64 end)
 		self.redraw = false
 	end
+	
 end
 
 --- Adds a fire block if possible

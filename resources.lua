@@ -9,9 +9,9 @@ local IMAGE_FILES = {
 	"water_bar", "reserve_bar", "overloaded_bar", "temperature_bar",
 	"stream", "water", "shards",
 	"fire_wall", "fire_wall_small", "fire_floor",
-	"black_smoke", "black_smoke_small", "ashes",
+	"black_smoke", "black_smoke_small", "ashes", "sparkles",
 	"light_player", "light_fire", "light_fireball",
-	"red_screen",
+	"red_screen", "circles",
 	"item_coolant", "item_reserve", "item_suit", "item_tank", "item_regen",
 
 	"player_gun", "player_throw", "player_climb_down",
