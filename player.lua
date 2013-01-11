@@ -95,6 +95,8 @@ end
 function Player:warp(x,y)
 	self.x, self.y = x,y
 	self.xspeed, self.yspeed = 0,0
+	self.streamLength = 0
+	self.shooting = false
 end
 
 --- Updates key states in self.key_state from

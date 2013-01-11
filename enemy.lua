@@ -353,7 +353,7 @@ end
 
 function Fireball:update(dt)
 	-- Update position
-	self.yspeed = self.yspeed + 350*dt
+	self.yspeed = self.yspeed + self.GRAVITY*dt
 
 	self.x = self.x + self.xspeed*dt
 	self.y = self.y + self.yspeed*dt
