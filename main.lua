@@ -31,12 +31,11 @@ function love.load()
 	lg.setMode(WIDTH*SCALE, HEIGHT*SCALE, false, true)
 	lg.setDefaultImageFilter("nearest","nearest")
 
-	lg.setFont(lg.newFont(16))
-
 	loadResources()
 
 	max_casualties = 3
 	casualties = 0
+	score = 0
 	saved = 0
 
 	state = STATE_FADE_IN
@@ -203,15 +202,15 @@ function drawHUD()
 	-- Draw temperature bar
 	local temp_length = math.floor((player.temperature/player.max_temperature)*81+0.5)
 	quad.temperature_bar:setViewport(0,0, temp_length, 6)
-	lg.drawq(img.temperature_bar, quad.temperature_bar, 90, HEIGHT-25)
-	lg.drawq(img.temperature_bar, quad.temperature_bar_end, 90+temp_length, HEIGHT-25)
+	lg.drawq(img.temperature_bar, quad.temperature_bar, 75, HEIGHT-25)
+	lg.drawq(img.temperature_bar, quad.temperature_bar_end, 75+temp_length, HEIGHT-25)
 
 	-- Draw casualty count
 	for i=1,max_casualties do
 		if i<= casualties then
-			lg.drawq(img.hud_people, quad.hud_people_red, 189+(i-1)*5, HEIGHT-25)
+			lg.drawq(img.hud_people, quad.hud_people_red, 168+(i-1)*5, HEIGHT-25)
 		else
-			lg.drawq(img.hud_people, quad.hud_people_green, 189+(i-1)*5, HEIGHT-25)
+			lg.drawq(img.hud_people, quad.hud_people_green, 168+(i-1)*5, HEIGHT-25)
 		end
 	end
 
@@ -220,15 +219,23 @@ function drawHUD()
 	-- Draw item slots
 	for i=1,3 do
 		if i <= player.num_regens then
-			lg.drawq(img.item_slots, quad.item_slot_regen, 93+(i-1)*6, HEIGHT-14)
+			lg.drawq(img.item_slots, quad.item_slot_regen, 78+(i-1)*6, HEIGHT-14)
 		end
 		if i <= player.num_tanks then
-			lg.drawq(img.item_slots, quad.item_slot_tank, 115+(i-1)*6, HEIGHT-14)
+			lg.drawq(img.item_slots, quad.item_slot_tank, 100+(i-1)*6, HEIGHT-14)
 		end
 		if i <= player.num_suits then
-			lg.drawq(img.item_slots, quad.item_slot_suit, 137+(i-1)*6, HEIGHT-14)
+			lg.drawq(img.item_slots, quad.item_slot_suit, 122+(i-1)*6, HEIGHT-14)
 		end
 	end
+
+	-- Draw score
+	lg.setFont(font.bold)
+	lg.setColor(16,12,9)
+	lg.print("SCORE: "..score,150,187)
+	lg.setColor(246,247,221)
+	lg.print("SCORE: "..score,150,186)
+	lg.setColor(255,255,255)
 
 	-- Draw panic/burning human icons
 	drawIcons()

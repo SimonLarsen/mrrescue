@@ -2,9 +2,10 @@ local lg = love.graphics
 
 img = {}  	-- global Image objects
 quad = {}	-- global Quads
+font = {}   -- global Fonts
 
 local IMAGE_FILES = {
-	"tiles", "door",
+	"tiles", "door", "boldfont",
 	"hud", "hud2", "hud_people", "item_slots",
 	"water_bar", "reserve_bar", "overloaded_bar", "temperature_bar",
 	"stream", "water", "shards",
@@ -63,6 +64,10 @@ function loadResources()
 	-- Set special image attributes
 	img.stream:setWrap("repeat", "clamp")
 
+	-- Create fonts
+	font.bold = lg.newImageFont(img.boldfont, " ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789.!'-:*")
+
+	-- Create quads
 	quad.player_gun = {}
 	for i=0,4 do
 		quad.player_gun[i] = lg.newQuad(i*12,0,12,18, getSize(img.player_gun))

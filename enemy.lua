@@ -1,7 +1,7 @@
 -- %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 -- %           Normal enemy           %
 -- %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-NormalEnemy = { MOVE_SPEED = 80, FIRE_SPAWN_MIN = 7, FIRE_SPAWN_MAX = 25, MAX_HEALTH = 1.2 }
+NormalEnemy = { MOVE_SPEED = 80, FIRE_SPAWN_MIN = 7, FIRE_SPAWN_MAX = 25, MAX_HEALTH = 1.2, SCORE = 100 }
 NormalEnemy.__index = NormalEnemy
 
 local EN_RUN, EN_HIT, EN_RECOVER, EN_IDLE, EN_JUMPING, EN_SHOOT = 0,1,2,3,4,5
@@ -112,6 +112,7 @@ function NormalEnemy:shot(dt,dir)
 	if self.health <= 0 then
 		map:addParticle(BlackSmoke.create(self.x, self.y-8))
 		self.alive = false
+		score = score + self.SCORE
 	end
 end
 
@@ -122,7 +123,7 @@ end
 -- %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 -- %           Jumper enemy           %
 -- %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-JumperEnemy = { MOVE_SPEED = 100, JUMP_DELAY = 1, JUMP_POWER = 150, MAX_HEALTH = 1.0,
+JumperEnemy = { MOVE_SPEED = 100, JUMP_DELAY = 1, JUMP_POWER = 150, MAX_HEALTH = 1.0, SCORE = 125,
 				GRAVITY = 350, corners = {-6, 6, -24, -0.5 }, MIN_FIRE_TIME = 3, MAX_FIRE_TIME = 13}
 JumperEnemy.__index = JumperEnemy
 
@@ -220,6 +221,7 @@ function JumperEnemy:shot(dt,dir)
 	if self.health <= 0 then
 		self.alive = false
 		map:addParticle(BlackSmoke.create(self.x, self.y-14))
+		score = score + self.SCORE
 	end
 end
 
@@ -230,7 +232,7 @@ end
 -- %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 -- %          Volcano enemy          %
 -- %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-VolcanoEnemy = { MOVE_SPEED = 60, MAX_HEALTH = 1.2, SHOOT_DELAY = 2, SHOT_COUNT = 4 }
+VolcanoEnemy = { MOVE_SPEED = 60, MAX_HEALTH = 1.2, SHOOT_DELAY = 2, SHOT_COUNT = 4, SCORE = 200 }
 VolcanoEnemy.__index = VolcanoEnemy
 
 function VolcanoEnemy.create(x,y)
@@ -311,6 +313,7 @@ function VolcanoEnemy:shot(dt,dir)
 	if self.health <= 0 then
 		map:addParticle(BlackSmoke.create(self.x, self.y-8))
 		self.alive = false
+		score = score + self.SCORE
 	end
 end
 
@@ -330,7 +333,7 @@ end
 -- %%%%%%%%%%%%%%%%%%%%%%%%%%
 -- %        Fireball        %
 -- %%%%%%%%%%%%%%%%%%%%%%%%%%
-Fireball = { FIRE_ODDS = 25 }
+Fireball = { FIRE_ODDS = 25, SCORE = 10, GRAVITY = 350 }
 Fireball.__index = Fireball
 
 function Fireball.create(x,y,xspeed)
@@ -389,6 +392,7 @@ end
 function Fireball:shot()
 	self.alive = false
 	map:addParticle(SmallBlackSmoke.create(self.x, self.y-1))
+	score = score + self.SCORE
 end
 
 function Fireball:draw()
