@@ -64,24 +64,13 @@ function Human:update(dt)
 		end
 
 		-- Avoid walking into fire
-		local lx = math.floor((self.x-PANIC_RADIUS)/16)
-		local rx = math.floor((self.x+PANIC_RADIUS)/16)
-		local cy = math.floor((self.y-8)/16)
-		local fire_left  = map:hasFire(lx, cy)
-		local fire_right = map:hasFire(rx, cy)
-
-		if fire_left == true then
-			if fire_right == true or map:collideCell(rx,cy) then
-				self:setState(HS_PANIC)
-			else
-				self.dir = 1
-			end
+		local isTrapped, fire_left, fire_right = self:isTrapped()
+		if isTrapped == true then
+			self:setState(HS_PANIC)
+		elseif fire_left == true then
+			self.dir = 1
 		elseif fire_right == true then
-			if fire_left == true or map:collideCell(lx,cy) then
-				self:setState(HS_PANIC)
-			else
-				self.dir = -1
-			end
+			self.dir = -1
 		end
 
 		self.time = self.time - dt
@@ -94,6 +83,10 @@ function Human:update(dt)
 	-- Panic state
 	elseif self.state == HS_PANIC then
 		self:collideFire()
+		
+		if self:isTrapped() == false then
+			self:setState(HS_IDLE)
+		end
 	
 	-- Burning panic state
 	elseif self.state == HS_BURN then
@@ -167,6 +160,25 @@ function Human:collideFire()
 
 end
 
+function Human:isTrapped()
+	local lx = math.floor((self.x-PANIC_RADIUS)/16)
+	local rx = math.floor((self.x+PANIC_RADIUS)/16)
+	local cy = math.floor((self.y-8)/16)
+	local fire_left  = map:hasFire(lx, cy)
+	local fire_right = map:hasFire(rx, cy)
+
+	if fire_left == true then
+		if fire_right == true or map:collideCell(rx,cy) then
+			return true, fire_left, fire_right
+		end
+	elseif fire_right == true then
+		if fire_left == true or map:collideCell(lx,cy) then
+			return true, fire_left, fire_right
+		end
+	end
+	return false, fire_left, fire_right
+end
+
 function Human:setState(state)
 	self.state = state
 	self.anim = self.anims[self.state]
@@ -186,7 +198,8 @@ function Human:shot(dt,dir)
 		self:setState(HS_WALK)
 	end
 
-	if self.state == HS_IDLE or self.state == HS_BURN or self.state == HS_WALK then
+	if self.state == HS_IDLE or self.state == HS_PANIC
+	or self.state == HS_BURN or self.state == HS_WALK then
 		self:push(self.x, self.y, dir)
 	end
 end
