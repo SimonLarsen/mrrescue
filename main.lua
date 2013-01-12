@@ -10,6 +10,7 @@ require("door")
 require("item")
 require("fire")
 require("particles")
+require("slam")
 
 WIDTH = 256
 HEIGHT = 200

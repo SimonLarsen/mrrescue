@@ -53,6 +53,12 @@ function loadResources()
 	for i,v in ipairs(BACKGROUND_FILES) do
 		img[v] = lg.newImage("data/backgrounds/"..v..".png")
 	end
+	-- Load all sound files
+	for i,v in ipairs(SOUND_FILES) do
+		snd[v] = love.audio.newSource("data/sfx/"..v..".wav","static")
+		snd[v]:addTags("sfx")
+		if snd[v] == nil then print("HDWJAKDJKA") end
+	end
 
 	img.human_run = { img.human_1_run, img.human_2_run, img.human_3_run, img.human_4_run }
 	img.human_carry_left = { img.human_1_carry_left, img.human_2_carry_left, img.human_3_carry_left, img.human_4_carry_left }
@@ -151,4 +157,24 @@ function loadResources()
 	for i=0,4 do
 		quad.warning_icons[i] = lg.newQuad(i*22, 0, 22, 20, getSize(img.warning_icons))
 	end
+
+	quad.captain_dialog = {}
+	quad.captain_dialog[0] = lg.newQuad(0,0,200,56, getSize(img.captain_dialog))
+	quad.captain_dialog[1] = lg.newQuad(0,64,200,56, getSize(img.captain_dialog))
+
+	-- Set audio tag volumes
+	love.audio.tags.sfx.setVolume(1.0)
+	love.audio.tags.music.setVolume(0.4)
+end
+
+function playSound(name)
+	love.audio.play(snd[name])
+end
+
+function playMusic(name)
+	local music = love.audio.newSource("data/sfx/"..name..".ogg", "stream")
+	music:addTags("music")
+	music:setLooping(true)
+	love.audio.tags.music.setVolume(0.4)
+	love.audio.play(music)
 end
