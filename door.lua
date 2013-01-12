@@ -3,6 +3,7 @@ Door.__index = Door
 setmetatable(Door,Entity)
 
 local GRAVITY = 550
+local SCORE = 50
 
 function Door.create(x,y,dir)
 	local self = setmetatable({}, Door)	
@@ -62,6 +63,7 @@ function Door:shot(dt,dir)
 		self.state = 1
 		self.xspeed = 50*dir
 		self.yspeed = -100
+		score = score + SCORE
 	end
 end
 

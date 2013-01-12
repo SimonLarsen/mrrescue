@@ -203,7 +203,9 @@ function Player:update(dt)
 		if self:collideBox(v:getBBox()) == true then
 			self:applyItem(v)
 			map:addParticle(Sparkles.create(v.x+6, v.y+10, 15, 2))
+			playSound("powerup")
 			v.alive = false
+			score = score + 500
 		end
 	end
 

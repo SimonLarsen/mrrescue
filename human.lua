@@ -10,6 +10,7 @@ local GRAVITY = 350
 local COL_OFFSETS = {{-5,-0.9001}, {5,-0.9001}, {-5,-18}, {5,-18}} -- Collision point offsets
 local PANIC_RADIUS = 29
 local MAX_HEALTH = 10
+local SCORE = 250
 
 local IDLE_TIME = 2
 local WALK_TIME = 3
@@ -139,6 +140,7 @@ function Human:update(dt)
 	-- Check if thrown out of window
 	if self.y > MAPH+64 then
 		saved = saved + 1
+		score = score + SCORE
 		self.alive = false
 	end
 

@@ -3,8 +3,8 @@ Fire.__index = Fire
 
 local MIN_SPREAD_WAIT = 4
 local MAX_SPREAD_WAIT = 10
---local FIRE_HEALTH = 0.4
 local REGEN_RATE = 0.05
+local SCORE = 20
 
 function Fire.create(x,y,map)
 	local self = setmetatable({}, Fire)
@@ -66,6 +66,7 @@ function Fire:shot(dt,dir)
 	self.health = self.health - dt
 	if self.health < 0 then
 		self.alive = false
+		score = score + SCORE
 	end
 end
 
