@@ -25,30 +25,41 @@ local MAX_FRAMERATE = 1/200
 
 local lg = love.graphics
 
-local STATE_INGAME, STATE_FADE_IN, STATE_NEXTLEVEL_OUT, STATE_FALL_OUT = 0,1,2,3
+local STATE_INGAME, STATE_FADE_IN, STATE_NEXTLEVEL_OUT, STATE_FALL_OUT, STATE_PRESCREEN = 0,1,2,3,4
 
 function love.load()
-	lg.setBackgroundColor(82,117,176)
+	lg.setBackgroundColor(0,0,0)
 	lg.setMode(WIDTH*SCALE, HEIGHT*SCALE, false, true)
 	lg.setDefaultImageFilter("nearest","nearest")
 
 	loadResources()
 
+	newGame()
+end
+
+function newGame()
 	max_casualties = 3
 	casualties = 0
 	score = 0
 	saved = 0
+	section = 1
+	last_missed = 0
 
-	state = STATE_FADE_IN
 	transition_time = 0
 	warning_frame = 0
 
 	map = Map.create()
 	player = Player.create(map:getStart())
+
+	state = STATE_PRESCREEN
+	setPrescreenMessage()
 end
 
 function nextLevel()
-	casualties = casualties + #map.humans
+	score = score + 1000
+	section = section + 1
+	last_missed = #map.humans
+	casualties = casualties + last_missed
 	map = Map.create()
 	player:warp(map:getStart())
 end
@@ -105,7 +116,8 @@ function love.update(dt)
 		if transition_time > 20 then
 			if state == STATE_NEXTLEVEL_OUT then
 				nextLevel()
-				state = STATE_FADE_IN
+				state = STATE_PRESCREEN
+				setPrescreenMessage()
 			elseif state == STATE_FALL_OUT then
 				player:warp(map:getStart())
 				state = STATE_FADE_IN
@@ -114,6 +126,8 @@ function love.update(dt)
 			end
 			transition_time = 0
 		end
+	elseif state == STATE_PRESCREEN then
+		transition_time = transition_time + dt*3
 	end
 end
 
@@ -121,66 +135,107 @@ function love.draw()
 	-- Scale screen
 	lg.push()
 	lg.scale(SCALE,SCALE)
-	-- Translate to center player
-	lg.push()
-	lg.translate(-math.floor(translate_x), -math.floor(translate_y))
 
-	-- Draw back
-	map:drawBack()
-	-- Draw player
-	player:draw()
-	-- Draw front
-	map:drawFront()
+	if state == STATE_INGAME or state == STATE_FADE_IN
+	or state == STATE_NEXTLEVEL_OUT or state == STATE_FALL_OUT then
+		-- Translate to center player
+		lg.push()
+		lg.translate(-math.floor(translate_x), -math.floor(translate_y))
 
-	-- Update lightmap
-	lg.pop()
-	lg.pop()	
-	lg.push()
-	lg.translate(-math.floor(translate_x), -math.floor(translate_y))
-	updateLightmap()
-	lg.pop()
+		-- Draw back
+		map:drawBack()
+		-- Draw player
+		player:draw()
+		-- Draw front
+		map:drawFront()
 
-	-- Draw canvas with lighting
-	lg.push()
-	lg.scale(SCALE,SCALE)
-	lg.setBlendMode("multiplicative")
-	lg.draw(canvas, 0,0)
-	lg.setBlendMode("alpha")
+		-- Update lightmap
+		lg.pop()
+		lg.pop()	
+		lg.push()
+		lg.translate(-math.floor(translate_x), -math.floor(translate_y))
+		updateLightmap()
+		lg.pop()
 
-	-- Draw red screen if hit
-	if player.heat > 0 then
-		lg.setColor(255,255,255,cap(player.heat*255, 16, 255))
-		lg.drawq(img.red_screen, quad.red_screen, 0,0)
-		lg.setColor(255,255,255,255)
-	end
+		-- Draw canvas with lighting
+		lg.push()
+		lg.scale(SCALE,SCALE)
+		lg.setBlendMode("multiplicative")
+		lg.draw(canvas, 0,0)
+		lg.setBlendMode("alpha")
 
-	-- Draw transition if eligible
-	if state == STATE_NEXTLEVEL_OUT or state == STATE_FALL_OUT then
-		local frame = math.floor(transition_time)
+		-- Draw red screen if hit
+		if player.heat > 0 then
+			lg.setColor(255,255,255,cap(player.heat*255, 16, 255))
+			lg.drawq(img.red_screen, quad.red_screen, 0,0)
+			lg.setColor(255,255,255,255)
+		end
 
-		for ix = 0,7 do
-			for iy = 0,5 do
-				lg.drawq(img.circles, quad.circles[math.max(0,math.min(frame-13+ix+iy,6))], ix*32, iy*32)
+		-- Draw hud
+		drawHUD()
+
+		-- Draw transition if eligible
+		if state == STATE_NEXTLEVEL_OUT or state == STATE_FALL_OUT then
+			local frame = math.floor(transition_time)
+
+			for ix = 0,7 do
+				for iy = 0,6 do
+					lg.drawq(img.circles, quad.circles[math.max(0,math.min(frame-13+ix+iy,6))], ix*32, iy*32)
+				end
 			end
 		end
-	end
-	if state == STATE_FADE_IN then
-		local frame = math.floor(transition_time)
+		if state == STATE_FADE_IN then
+			local frame = math.floor(transition_time)
 
-		for ix = 0,7 do
-			for iy = 0,5 do
-				lg.drawq(img.circles, quad.circles[6-math.max(0,math.min(frame-13+ix+iy,6))], ix*32, iy*32)
+			for ix = 0,7 do
+				for iy = 0,6 do
+					lg.drawq(img.circles, quad.circles[6-math.max(0,math.min(frame-13+ix+iy,6))], ix*32, iy*32)
+				end
 			end
 		end
-	end
 
-	-- Draw hud
-	drawHUD()
+	elseif state == STATE_PRESCREEN then
+		drawPrescreen()
+	end
 
 	-- Draw debug information
 	lg.pop()
 	if show_debug == true then
 		drawDebug()
+	end
+end
+
+function drawPrescreen()
+	local floor = section*3-2
+	lg.setFont(font.bold)
+	lg.printf("FLOOR ".. floor .. "-" .. floor+2, 0, 40, WIDTH, "center")
+
+	local fr = math.floor(transition_time) % 2
+	lg.drawq(img.captain_dialog, quad.captain_dialog[fr], 28, 72)
+	drawPrescreenMessage(table.random(GOODLUCK_MESSAGES))
+
+	lg.printf("PRESS ANY KEY TO CONTINUE", 0, 150, WIDTH, "center")
+end
+
+function drawPrescreenMessage()
+	for i=1,#prescreen_message do
+		lg.print(prescreen_message[i], 74, 69+i*11)
+	end
+end
+
+function setPrescreenMessage()
+	if section == 1 then
+		prescreen_message = table.random(GOODLUCK_MESSAGES)
+	else
+		if last_missed > 0 then
+			if last_missed == 1 then
+				prescreen_message = {"HEY THERE, BUDDY!","YOU MISSED 1 PERSON.","TRY A LITTLE HARDER."}
+			else
+				prescreen_message = {"HEY THERE, BUDDY!","YOU MISSED "..last_missed,"PEOPLE.","TRY A LITTLE HARDER."}
+			end
+		else
+			prescreen_message = table.random(NO_CASUALTIES_MESSAGES)
+		end
 	end
 end
 
@@ -322,15 +377,27 @@ end
 function love.keypressed(k, uni)
 	if k == "escape" then
 		love.event.quit()
-	elseif k == "f1" then
-		show_debug = not show_debug
-	elseif k == "i" then
-		map:addFire(math.floor(player.x/16), math.floor((player.y-8)/16))
-	else
-		player:keypressed(k)
+	end
+
+	if state == STATE_INGAME then
+		if k == "f1" then
+			show_debug = not show_debug
+		elseif k == "i" then
+			map:addFire(math.floor(player.x/16), math.floor((player.y-8)/16))
+		else
+			player:keypressed(k)
+		end
+	elseif state == STATE_PRESCREEN then
+		state = STATE_FADE_IN
+		transition_time = 0
 	end
 end
 
 function love.joystickpressed(joy, k)
-	player:joystickpressed(joy,k)
+	if state == STATE_INGAME then
+		player:joystickpressed(joy,k)
+	elseif state == STATE_PRESCREEN then
+		state = STATE_FADE_IN
+		transition_time = 0
+	end
 end

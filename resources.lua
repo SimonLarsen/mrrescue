@@ -3,9 +3,10 @@ local lg = love.graphics
 img = {}  	-- global Image objects
 quad = {}	-- global Quads
 font = {}   -- global Fonts
+local snd = {}	-- sound Sources
 
 local IMAGE_FILES = {
-	"tiles", "door", "boldfont",
+	"tiles", "door", "boldfont", "captain_dialog",
 	"hud", "hud2", "hud_people", "item_slots",
 	"water_bar", "reserve_bar", "overloaded_bar", "temperature_bar",
 	"stream", "water", "shards",
@@ -32,8 +33,16 @@ local IMAGE_FILES = {
 
 local BACKGROUND_FILES = { "mountains", "night" }
 
+local SOUND_FILES = { "powerup" }
+
 NUM_ROOMS = { [10] = 6, [11] = 6, [17] = 6, [24] = 6 }
 
+GOODLUCK_MESSAGES = {
+	{"GOOD LUCK,","BUDDY!"}, {"GO GET 'EM,","BUDDY!"}, {"GO FIGHT FIRE WITH","WATER!","","HE HE HE"}
+}
+NO_CASUALTIES_MESSAGES = {
+	{"KEEP UP THE GOOD","WORK, BUDDY!","YOU'RE ON FIRE.","HE HE HE"}
+}
 --- Returns size of an Image as two return values
 -- Saves some typing when creating quads
 function getSize(img)
@@ -71,7 +80,7 @@ function loadResources()
 	img.stream:setWrap("repeat", "clamp")
 
 	-- Create fonts
-	font.bold = lg.newImageFont(img.boldfont, " ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789.!'-:*")
+	font.bold = lg.newImageFont(img.boldfont, " ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789.,!'-:*")
 
 	-- Create quads
 	quad.player_gun = {}
