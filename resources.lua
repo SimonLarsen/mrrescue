@@ -6,12 +6,12 @@ font = {}   -- global Fonts
 local snd = {}	-- sound Sources
 
 local IMAGE_FILES = {
-	"tiles", "door", "boldfont", "captain_dialog",
+	"tiles", "door", "boldfont", "captain_dialog", "splash",
 	"hud", "hud2", "hud_people", "item_slots",
 	"water_bar", "reserve_bar", "overloaded_bar", "temperature_bar",
 	"stream", "water", "shards",
 	"fire_wall", "fire_wall_small", "fire_floor",
-	"black_smoke", "black_smoke_small", "ashes", "sparkles",
+	"black_smoke", "black_smoke_small", "ashes", "sparkles", "savebeam",
 	"light_player", "light_fire", "light_fireball",
 	"red_screen", "circles", "warning_icons",
 	"item_coolant", "item_reserve", "item_suit", "item_tank", "item_regen",
@@ -162,6 +162,11 @@ function loadResources()
 		quad.circles[i] = lg.newQuad(i*32, 0, 32, 32, getSize(img.circles))
 	end
 
+	quad.savebeam = {}
+	for i=0,7 do
+		quad.savebeam[i] = lg.newQuad(i*32, 0, 32, 32, getSize(img.savebeam))
+	end
+
 	quad.warning_icons = {}
 	for i=0,4 do
 		quad.warning_icons[i] = lg.newQuad(i*22, 0, 22, 20, getSize(img.warning_icons))
@@ -170,6 +175,8 @@ function loadResources()
 	quad.captain_dialog = {}
 	quad.captain_dialog[0] = lg.newQuad(0,0,200,56, getSize(img.captain_dialog))
 	quad.captain_dialog[1] = lg.newQuad(0,64,200,56, getSize(img.captain_dialog))
+
+	quad.splash = lg.newQuad(0, 0, 256, 200, getSize(img.splash))
 
 	-- Set audio tag volumes
 	love.audio.tags.sfx.setVolume(1.0)
@@ -181,7 +188,12 @@ function playSound(name)
 end
 
 function playMusic(name)
-	local music = love.audio.newSource("data/sfx/"..name..".ogg", "stream")
+	-- Stop previously playing music if any
+	if music then
+		music:stop()
+	end
+	-- Play new file
+	music = love.audio.newSource("data/sfx/"..name..".ogg", "stream")
 	music:addTags("music")
 	music:setLooping(true)
 	love.audio.tags.music.setVolume(0.4)

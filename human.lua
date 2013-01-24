@@ -1,4 +1,4 @@
-Human = { corners = {-5, 5, -18, -0.5} }
+Human = { corners = {-5, 5, -16, -0.5} }
 Human.__index = Human
 
 local MOVE_SPEED = 50
@@ -7,7 +7,7 @@ local THROW_SPEED = 250
 local PUSH_SPEED  = 100
 local NUM_HUMANS = 4
 local GRAVITY = 350
-local COL_OFFSETS = {{-5,-0.9001}, {5,-0.9001}, {-5,-18}, {5,-18}} -- Collision point offsets
+local COL_OFFSETS = {{-5,-0.9001}, {5,-0.9001}, {-5,-16}, {5,-16}} -- Collision point offsets
 local PANIC_RADIUS = 29
 local MAX_HEALTH = 10
 local SCORE = 250
@@ -138,7 +138,7 @@ function Human:update(dt)
 	end
 
 	-- Check if thrown out of window
-	if self.y > MAPH+64 then
+	if self.x < -16 or self.x > MAPW+16 or self.y > MAPH+64 then
 		saved = saved + 1
 		score = score + SCORE
 		self.alive = false
@@ -268,7 +268,7 @@ end
 
 function Human:collideBox(bbox)
 	if self.x-5  > bbox.x+bbox.w or self.x+5 < bbox.x
-	or self.y-18 > bbox.y+bbox.h or self.y   < bbox.y then
+	or self.y-16 > bbox.y+bbox.h or self.y   < bbox.y then
 		return false
 	else
 		return true
@@ -276,5 +276,5 @@ function Human:collideBox(bbox)
 end
 
 function Human:getBBox()
-	return {x = self.x-5, y = self.y-18, w = 10, h = 18}
+	return {x = self.x-5, y = self.y-16, w = 10, h = 16}
 end

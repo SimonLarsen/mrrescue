@@ -147,3 +147,29 @@ function Sparkles:draw()
 		love.graphics.drawq(img.sparkles, quad.sparkles[v.size], v.x, v.y, 0,1,1, 3.5, 3.5)
 	end
 end
+
+SaveBeam = {}
+SaveBeam.__index = SaveBeam
+
+function SaveBeam.create(x,y,dir)
+	local self = setmetatable({}, SaveBeam)
+	self.alive = true
+	self.time = 0
+	self.x, self.y = x, math.floor(y)
+	self.dir = dir
+
+	return self
+end
+
+function SaveBeam:update(dt)
+	self.time = self.time + dt*18
+	if self.time >= 8 then
+		self.time = 7
+		self.alive = false
+	end
+end
+
+function SaveBeam:draw()
+	local frame = math.floor(self.time)
+	lg.drawq(img.savebeam, quad.savebeam[frame], self.x, self.y, 0, self.dir, 1, 1, 16)
+end
