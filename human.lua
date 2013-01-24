@@ -7,7 +7,6 @@ local THROW_SPEED = 250
 local PUSH_SPEED  = 100
 local NUM_HUMANS = 4
 local GRAVITY = 350
-local COL_OFFSETS = {{-5,-0.9001}, {5,-0.9001}, {-5,-16}, {5,-16}} -- Collision point offsets
 local PANIC_RADIUS = 29
 local MAX_HEALTH = 10
 local SCORE = 250
@@ -138,10 +137,11 @@ function Human:update(dt)
 	end
 
 	-- Check if thrown out of window
-	if self.x < -16 or self.x > MAPW+16 or self.y > MAPH+64 then
+	if self.x < 0 or self.x > MAPW or self.y > MAPH+64 then
 		saved = saved + 1
 		score = score + SCORE
 		self.alive = false
+		map:addParticle(PopupText.create("rescue"))
 	end
 
 	-- Update animation
@@ -208,10 +208,10 @@ end
 
 function Human:collideWindows()
 	for i=1,2 do
-		local cx = math.floor((self.x+COL_OFFSETS[i][1])/16)
-		local cy = math.floor((self.y+COL_OFFSETS[i][2])/16)
-		local tile = map:getPoint(self.x+COL_OFFSETS[i][1], self.y+COL_OFFSETS[i][2])
+		local tile = map:getPoint(self.x+self.corners[i], self.y+self.corners[4])
 		if tile == 38 or tile == 39 then
+			local cx = math.floor((self.x+self.corners[i])/16)
+			local cy = math.floor((self.y+self.corners[4])/16)
 			map:hitCell(cx,cy,math.sign(self.xspeed))
 		end
 	end

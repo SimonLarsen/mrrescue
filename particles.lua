@@ -173,3 +173,41 @@ function SaveBeam:draw()
 	local frame = math.floor(self.time)
 	lg.drawq(img.savebeam, quad.savebeam[frame], self.x, self.y, 0, self.dir, 1, 1, 16)
 end
+
+PopupText = {}
+PopupText.__index = PopupText
+
+function PopupText.create(text)
+	local self = setmetatable({}, PopupText)
+	self.alive = true
+	self.time = 0
+	self.x = player.flx
+	self.y = player.fly-24
+
+	if text == "rescue" then
+		self.id = 0
+	elseif text == "coolant" then
+		self.id = 1
+	elseif text == "suit" then
+		self.id = 2
+	elseif text == "tank" then
+		self.id = 3
+	elseif text == "reserve" then
+		self.id = 4
+	elseif text == "regen" then
+		self.id = 5
+	end
+
+	return self
+end
+
+function PopupText:update(dt)
+	self.time = self.time + dt
+	if self.time > 0.7 then
+		self.alive = false
+	end
+end
+
+function PopupText:draw()
+	lg.drawq(img.popup_text, quad.popup_text[self.id], self.x, self.y-math.sqrt(self.time)*32, 0, 1, 1, 32, 0)
+end

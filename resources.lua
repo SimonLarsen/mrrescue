@@ -13,11 +13,11 @@ local IMAGE_FILES = {
 	"fire_wall", "fire_wall_small", "fire_floor",
 	"black_smoke", "black_smoke_small", "ashes", "sparkles", "savebeam",
 	"light_player", "light_fire", "light_fireball",
-	"red_screen", "circles", "warning_icons",
+	"red_screen", "circles", "warning_icons", "popup_text",
 	"item_coolant", "item_reserve", "item_suit", "item_tank", "item_regen",
 
 	"player_gun", "player_throw", "player_climb_down",
-	"player_climb_up", "player_running",
+	"player_climb_up", "player_running", "player_death",
 
 	"enemy_normal_run", "enemy_normal_hit", "enemy_normal_recover", "enemy_jumper_hit",
 	"enemy_jumper_jump", "enemy_jumper_recover", 
@@ -43,6 +43,7 @@ GOODLUCK_MESSAGES = {
 NO_CASUALTIES_MESSAGES = {
 	{"KEEP UP THE GOOD","WORK, BUDDY!","YOU'RE ON FIRE.","HE HE HE"}
 }
+
 --- Returns size of an Image as two return values
 -- Saves some typing when creating quads
 function getSize(img)
@@ -177,6 +178,15 @@ function loadResources()
 	quad.captain_dialog[1] = lg.newQuad(0,64,200,56, getSize(img.captain_dialog))
 
 	quad.splash = lg.newQuad(0, 0, 256, 200, getSize(img.splash))
+
+	quad.player_death_up   = lg.newQuad( 0, 0, 16, 24, getSize(img.player_death))
+	quad.player_death_down = lg.newQuad(16, 0, 16, 24, getSize(img.player_death))
+	quad.player_death_suit = lg.newQuad(32, 0, 16, 10, getSize(img.player_death))
+
+	quad.popup_text = {}
+	for i=0,5 do
+		quad.popup_text[i] = lg.newQuad(0,i*8, 64,8, getSize(img.popup_text))
+	end
 
 	-- Set audio tag volumes
 	love.audio.tags.sfx.setVolume(1.0)

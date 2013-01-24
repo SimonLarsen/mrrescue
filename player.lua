@@ -15,7 +15,7 @@ local BURN_DAMAGE = 0.5 -- Damage over time when touching enemies
 local TIME_DAMAGE = 0.008
 local FIRE_DIST = 1600
 
-local PS_RUN, PS_CLIMB, PS_CARRY, PS_THROW = 0,1,2,3 -- Player states
+PS_RUN, PS_CLIMB, PS_CARRY, PS_THROW, PS_DEAD = 0,1,2,3,4 -- Player states
 local GD_UP, GD_HORIZONTAL, GD_DOWN = 0,2,4 -- Gun directions
 
 local lg = love.graphics
@@ -182,6 +182,14 @@ function Player:update(dt)
 		if self.time <= 0 then
 			self:setState(PS_RUN)
 		end
+	-- DEAD STATE
+	elseif self.state == PS_DEAD then
+		self.yspeed = self.yspeed + GRAVITY*dt
+		self.time = self.time + dt*self.yspeed
+		if self.time > MAPH+32 then
+			ingame_state = INGAME_GAMEOVER_OUT
+			transition_time = 0
+		end
 	end
 
 	-- Regen water
@@ -203,6 +211,7 @@ function Player:update(dt)
 		if self:collideBox(v:getBBox()) == true then
 			self:applyItem(v)
 			map:addParticle(Sparkles.create(v.x+6, v.y+10, 15, 2))
+			map:addParticle(PopupText.create(v.id))
 			playSound("powerup")
 			v.alive = false
 			score = score + 500
@@ -216,8 +225,10 @@ function Player:update(dt)
 	self.temperature = cap(self.temperature, 0, self.max_temperature)
 
 	-- Detect death
-	if self.temperature >= self.max_temperature then
-		self.y = 10000
+	if self.temperature >= self.max_temperature and self.state ~= PS_DEAD then
+		self.time = self.fly
+		self.yspeed = -230
+		self.state = PS_DEAD
 	end
 end
 
@@ -694,6 +705,15 @@ function Player:draw()
 			self.anim:draw(self.flx, self.fly, 0,self.dir,1, 8, 22, 4)
 		else
 			self.anim:draw(self.flx, self.fly, 0,self.dir,1, 8, 22)
+		end
+	-- Dead from overheating
+	elseif self.state == PS_DEAD then
+		if self.yspeed < 0 then
+			lg.drawq(img.player_death, quad.player_death_up, self.flx, self.time, 0,self.dir,1, 8, 24)
+			lg.drawq(img.player_death, quad.player_death_suit, self.flx, self.fly, 0,self.dir,1, 7, 10)
+		else
+			lg.drawq(img.player_death, quad.player_death_suit, self.flx, self.fly, 0,self.dir,1, 7, 10)
+			lg.drawq(img.player_death, quad.player_death_down, self.flx, self.time, 0,self.dir,1, 8,25)
 		end
 	end
 end

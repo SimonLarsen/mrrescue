@@ -1,15 +1,21 @@
 ingame = {}
 
 local lg = love.graphics
-local INGAME_ACTIVE, INGAME_FADE_IN, INGAME_NEXTLEVEL_OUT, INGAME_FALL_OUT, INGAME_PRESCREEN = 0,1,2,3,4
+INGAME_ACTIVE, INGAME_FADE_IN, INGAME_NEXTLEVEL_OUT, INGAME_FALL_OUT, INGAME_PRESCREEN, INGAME_GAMEOVER_OUT, INGAME_GAMEOVER = 0,1,2,3,4,5,6
 
 function ingame.nextLevel()
-	score = score + 1000
-	section = section + 1
 	last_missed = #map.humans
 	casualties = casualties + last_missed
-	map = Map.create()
-	player:warp(map:getStart())
+
+	if casualties >= max_casualties then
+		ingame_state = INGAME_GAMEOVER
+	else
+		ingame_state = INGAME_PRESCREEN
+		score = score + 1000
+		section = section + 1
+		map = Map.create()
+		player:warp(map:getStart())
+	end
 end
 
 function ingame.newGame()
@@ -63,7 +69,7 @@ function ingame.update(dt)
 		warning_frame = (warning_frame + dt*2) % 2
 
 	-- Transition TO or FROM next level
-	elseif ingame_state == INGAME_NEXTLEVEL_OUT or ingame_state == INGAME_FALL_OUT or ingame_state == INGAME_FADE_IN then
+	elseif ingame_state == INGAME_NEXTLEVEL_OUT or ingame_state == INGAME_FALL_OUT or ingame_state == INGAME_FADE_IN or ingame_state == INGAME_GAMEOVER_OUT then
 		transition_time = transition_time + dt*15
 
 		-- Calculate translation offest
@@ -76,17 +82,19 @@ function ingame.update(dt)
 		if transition_time > 20 then
 			if ingame_state == INGAME_NEXTLEVEL_OUT then
 				ingame.nextLevel()
-				ingame_state = INGAME_PRESCREEN
 				setPrescreenMessage()
 			elseif ingame_state == INGAME_FALL_OUT then
 				player:warp(map:getStart())
 				ingame_state = INGAME_FADE_IN
 			elseif ingame_state == INGAME_FADE_IN then
 				ingame_state = INGAME_ACTIVE
+			elseif ingame_state == INGAME_GAMEOVER_OUT then
+				setPrescreenMessage()
+				ingame_state = INGAME_GAMEOVER
 			end
 			transition_time = 0
 		end
-	elseif ingame_state == INGAME_PRESCREEN then
+	elseif ingame_state == INGAME_PRESCREEN or ingame_state == INGAME_GAMEOVER then
 		transition_time = transition_time + dt*3
 	end
 end
@@ -97,7 +105,7 @@ function ingame.draw()
 	lg.scale(SCALE,SCALE)
 
 	if ingame_state == INGAME_ACTIVE or ingame_state == INGAME_FADE_IN
-	or ingame_state == INGAME_NEXTLEVEL_OUT or ingame_state == INGAME_FALL_OUT then
+	or ingame_state == INGAME_NEXTLEVEL_OUT or ingame_state == INGAME_FALL_OUT or ingame_state == INGAME_GAMEOVER_OUT then
 		-- Translate to center player
 		lg.push()
 		lg.translate(-math.floor(translate_x), -math.floor(translate_y))
@@ -108,6 +116,10 @@ function ingame.draw()
 		player:draw()
 		-- Draw front
 		map:drawFront()
+
+		if player.state == PS_DEAD then
+			player:draw()
+		end
 
 		-- Update lightmap
 		lg.pop()
@@ -135,7 +147,7 @@ function ingame.draw()
 		drawHUD()
 
 		-- Draw transition if eligible
-		if ingame_state == INGAME_NEXTLEVEL_OUT or ingame_state == INGAME_FALL_OUT then
+		if ingame_state == INGAME_NEXTLEVEL_OUT or ingame_state == INGAME_FALL_OUT or ingame_state == INGAME_GAMEOVER_OUT then
 			local frame = math.floor(transition_time)
 
 			for ix = 0,7 do
@@ -156,6 +168,9 @@ function ingame.draw()
 
 	elseif ingame_state == INGAME_PRESCREEN then
 		drawPrescreen()
+	
+	elseif ingame_state == INGAME_GAMEOVER then
+		drawGameover()
 	end
 
 	-- Draw debug information
@@ -172,9 +187,20 @@ function drawPrescreen()
 
 	local fr = math.floor(transition_time) % 2
 	lg.drawq(img.captain_dialog, quad.captain_dialog[fr], 28, 72)
-	drawPrescreenMessage(table.random(GOODLUCK_MESSAGES))
+	drawPrescreenMessage()
 
 	lg.printf("PRESS ANY KEY TO CONTINUE", 0, 150, WIDTH, "center")
+end
+
+function drawGameover()
+	local fr = math.floor(transition_time) % 2
+	lg.drawq(img.captain_dialog, quad.captain_dialog[fr], 28, 72)
+
+	if casualties >= max_casualties then
+		drawPrescreenMessage()
+	elseif player.state == PS_DEAD then
+		drawPrescreenMessage()
+	end
 end
 
 function drawPrescreenMessage()
@@ -184,14 +210,19 @@ function drawPrescreenMessage()
 end
 
 function setPrescreenMessage()
-	if section == 1 then
-		prescreen_message = table.random(GOODLUCK_MESSAGES)
+	if casualties >= max_casualties then
+		prescreen_message = {"TOO MANY CASUALTIES!"}
+
+	elseif player.state == PS_DEAD then
+		prescreen_message = {"OVERHEATED!"}
+
 	else
-		if last_missed > 0 then
+		if section == 1 then
+			prescreen_message = table.random(GOODLUCK_MESSAGES)
+		elseif last_missed > 0 then
 			if last_missed == 1 then
 				prescreen_message = {"HEY THERE, BUDDY!","YOU MISSED 1 PERSON.","TRY A LITTLE HARDER."}
 			else
-				--prescreen_message = {"HEY THERE, BUDDY!","YOU MISSED "..last_missed,"PEOPLE.","TRY A LITTLE HARDER."}
 				prescreen_message = {"HEY THERE, BUDDY!","YOU LET "..last_missed.." PEOPLE","BURN TO DEATH.","TRY A LITTLE HARDER."}
 			end
 		else
@@ -351,6 +382,8 @@ function ingame.keypressed(k, uni)
 	elseif ingame_state == INGAME_PRESCREEN then
 		ingame_state = INGAME_FADE_IN
 		transition_time = 0
+	elseif ingame_state == INGAME_GAMEOVER then
+		ingame.newGame()
 	end
 end
 
@@ -360,5 +393,7 @@ function ingame.joystickpressed(joy, k)
 	elseif ingame_state == INGAME_PRESCREEN then
 		ingame_state = INGAME_FADE_IN
 		transition_time = 0
+	elseif ingame_state == INGAME_GAMEOVER then
+		ingame.newGame()
 	end
 end
