@@ -426,6 +426,35 @@ function Map:hitCell(cx,cy,dir)
 	end
 end
 
+function Map:lineOfSight(x1,y1,x2,y2)
+	local minx = math.min(x1,x2)
+	local miny = math.min(y1,y2)
+	local width = math.abs(x1-x2)
+	local height = math.abs(y1-y2)
+
+	-- Collide with tiles
+	local cx,cy = math.floor(minx/16), math.floor(miny/16)
+	local endx = math.floor((minx+width)/16)
+	local endy = math.floor((miny+height)/16)
+	for iy=cy,endy do
+		for ix=cx,endx do
+			if map:collideCell(ix,iy) == true then
+				return false
+			end
+		end
+	end
+
+	-- Collide with objects
+	local bbox = {x=minx, y=miny, w=width, h=height}
+	for i,v in ipairs(map.objects) do
+		if v:collideBox(bbox) == true then
+			return false
+		end
+	end
+
+	return true
+end
+
 --- Destroy a window and adds shards particle effect
 --@param cx X-position of window
 --@param cy Y-position of upper tile of window

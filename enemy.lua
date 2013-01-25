@@ -61,6 +61,15 @@ function NormalEnemy:update(dt)
 			self.nextFire = math.random(self.FIRE_SPAWN_MIN, self.FIRE_SPAWN_MAX)
 		end
 
+		-- Follow player if in line of sight
+		local xdist = math.abs(self.x-player.x)
+		local ydist = math.abs(self.y-player.y)
+		if ydist < 64 and xdist < 256 and xdist > 16 then
+			if map:lineOfSight(self.x,self.y-12, player.x,player.y-12) then
+				self.dir = math.sign(player.x-self.x)
+			end
+		end
+
 	-- Getting hit
 	elseif self.state == EN_HIT then
 		if self.hit == false then
