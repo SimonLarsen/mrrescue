@@ -12,8 +12,9 @@ require("fire")
 require("particles")
 require("slam")
 -- gamestates
-require("ingame")
 require("splash")
+require("mainmenu")
+require("ingame")
 
 WIDTH = 256
 HEIGHT = 200
@@ -21,6 +22,7 @@ MAPW = 41*16
 MAPH = 16*16
 translate_x, translate_y = 0,0
 show_debug = false
+disable_music = true
 
 SCALE = 3
 local MIN_FRAMERATE = 1/15
@@ -28,7 +30,7 @@ local MAX_FRAMERATE = 1/120
 
 local lg = love.graphics
 
-STATE_SPLASH, STATE_INGAME = 0,1
+STATE_SPLASH, STATE_INGAME, STATE_MAINMENU = 0,1,2
 
 function love.load()
 	lg.setBackgroundColor(0,0,0)
@@ -36,7 +38,7 @@ function love.load()
 	lg.setDefaultImageFilter("nearest","nearest")
 
 	loadResources()
-	--playMusic(table.random({"rockerronni","bundesliga"}))
+	playMusic("opening")
 
 	transition_time = 0
 	state = STATE_SPLASH
@@ -60,23 +62,33 @@ end
 function love.draw()
 	if state == STATE_INGAME then
 		ingame.draw()
+	elseif state == STATE_MAINMENU then
+		mainmenu.draw()
 	elseif state == STATE_SPLASH then
 		splash.draw()
 	end
 end
 
 function love.keypressed(k, uni)
+	if k == "escape" then
+		love.event.quit()
+	end
+
 	if state == STATE_INGAME then
 		ingame.keypressed(k, uni)
+	elseif state == STATE_MAINMENU then
+		mainmenu.keypressed(k, uni)
 	elseif state == STATE_SPLASH then
-		ingame.newGame()
+		state = STATE_MAINMENU
 	end
 end
 
 function love.joystickpressed(joy, k)
 	if state == STATE_INGAME then
 		ingame.joystickpressed(joy, k)
+	elseif state == STATE_MAINMENU then
+		mainmenu.joystickpressed(joy, k)
 	elseif state == STATE_SPLASH then
-		ingame.newGame()
+		state = STATE_MAINMENU
 	end
 end

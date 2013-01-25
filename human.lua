@@ -137,7 +137,7 @@ function Human:update(dt)
 	end
 
 	-- Check if thrown out of window
-	if self.x < 0 or self.x > MAPW or self.y > MAPH+64 then
+	if self.x < -16 or self.x > MAPW+16 or self.y > MAPH+64 then
 		saved = saved + 1
 		score = score + SCORE
 		self.alive = false

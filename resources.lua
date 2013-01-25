@@ -198,6 +198,10 @@ function playSound(name)
 end
 
 function playMusic(name)
+	if disable_music == true then
+		return
+	end
+
 	-- Stop previously playing music if any
 	if music then
 		music:stop()

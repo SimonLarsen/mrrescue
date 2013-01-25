@@ -35,6 +35,7 @@ function ingame.newGame()
 	state = STATE_INGAME
 	ingame_state = INGAME_PRESCREEN
 	setPrescreenMessage()
+	playMusic(table.random({"rockerronni","bundesliga"}))
 end
 
 function ingame.update(dt)
@@ -367,10 +368,6 @@ function drawDebug()
 end
 
 function ingame.keypressed(k, uni)
-	if k == "escape" then
-		love.event.quit()
-	end
-
 	if ingame_state == INGAME_ACTIVE then
 		if k == "f1" then
 			show_debug = not show_debug
