@@ -43,11 +43,13 @@ function Human:update(dt)
 	-- Idle state
 	if self.state == HS_IDLE then
 		self.time = self.time - dt
+		-- Go to walk state if idle time is over
 		if self.time <= 0 then
 			self:setState(HS_WALK)
 		end
 
 		self:collideFire()
+		self:collideEnemies()
 
 	-- Walking state
 	elseif self.state == HS_WALK then
@@ -74,16 +76,20 @@ function Human:update(dt)
 		end
 
 		self.time = self.time - dt
+		-- Go to idle state if walk time if over
 		if self.time <= 0 then
 			self:setState(HS_IDLE)
 		end
 
 		self:collideFire()
+		self:collideEnemies()
 	
 	-- Panic state
 	elseif self.state == HS_PANIC then
 		self:collideFire()
+		self:collideEnemies()
 		
+		-- Check if it is safe to continue
 		if self:isTrapped() == false then
 			self:setState(HS_IDLE)
 		end
@@ -156,10 +162,19 @@ function Human:collideFire()
 		for i,v in pairs(w) do
 			if self:collideBox(v:getBBox()) == true then
 				self:setState(HS_BURN)
+				return
 			end
 		end
 	end
+end
 
+function Human:collideEnemies()
+	for i,v in ipairs(map.enemies) do
+		if self:collideBox(v:getBBox()) == true then
+			self:setState(HS_BURN)
+			return
+		end
+	end
 end
 
 function Human:isTrapped()
