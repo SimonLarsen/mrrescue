@@ -2,6 +2,13 @@ splash = {}
 
 lg = love.graphics
 
+function splash.enter()
+	state = STATE_SPLASH
+	transition_time = 0
+
+	playMusic("opening")
+end
+
 function splash.draw()
 	lg.push()
 	lg.scale(SCALE)
@@ -24,4 +31,14 @@ end
 
 function splash.update(dt)
 	transition_time = transition_time + dt
+end
+
+function splash.keypressed(k,uni)
+	if k == "return" or k == " " then
+		mainmenu.enter()
+	end
+end
+
+function splash.joystickpressed(joy, k)
+	mainmenu.enter()
 end

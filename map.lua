@@ -10,11 +10,10 @@ local floor_files = {
 	"2-2.lua"
 }
 
-function Map.create()
+function Map.create(section, maptype)
 	local self = setmetatable({}, Map)
 
 	local file = love.filesystem.load("maps/base.lua")()
-
 	for i,v in ipairs(file.layers) do
 		if v.name == "main" then
 			self.data = v.data

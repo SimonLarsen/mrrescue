@@ -22,7 +22,7 @@ MAPW = 41*16
 MAPH = 16*16
 translate_x, translate_y = 0,0
 show_debug = false
-disable_music = true
+--disable_music = true
 
 SCALE = 3
 local MIN_FRAMERATE = 1/15
@@ -38,10 +38,8 @@ function love.load()
 	lg.setDefaultImageFilter("nearest","nearest")
 
 	loadResources()
-	playMusic("opening")
 
-	transition_time = 0
-	state = STATE_SPLASH
+	splash.enter()
 end
 
 function love.update(dt)
@@ -79,7 +77,7 @@ function love.keypressed(k, uni)
 	elseif state == STATE_MAINMENU then
 		mainmenu.keypressed(k, uni)
 	elseif state == STATE_SPLASH then
-		state = STATE_MAINMENU
+		splash.keypressed(k, uni)
 	end
 end
 
@@ -89,6 +87,6 @@ function love.joystickpressed(joy, k)
 	elseif state == STATE_MAINMENU then
 		mainmenu.joystickpressed(joy, k)
 	elseif state == STATE_SPLASH then
-		state = STATE_MAINMENU
+		splash.joystickpressed(joy, k)
 	end
 end

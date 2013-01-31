@@ -2,7 +2,12 @@ mainmenu = {}
 
 lg = love.graphics
 
+function mainmenu.enter()
+	state = STATE_MAINMENU
+end
+
 function mainmenu.update(dt)
+
 end
 
 function mainmenu.draw()
@@ -22,10 +27,10 @@ end
 
 function mainmenu.keypressed(k, uni)
 	if k == "return" or k == " " then
-		ingame.newGame()
+		ingame.enter()
 	end
 end
 
 function mainmenu.joystickpressed(joy, k)
-	
+	ingame.enter()
 end

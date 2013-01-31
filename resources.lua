@@ -190,7 +190,6 @@ function loadResources()
 
 	-- Set audio tag volumes
 	love.audio.tags.sfx.setVolume(1.0)
-	love.audio.tags.music.setVolume(0.4)
 end
 
 function playSound(name)
@@ -210,6 +209,6 @@ function playMusic(name)
 	music = love.audio.newSource("data/sfx/"..name..".ogg", "stream")
 	music:addTags("music")
 	music:setLooping(true)
-	love.audio.tags.music.setVolume(0.4)
+	love.audio.tags.music.setVolume(0.7)
 	love.audio.play(music)
 end

@@ -3,6 +3,13 @@ ingame = {}
 local lg = love.graphics
 INGAME_ACTIVE, INGAME_FADE_IN, INGAME_NEXTLEVEL_OUT, INGAME_FALL_OUT, INGAME_PRESCREEN, INGAME_GAMEOVER_OUT, INGAME_GAMEOVER = 0,1,2,3,4,5,6
 
+function ingame.enter()
+	state = STATE_INGAME
+	playMusic(table.random({"rockerronni","bundesliga"}))
+
+	ingame.newGame()
+end
+
 function ingame.nextLevel()
 	last_missed = #map.humans
 	casualties = casualties + last_missed
@@ -13,12 +20,13 @@ function ingame.nextLevel()
 		ingame_state = INGAME_PRESCREEN
 		score = score + 1000
 		section = section + 1
-		map = Map.create()
+		map = Map.create(section)
 		player:warp(map:getStart())
 	end
 end
 
 function ingame.newGame()
+	ingame_state = INGAME_PRESCREEN
 	max_casualties = 3
 	casualties = 0
 	score = 0
@@ -29,13 +37,10 @@ function ingame.newGame()
 	transition_time = 0
 	warning_frame = 0
 
-	map = Map.create()
+	map = Map.create(section)
 	player = Player.create(map:getStart())
 
-	state = STATE_INGAME
-	ingame_state = INGAME_PRESCREEN
 	setPrescreenMessage()
-	playMusic(table.random({"rockerronni","bundesliga"}))
 end
 
 function ingame.update(dt)
