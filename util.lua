@@ -26,6 +26,10 @@ function math.sign(n)
 	end
 end
 
+function math.round(x)
+	return math.floor(x+0.5)
+end
+
 function collideX(self)
 	if self.xspeed == 0 then return end
 

@@ -22,6 +22,7 @@ function Map.create(section, maptype)
 	end
 	self.width = file.width
 	self.height = file.height
+	self.section = section
 
 	self.front_batch = lg.newSpriteBatch(img.tiles, 256)
 	self.back_batch  = lg.newSpriteBatch(img.tiles, 256)
@@ -159,7 +160,7 @@ end
 
 --- Adds a fire block if possible
 function Map:addFire(x,y)
-	if x < 3 or x > 37 then
+	if self:canBurnCell(x,y) == false or x < 3 or x > 37 then
 		return
 	end
 
@@ -292,8 +293,8 @@ function Map:addFloor(floor)
 	local yoffset = 5*(floor-1) -- 0, 5 or 10
 
 	local file = love.filesystem.load("maps/floors/"..table.random(floor_files))()
+	-- Load tiles
 	for i,v in ipairs(file.layers) do
-		-- Load tiles
 		if v.name == "main" then
 			for iy = 0,file.height-1 do
 				for ix = 3,file.width-4 do
@@ -348,7 +349,6 @@ function Map:addRoom(x,y,width,room)
 		local count = math.floor(width/5)
 		local sep = math.floor(width/(count+1))
 		for i=1,count do
-			--local rx = math.random(x+1,x+width-2)*16+8
 			if math.random(1,2) == 1 then
 				table.insert(self.humans, Human.create((x+i*sep)*16+8, (y+4)*16))
 			else
@@ -358,14 +358,23 @@ function Map:addRoom(x,y,width,room)
 
 	-- Enemy room
 	elseif random == 2 then
-		random = math.random(1,3)
-		local rx = math.random(x+1, x+width-2)*16+8
-		if random == 1 then
-			table.insert(self.enemies, NormalEnemy.create(rx, (y+4)*16))
-		elseif random == 2 then
-			table.insert(self.enemies, JumperEnemy.create(rx, (y+4)*16))
-		else
-			table.insert(self.enemies, VolcanoEnemy.create(rx, (y+4)*16))
+		local count = 1
+		if self.section >= 15 and math.random(1,5) == 1 then count = 2 end
+		local sep = math.floor(width/(count+1))
+
+		local enemy_types = 1
+		if self.section >= 3 then enemy_types = 2 end
+		if self.section >= 6 then enemy_types = 3 end
+		for i=1,count do
+			random = math.random(1,enemy_types)
+			local rx = (x+i*sep)*16+8
+			if random == 1 then
+				table.insert(self.enemies, NormalEnemy.create(rx, (y+4)*16))
+			elseif random == 2 then
+				table.insert(self.enemies, JumperEnemy.create(rx, (y+4)*16))
+			else
+				table.insert(self.enemies, VolcanoEnemy.create(rx, (y+4)*16))
+			end
 		end
 	end
 end
@@ -407,8 +416,11 @@ function Map:canBurnCell(cx,cy)
 		return false
 	end
 	local tile = self:get(cx,cy)
-	if tile >= 255 and tile <= 256
-	or tile >= 239 and tile <= 240 then
+	local below = self:get(cx,cy+1)
+	if tile == 239 or tile == 240 -- window top
+	or tile == 255 or tile == 256 -- window bottom
+	or tile == 137 or tile == 153 -- inside ladders
+	or below == 92 then			  -- above ladder
 		return false
 	end
 	return true

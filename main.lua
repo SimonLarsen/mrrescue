@@ -20,22 +20,20 @@ WIDTH = 256
 HEIGHT = 200
 MAPW = 41*16
 MAPH = 16*16
-translate_x, translate_y = 0,0
 show_debug = false
---disable_music = true
+disable_music = true
 
 SCALE = 3
 local MIN_FRAMERATE = 1/15
 local MAX_FRAMERATE = 1/120
-
-local lg = love.graphics
+LAST_SECTION = 30
 
 STATE_SPLASH, STATE_INGAME, STATE_MAINMENU = 0,1,2
 
 function love.load()
-	lg.setBackgroundColor(0,0,0)
-	lg.setMode(WIDTH*SCALE, HEIGHT*SCALE, false, true)
-	lg.setDefaultImageFilter("nearest","nearest")
+	love.graphics.setBackgroundColor(0,0,0)
+	love.graphics.setMode(WIDTH*SCALE, HEIGHT*SCALE, false, true)
+	love.graphics.setDefaultImageFilter("nearest","nearest")
 
 	loadResources()
 

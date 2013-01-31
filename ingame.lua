@@ -5,6 +5,7 @@ INGAME_ACTIVE, INGAME_FADE_IN, INGAME_NEXTLEVEL_OUT, INGAME_FALL_OUT, INGAME_PRE
 
 function ingame.enter()
 	state = STATE_INGAME
+	translate_x, translate_y = 0,0
 	playMusic(table.random({"rockerronni","bundesliga"}))
 
 	ingame.newGame()

@@ -1,8 +1,6 @@
 Fire = { max_health = 0.4 }
 Fire.__index = Fire
 
-local MIN_SPREAD_WAIT = 4
-local MAX_SPREAD_WAIT = 10
 local REGEN_RATE = 0.05
 local SCORE = 20
 
@@ -15,7 +13,9 @@ function Fire.create(x,y,map)
 	self.x, self.y = x*16, y*16
 	self.frame = math.random()*5
 	self.flframe = 0
-	self.nextSpread = math.random(MIN_SPREAD_WAIT, MAX_SPREAD_WAIT)
+	self.MIN_SPREAD_WAIT = math.round(4 - map.section*(2/LAST_SECTION))
+	self.MAX_SPREAD_WAIT = math.round(14 - map.section*(8/LAST_SECTION))
+	self.nextSpread = math.random(self.MIN_SPREAD_WAIT, self.MAX_SPREAD_WAIT)
 	self.bbox = {x=self.x+4, y=self.y+4, w=8, h=8}
 
 	self.ceiling = map:collideCell(self.cx, self.cy-1)
@@ -32,9 +32,9 @@ function Fire:update(dt)
 	end
 
 	if self.nextSpread <= 0 then
-		self.nextSpread = math.random(MIN_SPREAD_WAIT, MAX_SPREAD_WAIT)
+		self.nextSpread = math.random(self.MIN_SPREAD_WAIT, self.MAX_SPREAD_WAIT)
 		local cx,cy = self.cx, self.cy
-		while (cx == self.cx and cy == self.cy) or map:canBurnCell(cx,cy) == false do
+		while (cx == self.cx and cy == self.cy) do
 			if math.random(0,1) == 0 then -- vertically
 				if math.random(0,1) == 0 then -- up
 					cx, cy = self.cx, self.cy-1
