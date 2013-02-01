@@ -621,6 +621,25 @@ function Player:applyItem(item)
 	end
 end
 
+function Player:stealItem()
+	local sum = self.num_suits + self.num_tanks + self.num_regens
+	if sum == 0 then return false end
+
+	local val = math.random(1,sum)
+	if self.num_suits > 0 and val <= self.num_suits then
+		self.num_suits = cap(self.num_suits - 1, 0, 3)
+		self.max_temperature = self.max_temperature + 0.2
+	elseif self.num_tanks > 0 and val <= self.num_suits+self.num_tanks then
+		self.num_tanks = cap(self.num_tanks - 1, 0, 3)
+		self.water_capacity = self.water_capacity + 1
+	else
+		self.num_regens = cap(self.num_regens - 1, 0, 3)
+		self.regen_rate = self.regen_rate + 0.5
+	end
+
+	return true
+end
+
 --- Makes the player jump
 function Player:jump()
 	if self.onGround == true then

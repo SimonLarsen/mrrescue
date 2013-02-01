@@ -500,6 +500,14 @@ function ThiefEnemy:update(dt)
 				self.dir = math.sign(player.x-self.x)
 			end
 		end
+
+		-- Check collision with player
+		if player:collideBox(self:getBBox()) == true then
+			player:stealItem()
+			map:addFire(math.floor(self.x/16), math.floor((self.y-4)/16))
+			map:addParticle(BlackSmoke.create(self.x, self.y-8))
+			self.alive = false
+		end
 	end
 end
 
