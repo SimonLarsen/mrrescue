@@ -5,6 +5,7 @@ local lg = love.graphics
 function levelselection.enter()
 	state = STATE_LEVELSELECTION
 	level = 1
+	playMusic("menujazz")
 end
 
 function levelselection.update(dt)
@@ -34,7 +35,7 @@ function levelselection.draw()
 	lg.print(DIFFICULTY_NAMES[level], 16, 92)
 	lg.print("FLOORS: "..level*30, 16, 106)
 	lg.print("MISSES: "..string.rep("@",2+level), 16, 120)
-	lg.print("BEST: 9000", 16, 134)
+	lg.print("BEST: "..level*1234, 16, 134)
 
 	lg.pop()
 end
