@@ -33,7 +33,7 @@ function levelselection.draw()
 	lg.printf(BUILDING_NAMES[level][2], 16, 66, 107, "center")
 	lg.print(DIFFICULTY_NAMES[level], 16, 92)
 	lg.print("FLOORS: "..level*30, 16, 106)
-	lg.print("MISSES: "..string.rep("@",level*3), 16, 120)
+	lg.print("MISSES: "..string.rep("@",2+level), 16, 120)
 	lg.print("BEST: 9000", 16, 134)
 
 	lg.pop()

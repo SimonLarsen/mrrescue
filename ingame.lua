@@ -13,7 +13,7 @@ end
 
 function ingame.newGame()
 	ingame_state = INGAME_PRESCREEN
-	max_casualties = level*3
+	max_casualties = 2+level
 
 	casualties = 0
 	score = 0

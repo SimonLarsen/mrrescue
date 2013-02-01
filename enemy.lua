@@ -1,7 +1,7 @@
 -- %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 -- %           Normal enemy           %
 -- %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-NormalEnemy = { MOVE_SPEED = 80, FIRE_SPAWN_MIN = 7, FIRE_SPAWN_MAX = 25, MAX_HEALTH = 1.2, SCORE = 100 }
+NormalEnemy = { MOVE_SPEED = 80, FIRE_SPAWN_MIN = 7, FIRE_SPAWN_MAX = 25, MAX_HEALTH = 1.5, SCORE = 100 }
 NormalEnemy.__index = NormalEnemy
 
 local EN_RUN, EN_HIT, EN_RECOVER, EN_IDLE, EN_JUMPING, EN_SHOOT = 0,1,2,3,4,5
@@ -123,7 +123,7 @@ end
 -- %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 -- %        Angry Normal enemy        %
 -- %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-AngryNormalEnemy = { SCORE = 200 }
+AngryNormalEnemy = { SCORE = 200, MAX_HEALTH = 3.0 }
 AngryNormalEnemy.__index = AngryNormalEnemy
 setmetatable(AngryNormalEnemy, NormalEnemy)
 
@@ -203,7 +203,7 @@ end
 -- %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 -- %           Jumper enemy           %
 -- %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-JumperEnemy = { MOVE_SPEED = 100, JUMP_DELAY = 1, JUMP_POWER = 150, MAX_HEALTH = 1.0, SCORE = 125,
+JumperEnemy = { MOVE_SPEED = 100, JUMP_DELAY = 1, JUMP_POWER = 150, MAX_HEALTH = 1.5, SCORE = 125,
 				GRAVITY = 350, corners = {-6, 6, -24, -0.5 }, MIN_FIRE_TIME = 3, MAX_FIRE_TIME = 13}
 JumperEnemy.__index = JumperEnemy
 
@@ -312,7 +312,7 @@ end
 -- %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 -- %     Angry Jumper enemy     %
 -- %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-AngryJumperEnemy = {}
+AngryJumperEnemy = { MAX_HEALTH = 3.0, MIN_FIRE_TIME = 3, MAX_FIRE_TIME = 8 }
 AngryJumperEnemy.__index = AngryJumperEnemy
 setmetatable(AngryJumperEnemy, JumperEnemy)
 
@@ -326,13 +326,9 @@ function AngryJumperEnemy.create(x,y)
 end
 
 function AngryJumperEnemy:update(dt)
-	if self.state == EN_IDLE then
-		self.nextJump = self.nextJump - dt
-		if self.nextJump <= 0 then
-			self.state = EN_JUMPING
-			self.yspeed = -self.JUMP_POWER
-		end
+	JumperEnemy.update(self,dt)
 
+	if self.state == EN_IDLE then
 		-- Follow player if in line of sight
 		local xdist = math.abs(self.x-player.x)
 		local ydist = math.abs(self.y-player.y)
@@ -341,31 +337,7 @@ function AngryJumperEnemy:update(dt)
 				self.dir = math.sign(player.x-self.x)
 			end
 		end
-
-	elseif self.state == EN_JUMPING then
-		self.xspeed = self.MOVE_SPEED*self.dir
-		self.x = self.x + self.xspeed*dt
-		if collideX(self) == true then
-			self.dir = self.dir*-1
-		end
-
-		self.yspeed = self.yspeed + self.GRAVITY*dt
-		self.y = self.y + self.yspeed*dt
-		if collideY(self) == true then
-			if self.yspeed > 0 then
-				self.nextFire = self.nextFire - 1
-				if self.nextFire <= 0 then
-					self.nextFire = math.random(self.MIN_FIRE_TIME, self.MAX_FIRE_TIME)
-					map:addFire(math.floor(self.x/16), math.floor((self.y-8)/16))
-				end
-				self.state = EN_IDLE
-				self.nextJump = self.JUMP_DELAY
-			end
-			self.yspeed = 0
-		end
 	end
-
-	self.anim:update(dt)
 end
 
 function AngryJumperEnemy:draw()
@@ -387,7 +359,7 @@ end
 -- %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 -- %          Volcano enemy          %
 -- %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-VolcanoEnemy = { MOVE_SPEED = 60, MAX_HEALTH = 1.2, SHOOT_DELAY = 2, SHOT_COUNT = 4, SCORE = 200 }
+VolcanoEnemy = { MOVE_SPEED = 60, MAX_HEALTH = 1.6, SHOOT_DELAY = 2, SHOT_COUNT = 4, SCORE = 200 }
 VolcanoEnemy.__index = VolcanoEnemy
 
 function VolcanoEnemy.create(x,y)
@@ -488,7 +460,7 @@ end
 -- %%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 -- %    Angry Volcano enemy    %
 -- %%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-AngryVolcanoEnemy = {}
+AngryVolcanoEnemy = { MAX_HEALTH = 3.0 }
 AngryVolcanoEnemy.__index = AngryVolcanoEnemy
 setmetatable(AngryVolcanoEnemy, VolcanoEnemy)
 

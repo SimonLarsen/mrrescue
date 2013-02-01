@@ -14,7 +14,7 @@ function Fire.create(x,y,map)
 	self.frame = math.random()*5
 	self.flframe = 0
 	self.MIN_SPREAD_WAIT = math.round(4 - map.section*(2/LAST_SECTION))
-	self.MAX_SPREAD_WAIT = math.round(14 - map.section*(8/LAST_SECTION))
+	self.MAX_SPREAD_WAIT = math.round(12 - map.section*(7/LAST_SECTION))
 	self.nextSpread = math.random(self.MIN_SPREAD_WAIT, self.MAX_SPREAD_WAIT)
 	self.bbox = {x=self.x+4, y=self.y+4, w=8, h=8}
 

@@ -42,6 +42,25 @@ function Map.create(section, level)
 
 	self.background = img.night
 
+	self.minenemy = 1
+	self.maxenemy = 1
+	if self.section >= 34 then
+		self.minenemy = 4
+		self.maxenemy = 7
+	elseif self.section >= 28 then
+		self.minenemy = 3
+		self.maxenemy = 6
+	elseif self.section >= 20 then
+		self.minenemy = 2
+		self.maxenemy = 5
+	elseif self.section >= 13 then
+		self.maxenemy = 4
+	elseif self.section >= 6 then
+		self.maxenemy = 3
+	elseif self.section >= 3 then
+		self.maxenemy = 2
+	end
+
 	self:populate()
 
 	return self
@@ -363,7 +382,7 @@ function Map:addRoom(x,y,width,room)
 		local sep = math.floor(width/(count+1))
 
 		for i=1,count do
-			random = math.random(1,4)
+			random = math.random(self.minenemy, self.maxenemy)
 			local rx = (x+i*sep)*16+8
 			if random == 1 then
 				table.insert(self.enemies, NormalEnemy.create(rx, (y+4)*16))
@@ -377,6 +396,8 @@ function Map:addRoom(x,y,width,room)
 				table.insert(self.enemies, AngryJumperEnemy.create(rx, (y+4)*16))
 			elseif random == 6 then
 				table.insert(self.enemies, AngryVolcanoEnemy.create(rx, (y+4)*16))
+			elseif random == 7 then
+				-- TODO: Add Thief enemy
 			end
 		end
 	end
