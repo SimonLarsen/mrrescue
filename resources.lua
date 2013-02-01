@@ -40,7 +40,7 @@ local IMAGE_FILES = {
 
 local BACKGROUND_FILES = { "mountains", "night" }
 
-local SOUND_FILES = { "powerup" }
+local SOUND_FILES = { "powerup", "door", "empty" }
 
 NUM_ROOMS = { [10] = 6, [11] = 6, [17] = 6, [24] = 6 }
 
@@ -77,7 +77,6 @@ function loadResources()
 	for i,v in ipairs(SOUND_FILES) do
 		snd[v] = love.audio.newSource("data/sfx/"..v..".wav","static")
 		snd[v]:addTags("sfx")
-		if snd[v] == nil then print("HDWJAKDJKA") end
 	end
 
 	img.human_run = { img.human_1_run, img.human_2_run, img.human_3_run, img.human_4_run }
@@ -228,6 +227,6 @@ function playMusic(name)
 	music = love.audio.newSource("data/sfx/"..name..".ogg", "stream")
 	music:addTags("music")
 	music:setLooping(true)
-	love.audio.tags.music.setVolume(0.7)
+	love.audio.tags.music.setVolume(0.3)
 	love.audio.play(music)
 end

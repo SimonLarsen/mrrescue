@@ -64,6 +64,7 @@ function Door:shot(dt,dir)
 		self.xspeed = 50*dir
 		self.yspeed = -100
 		score = score + SCORE
+		playSound("door")
 	end
 end
 

@@ -554,6 +554,10 @@ function Player:action(action)
 		if self.state == PS_CLIMB then
 			self:leaveLadder()
 		end
+	elseif action == "shoot" then
+		if self.state == PS_RUN and self.overloaded == true then
+			playSound("empty")
+		end
 	end
 end
 
