@@ -363,7 +363,7 @@ function Map:addRoom(x,y,width,room)
 	end
 
 	local random = math.random(1,2)
-	-- Human room
+	-- Human/fire room
 	if random == 1 then
 		local count = math.floor(width/5)
 		local sep = math.floor(width/(count+1))
@@ -397,7 +397,7 @@ function Map:addRoom(x,y,width,room)
 			elseif random == 6 then
 				table.insert(self.enemies, AngryVolcanoEnemy.create(rx, (y+4)*16))
 			elseif random == 7 then
-				-- TODO: Add Thief enemy
+				table.insert(self.enemies, ThiefEnemy.create(rx, (y+4)*16))
 			end
 		end
 	end
@@ -443,8 +443,8 @@ function Map:canBurnCell(cx,cy)
 	local below = self:get(cx,cy+1)
 	if tile == 239 or tile == 240 -- window top
 	or tile == 255 or tile == 256 -- window bottom
-	or tile == 137 or tile == 153 -- inside ladders
-	or below == 92 then			  -- above ladder
+	or tile == 137 or tile == 153 or tile == 21 -- inside ladders
+	or below == 5 then			  -- above ladder
 		return false
 	end
 	return true

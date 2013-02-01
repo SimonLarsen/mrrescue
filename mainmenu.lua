@@ -23,17 +23,10 @@ function mainmenu.draw()
 	lg.setFont(font.bold)
 	for i=1,5 do
 		if i == selection then
-			lg.print(">", 140, 91+i*13)
+			lg.print(">", 144, 91+i*13)
 		end
-		lg.print(MENU_STRINGS[i], 150, 91+i*13)
+		lg.print(MENU_STRINGS[i], 152, 91+i*13)
 	end
-	--[[
-	lg.print("> START GAME", 150, 104)
-	lg.print("HIGHSCORES", 150, 117)
-	lg.print("OPTIONS", 150, 130)
-	lg.print("HISTORY", 150, 143)
-	lg.print("EXIT", 150, 156)
-	]]
 
 	lg.pop()
 end

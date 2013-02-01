@@ -71,7 +71,7 @@ function Player.create(x,y)
 	
 	-- Keyboard key binds
 	self.keys = {
-		up = "w", down = "s", left = "a", right = "d", jump = " ", shoot = "j", action = "k"
+		up = "up", down = "down", left = "left", right = "right", jump = "s", shoot = "d", action = "a"
 	}
 	-- Joystick to used
 	self.joystick = 1
@@ -609,14 +609,14 @@ function Player:applyItem(item)
 		self.temperature = cap(self.temperature - 0.25, 0, self.max_temperature)
 	elseif item.id == "reserve" then
 		self.hasReserve = true
-	elseif item.id == "suit" and self.num_suits < 3 then
-		self.num_suits = self.num_suits + 1
+	elseif item.id == "suit" then
+		self.num_suits = cap(self.num_suits + 1, 0, 3)
 		self.max_temperature = self.max_temperature + 0.2
-	elseif item.id == "tank" and self.num_tanks < 3 then
-		self.num_tanks = self.num_tanks + 1
+	elseif item.id == "tank" then
+		self.num_tanks = cap(self.num_tanks + 1, 0, 3)
 		self.water_capacity = self.water_capacity + 1
-	elseif item.id == "regen" and self.num_regens < 3 then
-		self.num_regens = self.num_regens + 1
+	elseif item.id == "regen" then
+		self.num_regens = cap(self.num_regens + 1, 0, 3)
 		self.regen_rate = self.regen_rate + 0.5
 	end
 end
