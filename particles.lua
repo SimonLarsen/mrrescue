@@ -196,6 +196,8 @@ function PopupText.create(text)
 		self.id = 4
 	elseif text == "regen" then
 		self.id = 5
+	elseif text == "theft" then
+		self.id = 6
 	end
 
 	return self

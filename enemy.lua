@@ -503,9 +503,13 @@ function ThiefEnemy:update(dt)
 
 		-- Check collision with player
 		if player:collideBox(self:getBBox()) == true then
-			player:stealItem()
+			if player:stealItem() == true then
+				map:addParticle(PopupText.create("theft"))
+			end
 			map:addFire(math.floor(self.x/16), math.floor((self.y-4)/16))
 			map:addParticle(BlackSmoke.create(self.x, self.y-8))
+			map:addParticle(BlackSmoke.create(self.x-6, self.y-18))
+			map:addParticle(BlackSmoke.create(self.x+6, self.y-18))
 			self.alive = false
 		end
 	end

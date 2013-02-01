@@ -193,7 +193,7 @@ function loadResources()
 	quad.player_death_suit = lg.newQuad(32, 0, 16, 10, getSize(img.player_death))
 
 	quad.popup_text = {}
-	for i=0,5 do
+	for i=0,6 do
 		quad.popup_text[i] = lg.newQuad(0,i*8, 64,8, getSize(img.popup_text))
 	end
 
