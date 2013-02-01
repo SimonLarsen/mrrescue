@@ -27,10 +27,10 @@ end
 
 function mainmenu.keypressed(k, uni)
 	if k == "return" or k == " " then
-		ingame.enter()
+		levelselection.enter()
 	end
 end
 
 function mainmenu.joystickpressed(joy, k)
-	ingame.enter()
+	levelselection.enter()
 end

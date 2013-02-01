@@ -11,6 +11,25 @@ function ingame.enter()
 	ingame.newGame()
 end
 
+function ingame.newGame()
+	ingame_state = INGAME_PRESCREEN
+	max_casualties = level*3
+
+	casualties = 0
+	score = 0
+	saved = 0
+	section = 1
+	last_missed = 0
+
+	transition_time = 0
+	warning_frame = 0
+
+	map = Map.create(section, level)
+	player = Player.create(map:getStart())
+
+	setPrescreenMessage()
+end
+
 function ingame.nextLevel()
 	last_missed = #map.humans
 	casualties = casualties + last_missed
@@ -21,27 +40,9 @@ function ingame.nextLevel()
 		ingame_state = INGAME_PRESCREEN
 		score = score + 1000
 		section = section + 1
-		map = Map.create(section)
+		map = Map.create(section, level)
 		player:warp(map:getStart())
 	end
-end
-
-function ingame.newGame()
-	ingame_state = INGAME_PRESCREEN
-	max_casualties = 3
-	casualties = 0
-	score = 0
-	saved = 0
-	section = 1
-	last_missed = 0
-
-	transition_time = 0
-	warning_frame = 0
-
-	map = Map.create(section)
-	player = Player.create(map:getStart())
-
-	setPrescreenMessage()
 end
 
 function ingame.update(dt)

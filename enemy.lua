@@ -61,15 +61,6 @@ function NormalEnemy:update(dt)
 			self.nextFire = math.random(self.FIRE_SPAWN_MIN, self.FIRE_SPAWN_MAX)
 		end
 
-		-- Follow player if in line of sight
-		local xdist = math.abs(self.x-player.x)
-		local ydist = math.abs(self.y-player.y)
-		if ydist < 64 and xdist < 256 and xdist > 16 then
-			if map:lineOfSight(self.x,self.y-12, player.x,player.y-12) then
-				self.dir = math.sign(player.x-self.x)
-			end
-		end
-
 	-- Getting hit
 	elseif self.state == EN_HIT then
 		if self.hit == false then
@@ -127,6 +118,86 @@ end
 
 function NormalEnemy:getBBox()
 	return {x = self.x-5, y = self.y-15, w = 10, h = 15}
+end
+
+-- %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+-- %        Angry Normal enemy        %
+-- %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+AngryNormalEnemy = { SCORE = 200 }
+AngryNormalEnemy.__index = AngryNormalEnemy
+setmetatable(AngryNormalEnemy, NormalEnemy)
+
+function AngryNormalEnemy.create(x,y)
+	local self = NormalEnemy.create(x,y)
+	setmetatable(self, AngryNormalEnemy)
+
+	self.anims[EN_RUN].img = img.enemy_angrynormal_run
+	self.anims[EN_HIT].img = img.enemy_angrynormal_hit
+	self.anims[EN_RECOVER].img = img.enemy_angrynormal_recover
+
+	self.anim = self.anims[self.state]
+
+	return self
+end
+
+function AngryNormalEnemy:update(dt)
+	-- Running state
+	if self.state == EN_RUN then
+		local oldx = self.x
+		self.x = self.x + self.dir*self.MOVE_SPEED*dt
+		
+		-- Collide with walls
+		if map:collidePoint(self.x + self.dir*7, self.y-13) == true then
+			self.dir = self.dir*-1
+			self.x = oldx
+		end
+		
+		-- Collide with objects
+		for i,v in ipairs(map.objects) do
+			if v.solid == true then
+				if self:collideBox(v:getBBox()) then
+					self.x = oldx
+					self.dir = self.dir*-1
+					break
+				end
+			end
+		end
+
+		-- Check if it can spawn a fire
+		self.nextFire = self.nextFire - dt
+		if self.nextFire <= 0 then
+			map:addFire(math.floor(self.x/16), math.floor((self.y-4)/16))
+			self.nextFire = math.random(self.FIRE_SPAWN_MIN, self.FIRE_SPAWN_MAX)
+		end
+
+		-- Follow player if in line of sight
+		local xdist = math.abs(self.x-player.x)
+		local ydist = math.abs(self.y-player.y)
+		if ydist < 64 and xdist < 256 and xdist > 16 then
+			if map:lineOfSight(self.x,self.y-12, player.x,player.y-12) then
+				self.dir = math.sign(player.x-self.x)
+			end
+		end
+
+	-- Getting hit
+	elseif self.state == EN_HIT then
+		if self.hit == false then
+			self.state = EN_RECOVER
+			self.anim = self.anims[EN_RECOVER]
+			self.time = 0.7
+		end
+	-- Recovering
+	elseif self.state == EN_RECOVER then
+		self.time = self.time - dt
+		if self.time < 0 then
+			self.state = EN_RUN
+			self.anim = self.anims[EN_RUN]
+		end
+	end
+
+	self.hit = false
+
+	self.anim:update(dt)
 end
 
 -- %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -238,6 +309,81 @@ function JumperEnemy:getBBox()
 	return {x = self.x-5, y = self.y-23, w = 10, h = 23}
 end
 
+-- %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+-- %     Angry Jumper enemy     %
+-- %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+AngryJumperEnemy = {}
+AngryJumperEnemy.__index = AngryJumperEnemy
+setmetatable(AngryJumperEnemy, JumperEnemy)
+
+function AngryJumperEnemy.create(x,y)
+	local self = JumperEnemy.create(x,y)
+	setmetatable(self, AngryJumperEnemy)
+
+	self.anims[EN_JUMPING].img = img.enemy_angryjumper_jump
+
+	return self
+end
+
+function AngryJumperEnemy:update(dt)
+	if self.state == EN_IDLE then
+		self.nextJump = self.nextJump - dt
+		if self.nextJump <= 0 then
+			self.state = EN_JUMPING
+			self.yspeed = -self.JUMP_POWER
+		end
+
+		-- Follow player if in line of sight
+		local xdist = math.abs(self.x-player.x)
+		local ydist = math.abs(self.y-player.y)
+		if ydist < 64 and xdist < 256 and xdist > 16 then
+			if map:lineOfSight(self.x,self.y-12, player.x,player.y-12) then
+				self.dir = math.sign(player.x-self.x)
+			end
+		end
+
+	elseif self.state == EN_JUMPING then
+		self.xspeed = self.MOVE_SPEED*self.dir
+		self.x = self.x + self.xspeed*dt
+		if collideX(self) == true then
+			self.dir = self.dir*-1
+		end
+
+		self.yspeed = self.yspeed + self.GRAVITY*dt
+		self.y = self.y + self.yspeed*dt
+		if collideY(self) == true then
+			if self.yspeed > 0 then
+				self.nextFire = self.nextFire - 1
+				if self.nextFire <= 0 then
+					self.nextFire = math.random(self.MIN_FIRE_TIME, self.MAX_FIRE_TIME)
+					map:addFire(math.floor(self.x/16), math.floor((self.y-8)/16))
+				end
+				self.state = EN_IDLE
+				self.nextJump = self.JUMP_DELAY
+			end
+			self.yspeed = 0
+		end
+	end
+
+	self.anim:update(dt)
+end
+
+function AngryJumperEnemy:draw()
+	self.flx = math.floor(self.x)
+	self.fly = math.floor(self.y)
+
+	if self.state == EN_IDLE then
+		if self.nextJump < self.JUMP_DELAY/1.5 then
+			self.anim:draw(self.flx, self.fly, 0, self.dir, 1,8, 32, 2, self.hit and img.enemy_angryjumper_hit)
+		else
+			self.anim:draw(self.flx, self.fly, 0, self.dir, 1,8, 32, 3, self.hit and img.enemy_angryjumper_hit)
+		end
+	elseif self.state == EN_JUMPING then
+		self.anim:draw(self.flx, self.fly, 0, self.dir, 1,8, 32, 1, self.hit and img.enemy_angryjumper_hit)
+	end
+	self.hit = false
+end
+
 -- %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 -- %          Volcano enemy          %
 -- %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -337,6 +483,51 @@ end
 
 function VolcanoEnemy:getBBox()
 	return {x = self.x-5, y = self.y-15, w = 10, h = 15}
+end
+
+-- %%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+-- %    Angry Volcano enemy    %
+-- %%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+AngryVolcanoEnemy = {}
+AngryVolcanoEnemy.__index = AngryVolcanoEnemy
+setmetatable(AngryVolcanoEnemy, VolcanoEnemy)
+
+function AngryVolcanoEnemy.create(x,y)
+	local self = VolcanoEnemy.create(x,y)
+	setmetatable(self, AngryVolcanoEnemy)
+
+	self.anims[EN_RUN].img = img.enemy_angryvolcano_run
+
+	return self
+end
+
+function AngryVolcanoEnemy:update(dt)
+	VolcanoEnemy.update(self,dt)
+
+	-- Shoot faster if player is in line of sight
+	local xdist = math.abs(self.x-player.x)
+	local ydist = math.abs(self.y-player.y)
+	if ydist < 64 and xdist < 256 and xdist > 16 then
+		if map:lineOfSight(self.x,self.y-12, player.x,player.y-12) then
+			self.nextShot = self.nextShot - dt
+		end
+	end
+end
+
+function AngryVolcanoEnemy:draw()
+	self.flx = math.floor(self.x)
+	self.fly = math.floor(self.y)
+
+	if self.nextShot < 0.05 or self.nextShot > self.SHOOT_DELAY-0.5 then
+		self.anim:draw(self.flx, self.fly, 0, self.dir,1, 8, 32, nil, img.enemy_angryvolcano_shoot)
+	else
+		if self.hit == false then
+			self.anim:draw(self.flx, self.fly, 0, self.dir,1, 8, 32)
+		else
+			self.anim:draw(self.flx, self.fly, 0, self.dir,1, 8, 32, nil, img.enemy_angryvolcano_hit)
+		end
+	end
+	self.hit = false
 end
 
 -- %%%%%%%%%%%%%%%%%%%%%%%%%%

@@ -15,20 +15,21 @@ require("slam")
 require("splash")
 require("mainmenu")
 require("ingame")
+require("levelselection")
 
 WIDTH = 256
 HEIGHT = 200
 MAPW = 41*16
 MAPH = 16*16
 show_debug = false
-disable_music = true
+--disable_music = true
 
 SCALE = 3
 local MIN_FRAMERATE = 1/15
 local MAX_FRAMERATE = 1/120
-LAST_SECTION = 30
+LAST_SECTION = 40
 
-STATE_SPLASH, STATE_INGAME, STATE_MAINMENU = 0,1,2
+STATE_SPLASH, STATE_INGAME, STATE_MAINMENU, STATE_LEVELSELECTION = 0,1,2,3
 
 function love.load()
 	love.graphics.setBackgroundColor(0,0,0)
@@ -62,6 +63,8 @@ function love.draw()
 		mainmenu.draw()
 	elseif state == STATE_SPLASH then
 		splash.draw()
+	elseif state == STATE_LEVELSELECTION then
+		levelselection.draw()
 	end
 end
 
@@ -74,6 +77,8 @@ function love.keypressed(k, uni)
 		ingame.keypressed(k, uni)
 	elseif state == STATE_MAINMENU then
 		mainmenu.keypressed(k, uni)
+	elseif state == STATE_LEVELSELECTION then
+		levelselection.keypressed(k, uni)
 	elseif state == STATE_SPLASH then
 		splash.keypressed(k, uni)
 	end
@@ -84,6 +89,8 @@ function love.joystickpressed(joy, k)
 		ingame.joystickpressed(joy, k)
 	elseif state == STATE_MAINMENU then
 		mainmenu.joystickpressed(joy, k)
+	elseif state == STATE_LEVELSELECTION then
+		levelselection.joystickpressed(joy, k)
 	elseif state == STATE_SPLASH then
 		splash.joystickpressed(joy, k)
 	end

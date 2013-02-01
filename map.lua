@@ -10,7 +10,7 @@ local floor_files = {
 	"2-2.lua"
 }
 
-function Map.create(section, maptype)
+function Map.create(section, level)
 	local self = setmetatable({}, Map)
 
 	local file = love.filesystem.load("maps/base.lua")()
@@ -22,7 +22,7 @@ function Map.create(section, maptype)
 	end
 	self.width = file.width
 	self.height = file.height
-	self.section = section
+	self.section = section + (level-1)*5
 
 	self.front_batch = lg.newSpriteBatch(img.tiles, 256)
 	self.back_batch  = lg.newSpriteBatch(img.tiles, 256)
@@ -362,18 +362,21 @@ function Map:addRoom(x,y,width,room)
 		if self.section >= 15 and math.random(1,5) == 1 then count = 2 end
 		local sep = math.floor(width/(count+1))
 
-		local enemy_types = 1
-		if self.section >= 3 then enemy_types = 2 end
-		if self.section >= 6 then enemy_types = 3 end
 		for i=1,count do
-			random = math.random(1,enemy_types)
+			random = math.random(1,4)
 			local rx = (x+i*sep)*16+8
 			if random == 1 then
 				table.insert(self.enemies, NormalEnemy.create(rx, (y+4)*16))
 			elseif random == 2 then
 				table.insert(self.enemies, JumperEnemy.create(rx, (y+4)*16))
-			else
+			elseif random == 3 then
 				table.insert(self.enemies, VolcanoEnemy.create(rx, (y+4)*16))
+			elseif random == 4 then
+				table.insert(self.enemies, AngryNormalEnemy.create(rx, (y+4)*16))
+			elseif random == 5 then
+				table.insert(self.enemies, AngryJumperEnemy.create(rx, (y+4)*16))
+			elseif random == 6 then
+				table.insert(self.enemies, AngryVolcanoEnemy.create(rx, (y+4)*16))
 			end
 		end
 	end

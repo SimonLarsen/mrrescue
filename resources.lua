@@ -9,19 +9,25 @@ local IMAGE_FILES = {
 	"tiles", "door", "boldfont", "captain_dialog", "splash",
 	"hud", "hud2", "hud_people", "item_slots",
 	"water_bar", "reserve_bar", "overloaded_bar", "temperature_bar",
-	"stream", "water", "shards",
+	"stream", "water", "shards", "level_buildings", "menu_box",
+
 	"fire_wall", "fire_wall_small", "fire_floor",
+
 	"black_smoke", "black_smoke_small", "ashes", "sparkles", "savebeam",
-	"light_player", "light_fire", "light_fireball",
 	"red_screen", "circles", "warning_icons", "popup_text",
+	
+	"light_player", "light_fire", "light_fireball",
 	"item_coolant", "item_reserve", "item_suit", "item_tank", "item_regen",
 
 	"player_gun", "player_throw", "player_climb_down",
 	"player_climb_up", "player_running", "player_death",
 
-	"enemy_normal_run", "enemy_normal_hit", "enemy_normal_recover", "enemy_jumper_hit",
-	"enemy_jumper_jump", "enemy_jumper_recover", 
-	"enemy_volcano_run", "enemy_volcano_shoot", "enemy_volcano_hit", "enemy_fireball",
+	"enemy_normal_run", "enemy_normal_hit", "enemy_normal_recover",
+	"enemy_angrynormal_run", "enemy_angrynormal_hit", "enemy_angrynormal_recover",
+	"enemy_jumper_hit", "enemy_jumper_jump",
+	"enemy_angryjumper_hit", "enemy_angryjumper_jump",
+	"enemy_volcano_run", "enemy_volcano_shoot", "enemy_volcano_hit",
+	"enemy_angryvolcano_run", "enemy_angryvolcano_shoot", "enemy_angryvolcano_hit", "enemy_fireball",
 
 	"human_1_run", "human_2_run", "human_3_run", "human_4_run",
 	"human_1_carry_left", "human_2_carry_left", "human_3_carry_left", "human_4_carry_left",
@@ -43,6 +49,9 @@ GOODLUCK_MESSAGES = {
 NO_CASUALTIES_MESSAGES = {
 	{"KEEP UP THE GOOD","WORK, BUDDY!","YOU'RE ON FIRE.","HE HE HE"}
 }
+
+BUILDING_NAMES = {{"SMALL","BUSINESS"},{"APARTMENT","COMPLEX"},{"BIG","CORPORATION"}}
+DIFFICULTY_NAMES = {"EASY", "NORMAL", "HARD"}
 
 --- Returns size of an Image as two return values
 -- Saves some typing when creating quads
@@ -81,7 +90,7 @@ function loadResources()
 	img.stream:setWrap("repeat", "clamp")
 
 	-- Create fonts
-	font.bold = lg.newImageFont(img.boldfont, " ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789.,!'-:*")
+	font.bold = lg.newImageFont(img.boldfont, " ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789.,!'-:*@")
 
 	-- Create quads
 	quad.player_gun = {}
@@ -187,6 +196,15 @@ function loadResources()
 	for i=0,5 do
 		quad.popup_text[i] = lg.newQuad(0,i*8, 64,8, getSize(img.popup_text))
 	end
+
+	quad.level_buildings = lg.newQuad(0,0, 134,158, getSize(img.level_buildings))
+	quad.building_outline1 = lg.newQuad(144,0, 37,40, getSize(img.level_buildings))
+	quad.building_outline2 = lg.newQuad(192,0, 43,75, getSize(img.level_buildings))
+	quad.building_outline3 = lg.newQuad(144,80, 64,83, getSize(img.level_buildings))
+
+	quad.box_corner = lg.newQuad(0,0, 6,6, getSize(img.menu_box))
+	quad.box_left   = lg.newQuad(0,6, 4,1, getSize(img.menu_box))
+	quad.box_top    = lg.newQuad(6,0, 1,4, getSize(img.menu_box))
 
 	-- Set audio tag volumes
 	love.audio.tags.sfx.setVolume(1.0)
