@@ -1,7 +1,8 @@
 -- %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 -- %           Normal enemy           %
 -- %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-NormalEnemy = { MOVE_SPEED = 80, FIRE_SPAWN_MIN = 7, FIRE_SPAWN_MAX = 25, MAX_HEALTH = 1.5, SCORE = 100 }
+NormalEnemy = { MOVE_SPEED = 80, FIRE_SPAWN_MIN = 7,FIRE_SPAWN_MAX = 25,
+				MAX_HEALTH = 1.5, SCORE = 100, RECOVER_TIME = 0.7 }
 NormalEnemy.__index = NormalEnemy
 
 local EN_RUN, EN_HIT, EN_RECOVER, EN_IDLE, EN_JUMPING, EN_SHOOT = 0,1,2,3,4,5
@@ -66,7 +67,7 @@ function NormalEnemy:update(dt)
 		if self.hit == false then
 			self.state = EN_RECOVER
 			self.anim = self.anims[EN_RECOVER]
-			self.time = 0.7
+			self.time = self.RECOVER_TIME
 		end
 	-- Recovering
 	elseif self.state == EN_RECOVER then
@@ -123,7 +124,7 @@ end
 -- %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 -- %        Angry Normal enemy        %
 -- %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-AngryNormalEnemy = { SCORE = 200, MAX_HEALTH = 3.0 }
+AngryNormalEnemy = { SCORE = 200, MAX_HEALTH = 3.0, RECOVER_TIME = 0.35 }
 AngryNormalEnemy.__index = AngryNormalEnemy
 setmetatable(AngryNormalEnemy, NormalEnemy)
 
@@ -141,35 +142,9 @@ function AngryNormalEnemy.create(x,y)
 end
 
 function AngryNormalEnemy:update(dt)
-	-- Running state
+	NormalEnemy.update(self,dt)
+	
 	if self.state == EN_RUN then
-		local oldx = self.x
-		self.x = self.x + self.dir*self.MOVE_SPEED*dt
-		
-		-- Collide with walls
-		if map:collidePoint(self.x + self.dir*7, self.y-13) == true then
-			self.dir = self.dir*-1
-			self.x = oldx
-		end
-		
-		-- Collide with objects
-		for i,v in ipairs(map.objects) do
-			if v.solid == true then
-				if self:collideBox(v:getBBox()) then
-					self.x = oldx
-					self.dir = self.dir*-1
-					break
-				end
-			end
-		end
-
-		-- Check if it can spawn a fire
-		self.nextFire = self.nextFire - dt
-		if self.nextFire <= 0 then
-			map:addFire(math.floor(self.x/16), math.floor((self.y-4)/16))
-			self.nextFire = math.random(self.FIRE_SPAWN_MIN, self.FIRE_SPAWN_MAX)
-		end
-
 		-- Follow player if in line of sight
 		local xdist = math.abs(self.x-player.x)
 		local ydist = math.abs(self.y-player.y)
@@ -178,26 +153,7 @@ function AngryNormalEnemy:update(dt)
 				self.dir = math.sign(player.x-self.x)
 			end
 		end
-
-	-- Getting hit
-	elseif self.state == EN_HIT then
-		if self.hit == false then
-			self.state = EN_RECOVER
-			self.anim = self.anims[EN_RECOVER]
-			self.time = 0.7
-		end
-	-- Recovering
-	elseif self.state == EN_RECOVER then
-		self.time = self.time - dt
-		if self.time < 0 then
-			self.state = EN_RUN
-			self.anim = self.anims[EN_RUN]
-		end
 	end
-
-	self.hit = false
-
-	self.anim:update(dt)
 end
 
 -- %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -500,6 +456,58 @@ function AngryVolcanoEnemy:draw()
 		end
 	end
 	self.hit = false
+end
+
+-- %%%%%%%%%%%%%%%%%%%%%%%%%
+-- %      Thief enemy      %
+-- %%%%%%%%%%%%%%%%%%%%%%%%%
+ThiefEnemy = { MAX_HEALTH = 1.5 }
+ThiefEnemy.__index = ThiefEnemy
+setmetatable(ThiefEnemy, NormalEnemy)
+
+function ThiefEnemy.create(x,y)
+	local self = setmetatable({}, ThiefEnemy)
+
+	self.alive = true
+	self.hit = false -- true if hit since last update
+	self.x = x
+	self.y = y
+	self.dir = 1
+	self.health = self.MAX_HEALTH
+	self.state = EN_RUN
+	self.time = 0
+	self.nextFire = math.random(self.FIRE_SPAWN_MIN, self.FIRE_SPAWN_MAX)
+
+	self.anims = {}
+	self.anims[EN_RUN]     = newAnimation(img.enemy_thief_run, 18, 32, 0.13, 4)
+	self.anims[EN_HIT]     = newAnimation(img.enemy_thief_hit, 18, 32, 0.12, 2)
+	self.anims[EN_RECOVER] = newAnimation(img.enemy_thief_recover, 18, 32, 0.07, 4)
+
+	self.anim = self.anims[self.state]
+
+	return self
+end
+
+function ThiefEnemy:update(dt)
+	NormalEnemy.update(self,dt)
+	
+	if self.state == EN_RUN then
+		-- Follow player if in line of sight
+		local xdist = math.abs(self.x-player.x)
+		local ydist = math.abs(self.y-player.y)
+		if ydist < 64 and xdist < 256 and xdist > 16 then
+			if map:lineOfSight(self.x,self.y-12, player.x,player.y-12) then
+				self.dir = math.sign(player.x-self.x)
+			end
+		end
+	end
+end
+
+function ThiefEnemy:draw()
+	self.flx = math.floor(self.x)
+	self.fly = math.floor(self.y)
+
+	self.anim:draw(self.flx, self.fly, 0, self.dir,1, 9, 32)
 end
 
 -- %%%%%%%%%%%%%%%%%%%%%%%%%%

@@ -23,6 +23,7 @@ local IMAGE_FILES = {
 	"player_climb_up", "player_running", "player_death",
 
 	"enemy_normal_run", "enemy_normal_hit", "enemy_normal_recover",
+	"enemy_thief_run", "enemy_thief_hit", "enemy_thief_recover",
 	"enemy_angrynormal_run", "enemy_angrynormal_hit", "enemy_angrynormal_recover",
 	"enemy_jumper_hit", "enemy_jumper_jump",
 	"enemy_angryjumper_hit", "enemy_angryjumper_jump",
