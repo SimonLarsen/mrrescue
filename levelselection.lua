@@ -44,11 +44,14 @@ function levelselection.keypressed(k, uni)
 	if k == "right" or k == "down" then
 		level = level + 1
 		if level > 3 then level = 1 end
+		playSound("blip")
 	elseif k == "left" or k == "up" then
 		level = level - 1
 		if level < 1 then level = 3 end
+		playSound("blip")
 	elseif k == "return" or k == " " then
 		ingame.enter(level)
+		playSound("confirm")
 	end
 end
 

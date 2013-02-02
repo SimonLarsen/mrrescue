@@ -35,15 +35,18 @@ function mainmenu.keypressed(k, uni)
 	if k == "down" then
 		selection = selection + 1
 		if selection > 5 then selection = 1 end
+		playSound("blip")
 	elseif k == "up" then
 		selection = selection - 1
 		if selection < 1 then selection = 5 end
+		playSound("blip")
 	elseif k == "return" or k == " " then
 		if selection == 1 then
 			levelselection.enter()
 		elseif selection == 5 then
 			love.event.quit()
 		end
+		playSound("confirm")
 	end
 end
 

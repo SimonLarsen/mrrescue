@@ -6,7 +6,7 @@ font = {}   -- global Fonts
 local snd = {}	-- sound Sources
 
 local IMAGE_FILES = {
-	"tiles", "door", "boldfont", "captain_dialog", "splash",
+	"tiles", "door", "boldfont", "captain_dialog", "splash", "tangram",
 	"hud", "hud2", "hud_people", "item_slots",
 	"water_bar", "reserve_bar", "overloaded_bar", "temperature_bar",
 	"stream", "water", "shards", "level_buildings", "menu_box",
@@ -40,7 +40,7 @@ local IMAGE_FILES = {
 
 local BACKGROUND_FILES = { "mountains", "night" }
 
-local SOUND_FILES = { "powerup", "door", "empty" }
+local SOUND_FILES = { "powerup", "door", "empty", "blip", "confirm" }
 
 NUM_ROOMS = { [10] = 6, [11] = 6, [17] = 6, [24] = 6 }
 
