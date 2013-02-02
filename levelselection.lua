@@ -14,7 +14,7 @@ end
 
 function levelselection.draw()
 	lg.push()
-	lg.scale(SCALE)
+	lg.scale(config.scale)
 
 	lg.print("PLEASE SELECT", 129, 11)
 	lg.print("A LEVEL", 151, 22)

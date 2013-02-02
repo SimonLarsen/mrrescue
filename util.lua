@@ -97,6 +97,13 @@ function cap(val, min, max)
 	return math.max(math.min(val, max), min)
 end
 
+function wrap(val, min, max)
+	if val < min then val = max end
+	if val > max then val = min end
+	return val
+end
+
+
 function drawBox(x,y,w,h)
 	lg.setColor(30,23,18)
 	lg.rectangle("fill",x+1,y+1,w-2,h-2)

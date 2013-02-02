@@ -207,7 +207,7 @@ function loadResources()
 	quad.box_top    = lg.newQuad(6,0, 1,4, getSize(img.menu_box))
 
 	-- Set audio tag volumes
-	love.audio.tags.sfx.setVolume(1.0)
+	love.audio.tags.sfx.setVolume(config.sfx_volume)
 end
 
 function playSound(name)
@@ -227,6 +227,6 @@ function playMusic(name)
 	music = love.audio.newSource("data/sfx/"..name..".ogg", "stream")
 	music:addTags("music")
 	music:setLooping(true)
-	love.audio.tags.music.setVolume(0.3)
+	love.audio.tags.music.setVolume(config.music_volume)
 	love.audio.play(music)
 end

@@ -110,7 +110,7 @@ end
 function ingame.draw()
 	-- Scale screen
 	lg.push()
-	lg.scale(SCALE,SCALE)
+	lg.scale(config.scale)
 
 	if ingame_state == INGAME_ACTIVE or ingame_state == INGAME_FADE_IN
 	or ingame_state == INGAME_NEXTLEVEL_OUT or ingame_state == INGAME_FALL_OUT or ingame_state == INGAME_GAMEOVER_OUT then
@@ -139,7 +139,7 @@ function ingame.draw()
 
 		-- Draw canvas with lighting
 		lg.push()
-		lg.scale(SCALE,SCALE)
+		lg.scale(config.scale)
 		lg.setBlendMode("multiplicative")
 		lg.draw(canvas, 0,0)
 		lg.setBlendMode("alpha")
@@ -387,7 +387,7 @@ function ingame.keypressed(k, uni)
 		ingame_state = INGAME_FADE_IN
 		transition_time = 0
 	elseif ingame_state == INGAME_GAMEOVER then
-		ingame.newGame()
+		levelselection.enter()
 	end
 end
 
@@ -398,6 +398,6 @@ function ingame.joystickpressed(joy, k)
 		ingame_state = INGAME_FADE_IN
 		transition_time = 0
 	elseif ingame_state == INGAME_GAMEOVER then
-		ingame.newGame()
+		levelselection.enter()
 	end
 end

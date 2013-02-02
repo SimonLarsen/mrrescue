@@ -11,7 +11,7 @@ end
 
 function splash.draw()
 	lg.push()
-	lg.scale(SCALE)
+	lg.scale(config.scale)
 
 	if transition_time < 4 then
 		if transition_time < 1 then
@@ -49,6 +49,7 @@ end
 
 function splash.keypressed(k,uni)
 	if k == "return" or k == " " then
+		playSound("blip")
 		mainmenu.enter()
 	end
 end

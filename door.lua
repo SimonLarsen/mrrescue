@@ -1,6 +1,6 @@
 Door = {solid = true}
 Door.__index = Door
-setmetatable(Door,Entity)
+--setmetatable(Door,Entity)
 
 local GRAVITY = 550
 local SCORE = 50

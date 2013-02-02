@@ -1,9 +1,9 @@
+require("config")
 require("resources")
 require("util")
 require("AnAL")
 require("map")
 require("player")
-require("entity")
 require("human")
 require("enemy")
 require("door")
@@ -15,6 +15,7 @@ require("slam")
 require("splash")
 require("mainmenu")
 require("ingame")
+require("options")
 require("levelselection")
 
 WIDTH = 256
@@ -24,18 +25,18 @@ MAPH = 16*16
 show_debug = false
 --disable_music = true
 
-SCALE = 3
 local MIN_FRAMERATE = 1/15
 local MAX_FRAMERATE = 1/120
 LAST_SECTION = 40
 
-STATE_SPLASH, STATE_INGAME, STATE_MAINMENU, STATE_LEVELSELECTION = 0,1,2,3
+STATE_SPLASH, STATE_INGAME, STATE_MAINMENU, STATE_LEVELSELECTION, STATE_OPTIONS = 0,1,2,3,4
 
 function love.load()
-	love.graphics.setBackgroundColor(0,0,0)
-	love.graphics.setMode(WIDTH*SCALE, HEIGHT*SCALE, false, true)
-	love.graphics.setDefaultImageFilter("nearest","nearest")
+	loadConfig()
 
+	love.graphics.setBackgroundColor(0,0,0)
+	love.graphics.setMode(WIDTH*config.scale, HEIGHT*config.scale, false, config.vsync)
+	love.graphics.setDefaultImageFilter("nearest","nearest")
 	loadResources()
 
 	splash.enter()
@@ -63,6 +64,8 @@ function love.draw()
 		mainmenu.draw()
 	elseif state == STATE_SPLASH then
 		splash.draw()
+	elseif state == STATE_OPTIONS then
+		options.draw()
 	elseif state == STATE_LEVELSELECTION then
 		levelselection.draw()
 	end
@@ -79,6 +82,8 @@ function love.keypressed(k, uni)
 		mainmenu.keypressed(k, uni)
 	elseif state == STATE_LEVELSELECTION then
 		levelselection.keypressed(k, uni)
+	elseif state == STATE_OPTIONS then
+		options.keypressed(k, uni)
 	elseif state == STATE_SPLASH then
 		splash.keypressed(k, uni)
 	end
@@ -91,6 +96,8 @@ function love.joystickpressed(joy, k)
 		mainmenu.joystickpressed(joy, k)
 	elseif state == STATE_LEVELSELECTION then
 		levelselection.joystickpressed(joy, k)
+	elseif state == STATE_OPTIONS then
+		options.joystickpressed(joy, k)
 	elseif state == STATE_SPLASH then
 		splash.joystickpressed(joy, k)
 	end

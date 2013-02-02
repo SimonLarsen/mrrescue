@@ -17,7 +17,7 @@ end
 
 function mainmenu.draw()
 	lg.push()
-	lg.scale(SCALE)
+	lg.scale(config.scale)
 
 	lg.drawq(img.splash, quad.splash, 0,0)
 	lg.setFont(font.bold)
@@ -33,16 +33,16 @@ end
 
 function mainmenu.keypressed(k, uni)
 	if k == "down" then
-		selection = selection + 1
-		if selection > 5 then selection = 1 end
+		selection = wrap(selection + 1, 1,5)
 		playSound("blip")
 	elseif k == "up" then
-		selection = selection - 1
-		if selection < 1 then selection = 5 end
+		selection = wrap(selection - 1, 1,5)
 		playSound("blip")
 	elseif k == "return" or k == " " then
 		if selection == 1 then
 			levelselection.enter()
+		elseif selection == 3 then
+			options.enter()
 		elseif selection == 5 then
 			love.event.quit()
 		end
