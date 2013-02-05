@@ -34,38 +34,49 @@ function options.draw()
 end
 
 function options.keypressed(k, uni)
-	if k == "left" then
-		if selection == 1 then
-			config.scale = cap(config.scale - 1, 1, 10)
-			setMode()
-		elseif selection == 2 then
-			toggleVSync()
-		end
-		playSound("blip")
-
-	elseif k == "right" then
-		if selection == 1 then
-			config.scale = cap(config.scale + 1, 1, 10)
-			setMode()
-		elseif selection == 2 then
-			toggleVSync()
-		end
-		playSound("blip")
-
-	elseif k == "return" then
-		if selection == 2 then
-			toggleVSync()
-		elseif selection == 7 then
-			mainmenu.enter()
-		end
-		playSound("blip")
-
-	elseif k == "down" then
+	if k == "down" then
 		selection = wrap(selection + 1, 1,7)
 		playSound("blip")
 	elseif k == "up" then
 		selection = wrap(selection - 1, 1,7)
 		playSound("blip")
+	elseif k == "left" or k == "right" then
+		if selection == 1 then -- SCALE
+			if k == "left" then
+				config.scale = cap(config.scale - 1, 1, 10)
+			else
+				config.scale = cap(config.scale + 1, 1, 10)
+			end
+			setMode()
+			playSound("blip")
+		elseif selection == 2 then -- VSYNC
+			toggleVSync()
+			playSound("blip")
+		elseif selection == 3 then -- SFX VOLUME
+			if k == "left" then
+				config.sfx_volume = cap(config.sfx_volume - 0.1, 0,1)
+			else
+				config.sfx_volume = cap(config.sfx_volume + 0.1, 0,1)
+			end
+			love.audio.tags.sfx.setVolume(config.sfx_volume)
+			playSound("blip")
+		elseif selection == 4 then -- MUSIC VOLUME
+			if k == "left" then
+				config.music_volume = cap(config.music_volume - 0.1, 0,1)
+			else
+				config.music_volume = cap(config.music_volume + 0.1, 0,1)
+			end
+			love.audio.tags.music.setVolume(config.music_volume)
+			playSound("blip")
+		end
+	elseif k == "return" then
+		if selection == 2 then -- VSYNC
+			toggleVSync()
+			playSound("blip")
+		elseif selection == 7 then -- BACK
+			mainmenu.enter()
+			playSound("confirm")
+		end
 	end
 end
 
