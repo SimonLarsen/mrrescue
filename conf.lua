@@ -1,8 +1,8 @@
 function love.conf(t)
-    t.title = "Firefighter"        
+    t.title = "mrrescue"        
     t.author = "Simon Larsen"        
-    t.url = nil                 
-    t.identity = nil            
+    t.url = "http://simonlarsen.github.com/mrrescue"
+    t.identity = "mrrescue"
     t.version = "0.8.0"         
     t.console = false           
     t.release = false           

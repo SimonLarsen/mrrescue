@@ -40,6 +40,7 @@ function options.keypressed(k, uni)
 	elseif k == "up" then
 		selection = wrap(selection - 1, 1,7)
 		playSound("blip")
+
 	elseif k == "left" or k == "right" then
 		if selection == 1 then -- SCALE
 			if k == "left" then
@@ -69,12 +70,14 @@ function options.keypressed(k, uni)
 			love.audio.tags.music.setVolume(config.music_volume)
 			playSound("blip")
 		end
+
 	elseif k == "return" then
 		if selection == 2 then -- VSYNC
 			toggleVSync()
 			playSound("blip")
 		elseif selection == 7 then -- BACK
 			mainmenu.enter()
+			saveConfig()
 			playSound("confirm")
 		end
 	end

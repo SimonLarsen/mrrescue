@@ -1,7 +1,6 @@
 require("config")
 require("resources")
 require("util")
-require("AnAL")
 require("map")
 require("player")
 require("human")
@@ -10,7 +9,10 @@ require("door")
 require("item")
 require("fire")
 require("particles")
+-- 3rd party libraries
+require("AnAL")
 require("slam")
+require("TSerial")
 -- gamestates
 require("splash")
 require("mainmenu")
@@ -23,7 +25,6 @@ HEIGHT = 200
 MAPW = 41*16
 MAPH = 16*16
 show_debug = false
---disable_music = true
 
 local MIN_FRAMERATE = 1/15
 local MAX_FRAMERATE = 1/120
