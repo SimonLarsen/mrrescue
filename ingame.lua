@@ -53,6 +53,8 @@ function ingame.update(dt)
 	-- INGAME STATE
 	if ingame_state == INGAME_ACTIVE then
 
+		updateKeys()
+
 		-- Update entities
 		player:update(dt)
 

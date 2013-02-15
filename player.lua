@@ -69,24 +69,6 @@ function Player.create(x,y)
 	self.anim = self.animRun
 	self.waterFrame = 0 -- water stream's frame
 	
-	-- Keyboard key binds
-	self.keys = {
-		up = "up", down = "down", left = "left", right = "right", jump = "s", shoot = "d", action = "a"
-	}
-	-- Joystick to used
-	self.joystick = 1
-	-- Joystick key binds
-	self.joykeys = {
-		jump = 3, shoot = 4, action = 2
-	}
-	-- Key states (keyboard and joystick combined)
-	self.key_state = {
-		up = false, down = false, left = false, right = false,
-		jump = false, shoot = false, action = false
-	}
-	-- Old axis values, used for checking rapid change
-	self.oldaxis1, self.oldaxis2 = 0,0
-
 	return self
 end
 
@@ -99,64 +81,11 @@ function Player:warp(x,y)
 	self.shooting = false
 end
 
---- Updates key states in self.key_state from
---  keyboard and joystick keys
-function Player:updateKeys()
-	-- Reset states
-	for i,v in pairs(self.key_state) do
-		self.key_state[i] = false
-	end
-	-- Check keyboard keys
-	for action, key in pairs(self.keys) do
-		if love.keyboard.isDown(key) then
-			self.key_state[action] = true
-		end
-	end
-	-- Check joystick axes
-	local axis1, axis2 = love.joystick.getAxes(self.joystick)
-	if axis1 then
-		if axis1 < -0.5 then
-			self.key_state.left = true
-		elseif axis1 > 0.5 then
-			self.key_state.right = true
-		end
-	end
-	if axis2 then
-		if axis2 < -0.5 then
-			self.key_state.up = true
-		elseif axis2 > 0.5 then
-			self.key_state.down = true
-		end
-	end
-	-- Check sudden movements (for ladders)
-	if math.abs(self.oldaxis1) < 0.05 and axis1 then
-		if axis1 < -0.5 then self:action("left")
-		elseif axis1 > 0.5 then self:action("right") end
-	end
-	if math.abs(self.oldaxis2) < 0.05 and axis2 then
-		if axis2 < -0.5 then self:action("up")
-		elseif axis2 > 0.5 then self:action("down") end
-	end
-	-- Write axis values for next update
-	self.oldaxis1 = axis1 or 0
-	self.oldaxis2 = axis2 or 0
-
-	-- Check joystick keys
-	for action, key in pairs(self.joykeys) do
-		if love.joystick.isDown(self.joystick, key) then
-			self.key_state[action] = true
-		end
-	end
-end
-
 --- Updates the player
 -- Called once once each love.update
 -- @param dt Time passed since last update
 function Player:update(dt)
 	self.shooting = false
-
-	-- Update keystate array
-	self:updateKeys()
 
 	-- RUNNING STATE
 	if self.state == PS_RUN then
@@ -238,9 +167,9 @@ function Player:updateRunning(dt)
 	local changedDir = false -- true if player changed horizontal direction
 
 	-- Check if both directions are held for handling conflicts
-	local both = self.key_state.right and self.key_state.left
+	local both = keystate.right and keystate.left
 	-- Walk left
-	if (both == false and self.key_state.right) or (both == true and self.lastDir == 1) then
+	if (both == false and keystate.right) or (both == true and self.lastDir == 1) then
 		self.xspeed = self.xspeed + RUN_SPEED*dt
 
 		if self.dir == -1 then
@@ -248,7 +177,7 @@ function Player:updateRunning(dt)
 			changedDir = true
 		end
 	-- Walk right
-	elseif (both == false and self.key_state.left) or (both == true and self.lastDir == -1) then
+	elseif (both == false and keystate.left) or (both == true and self.lastDir == -1) then
 		self.xspeed = self.xspeed - RUN_SPEED*dt
 
 		if self.dir == 1 then
@@ -335,9 +264,9 @@ function Player:updateGun(dt)
 	-- Find gundirection
 	local old_gundir = self.gundir
 	self.gundir = GD_HORIZONTAL
-	if self.key_state.up then
+	if keystate.up then
 		self.gundir = GD_UP
-	elseif self.key_state.down then
+	elseif keystate.down then
 		self.gundir = GD_DOWN
 	end
 	if self.gundir ~= old_gundir or changedDir and self.gundir == HORIZONTAL then
@@ -353,7 +282,7 @@ end
 -- and performs collision with walls and other entities
 function Player:updateStream(dt)
 	-- Shoot
-	if self.key_state.shoot and self.overloaded == false then
+	if keystate.shoot and self.overloaded == false then
 		self.shooting = true
 		self.streamLength = math.min(self.streamLength + STREAM_SPEED*dt, MAX_STREAM)
 	else
@@ -492,12 +421,12 @@ function Player:updateClimbing(dt)
 	local oldy = self.y
 	-- Move up and down ladder
 	local animSpeed = 0
-	if self.key_state.down then
+	if keystate.down then
 		self.y = self.y + CLIMB_SPEED*dt
 		self.animClimb.direction = 1
 		animSpeed = 1
 	end
-	if self.key_state.up then
+	if keystate.up then
 		self.y = self.y - CLIMB_SPEED*dt
 		self.animClimb.direction = -1
 		animSpeed = 1
@@ -562,7 +491,7 @@ function Player:action(action)
 end
 
 function Player:keypressed(k)
-	for a, key in pairs(self.keys) do
+	for a, key in pairs(config.keys) do
 		if k == key then
 			self:action(a)
 		end
@@ -571,7 +500,7 @@ end
 
 function Player:joystickpressed(joy, k)
 	if joy == self.joystick then
-		for a, key in pairs(self.joykeys) do
+		for a, key in pairs(config.joykeys) do
 			if k == key then
 				self:action(a)
 			end

@@ -18,6 +18,7 @@ require("splash")
 require("mainmenu")
 require("ingame")
 require("options")
+require("keyboard")
 require("levelselection")
 
 WIDTH = 256
@@ -30,7 +31,8 @@ local MIN_FRAMERATE = 1/15
 local MAX_FRAMERATE = 1/120
 LAST_SECTION = 40
 
-STATE_SPLASH, STATE_INGAME, STATE_MAINMENU, STATE_LEVELSELECTION, STATE_OPTIONS = 0,1,2,3,4
+STATE_SPLASH, STATE_INGAME, STATE_MAINMENU, STATE_LEVELSELECTION, STATE_OPTIONS, STATE_KEYBOARD = 0,1,2,3,4,5
+gamestates = {[0]=splash, [1]=ingame, [2]=mainmenu, [3]=levelselection, [4]=options, [5]=keyboard}
 
 function love.load()
 	loadConfig()
@@ -51,25 +53,11 @@ function love.update(dt)
 		dt = MAX_FRAMERATE
 	end
 
-	if state == STATE_INGAME then
-		ingame.update(dt)
-	elseif state == STATE_SPLASH then
-		splash.update(dt)
-	end
+	gamestates[state].update(dt)
 end
 
 function love.draw()
-	if state == STATE_INGAME then
-		ingame.draw()
-	elseif state == STATE_MAINMENU then
-		mainmenu.draw()
-	elseif state == STATE_SPLASH then
-		splash.draw()
-	elseif state == STATE_OPTIONS then
-		options.draw()
-	elseif state == STATE_LEVELSELECTION then
-		levelselection.draw()
-	end
+	gamestates[state].draw()
 end
 
 function love.keypressed(k, uni)
@@ -77,29 +65,9 @@ function love.keypressed(k, uni)
 		love.event.quit()
 	end
 
-	if state == STATE_INGAME then
-		ingame.keypressed(k, uni)
-	elseif state == STATE_MAINMENU then
-		mainmenu.keypressed(k, uni)
-	elseif state == STATE_LEVELSELECTION then
-		levelselection.keypressed(k, uni)
-	elseif state == STATE_OPTIONS then
-		options.keypressed(k, uni)
-	elseif state == STATE_SPLASH then
-		splash.keypressed(k, uni)
-	end
+	gamestates[state].keypressed(k, uni)
 end
 
 function love.joystickpressed(joy, k)
-	if state == STATE_INGAME then
-		ingame.joystickpressed(joy, k)
-	elseif state == STATE_MAINMENU then
-		mainmenu.joystickpressed(joy, k)
-	elseif state == STATE_LEVELSELECTION then
-		levelselection.joystickpressed(joy, k)
-	elseif state == STATE_OPTIONS then
-		options.joystickpressed(joy, k)
-	elseif state == STATE_SPLASH then
-		splash.joystickpressed(joy, k)
-	end
+	gamestates[state].joystickpressed(joy, k)
 end

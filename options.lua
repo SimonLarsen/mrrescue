@@ -75,10 +75,13 @@ function options.keypressed(k, uni)
 		if selection == 2 then -- VSYNC
 			toggleVSync()
 			playSound("blip")
+		elseif selection == 5 then -- KEYBOARD
+			playSound("confirm")
+			keyboard.enter()
 		elseif selection == 7 then -- BACK
+			playSound("confirm")
 			mainmenu.enter()
 			saveConfig()
-			playSound("confirm")
 		end
 	end
 end

@@ -6,7 +6,8 @@ font = {}   -- global Fonts
 local snd = {}	-- sound Sources
 
 local IMAGE_FILES = {
-	"tiles", "door", "boldfont", "captain_dialog", "splash", "tangram",
+	"splash", "tangram", "lovesplash",
+	"tiles", "door", "boldfont", "captain_dialog",
 	"hud", "hud2", "hud_people", "item_slots",
 	"water_bar", "reserve_bar", "overloaded_bar", "temperature_bar",
 	"stream", "water", "shards", "level_buildings", "menu_box",
@@ -90,7 +91,7 @@ function loadResources()
 	img.stream:setWrap("repeat", "clamp")
 
 	-- Create fonts
-	font.bold = lg.newImageFont(img.boldfont, " ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789.,!'-:*@<>")
+	font.bold = lg.newImageFont(img.boldfont, " ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789.,!'-:*@<>+/")
 
 	-- Create quads
 	quad.player_gun = {}
