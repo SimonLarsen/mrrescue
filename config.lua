@@ -60,16 +60,15 @@ end
 --  Should only be called when ingame, as it
 --  makes call to Player
 function updateKeys()
-	-- Reset states
-	for i,v in pairs(keystate) do
-		keystate[i] = false
-	end
 	-- Check keyboard keys
 	for action, key in pairs(config.keys) do
 		if love.keyboard.isDown(key) then
 			keystate[action] = true
+		else
+			keystate[action] = false
 		end
 	end
+
 	-- Check joystick axes
 	local axis1, axis2 = love.joystick.getAxes(config.joystick)
 	if axis1 and axis2 then
@@ -84,17 +83,17 @@ function updateKeys()
 			keystate.down = true
 		end
 		-- Check sudden movements (for ladders)
-		if math.abs(config.oldaxis1) < 0.05 then
+		if math.abs(keystate.oldaxis1) < 0.05 then
 			if axis1 < -0.5 then player:action("left")
 			elseif axis1 > 0.5 then player:action("right") end
 		end
-		if math.abs(config.oldaxis2) < 0.05 then
+		if math.abs(keystate.oldaxis2) < 0.05 then
 			if axis2 < -0.5 then player:action("up")
 			elseif axis2 > 0.5 then player:action("down") end
 		end
 		-- Write axis values for next update
-		config.oldaxis1 = axis1 or 0
-		config.oldaxis2 = axis2 or 0
+		keystate.oldaxis1 = axis1 or 0
+		keystate.oldaxis2 = axis2 or 0
 	end
 
 	-- Check joystick keys
@@ -108,5 +107,11 @@ end
 function defaultKeys()
 	for i,v in pairs(default_config.keys) do
 		config.keys[i] = v
+	end
+end
+
+function defaultJoyKeys()
+	for i,v in pairs(default_config.joykeys) do
+		config.joykeys[i] = v
 	end
 end

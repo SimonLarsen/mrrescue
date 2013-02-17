@@ -19,6 +19,7 @@ require("mainmenu")
 require("ingame")
 require("options")
 require("keyboard")
+require("joystick")
 require("levelselection")
 
 WIDTH = 256
@@ -29,10 +30,9 @@ show_debug = false
 
 local MIN_FRAMERATE = 1/15
 local MAX_FRAMERATE = 1/120
-LAST_SECTION = 40
 
-STATE_SPLASH, STATE_INGAME, STATE_MAINMENU, STATE_LEVELSELECTION, STATE_OPTIONS, STATE_KEYBOARD = 0,1,2,3,4,5
-gamestates = {[0]=splash, [1]=ingame, [2]=mainmenu, [3]=levelselection, [4]=options, [5]=keyboard}
+STATE_SPLASH, STATE_INGAME, STATE_MAINMENU, STATE_LEVELSELECTION, STATE_OPTIONS, STATE_KEYBOARD, STATE_JOYSTICK = 0,1,2,3,4,5,6
+gamestates = {[0]=splash, [1]=ingame, [2]=mainmenu, [3]=levelselection, [4]=options, [5]=keyboard, [6]=joystick}
 
 function love.load()
 	loadConfig()

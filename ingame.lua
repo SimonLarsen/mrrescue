@@ -6,7 +6,7 @@ INGAME_ACTIVE, INGAME_FADE_IN, INGAME_NEXTLEVEL_OUT, INGAME_FALL_OUT, INGAME_PRE
 function ingame.enter()
 	state = STATE_INGAME
 	translate_x, translate_y = 0,0
-	playMusic(table.random({"rockerronni","bundesliga"}))
+	playMusic(table.random({"rockerronni","bundesliga","scooterfest"}))
 
 	ingame.newGame()
 end
@@ -132,19 +132,26 @@ function ingame.draw()
 		end
 
 		-- Update lightmap
-		lg.pop()
-		lg.pop()	
-		lg.push()
-		lg.translate(-math.floor(translate_x), -math.floor(translate_y))
-		updateLightmap()
-		lg.pop()
+		if map.type == MT_NORMAL then
+			lg.pop()
+			lg.pop()	
+			lg.push()
+			lg.translate(-math.floor(translate_x), -math.floor(translate_y))
+			updateLightmap()
+			lg.pop()
 
-		-- Draw canvas with lighting
-		lg.push()
-		lg.scale(config.scale)
-		lg.setBlendMode("multiplicative")
-		lg.draw(canvas, 0,0)
-		lg.setBlendMode("alpha")
+			-- Draw canvas with lighting
+			lg.push()
+			lg.scale(config.scale)
+			lg.setBlendMode("multiplicative")
+			lg.draw(canvas, 0,0)
+			lg.setBlendMode("alpha")
+		else
+			lg.pop()
+			lg.pop()
+			lg.push()
+			lg.scale(config.scale)
+		end
 
 		-- Draw red screen if hit
 		if player.heat > 0 then

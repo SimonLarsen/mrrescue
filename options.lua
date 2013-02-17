@@ -4,7 +4,7 @@ local lg = love.graphics
 
 function options.enter()
 	state = STATE_OPTIONS
-	selection = 1
+	options.selection = 1
 end
 
 function options.update(dt)
@@ -28,21 +28,21 @@ function options.draw()
 	lg.print("JOYSTICK", 65, 136)
 	lg.print("BACK", 65, 149)
 
-	lg.print(">", 52, 57+selection*13)
+	lg.print(">", 52, 57+options.selection*13)
 
 	lg.pop()
 end
 
 function options.keypressed(k, uni)
 	if k == "down" then
-		selection = wrap(selection + 1, 1,7)
+		options.selection = wrap(options.selection + 1, 1,7)
 		playSound("blip")
 	elseif k == "up" then
-		selection = wrap(selection - 1, 1,7)
+		options.selection = wrap(options.selection - 1, 1,7)
 		playSound("blip")
 
 	elseif k == "left" or k == "right" then
-		if selection == 1 then -- SCALE
+		if options.selection == 1 then -- SCALE
 			if k == "left" then
 				config.scale = cap(config.scale - 1, 1, 10)
 			else
@@ -50,10 +50,10 @@ function options.keypressed(k, uni)
 			end
 			setMode()
 			playSound("blip")
-		elseif selection == 2 then -- VSYNC
+		elseif options.selection == 2 then -- VSYNC
 			toggleVSync()
 			playSound("blip")
-		elseif selection == 3 then -- SFX VOLUME
+		elseif options.selection == 3 then -- SFX VOLUME
 			if k == "left" then
 				config.sfx_volume = cap(config.sfx_volume - 0.1, 0,1)
 			else
@@ -61,7 +61,7 @@ function options.keypressed(k, uni)
 			end
 			love.audio.tags.sfx.setVolume(config.sfx_volume)
 			playSound("blip")
-		elseif selection == 4 then -- MUSIC VOLUME
+		elseif options.selection == 4 then -- MUSIC VOLUME
 			if k == "left" then
 				config.music_volume = cap(config.music_volume - 0.1, 0,1)
 			else
@@ -72,13 +72,16 @@ function options.keypressed(k, uni)
 		end
 
 	elseif k == "return" then
-		if selection == 2 then -- VSYNC
+		if options.selection == 2 then -- VSYNC
 			toggleVSync()
 			playSound("blip")
-		elseif selection == 5 then -- KEYBOARD
+		elseif options.selection == 5 then -- KEYBOARD
 			playSound("confirm")
 			keyboard.enter()
-		elseif selection == 7 then -- BACK
+		elseif options.selection == 6 then -- JOYSTICK
+			playSound("confirm")
+			joystick.enter()
+		elseif options.selection == 7 then -- BACK
 			playSound("confirm")
 			mainmenu.enter()
 			saveConfig()

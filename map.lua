@@ -1,6 +1,10 @@
 Map = {}
 Map.__index = Map
 
+LAST_SECTION = 40
+
+MT_NORMAL, MT_BOSS = 0,1
+
 local lg = love.graphics
 
 local floor_files = {
@@ -13,7 +17,16 @@ local floor_files = {
 function Map.create(section, level)
 	local self = setmetatable({}, Map)
 
-	local file = love.filesystem.load("maps/base.lua")()
+	self.type = MT_BOSS
+
+	-- Load base file
+	local file
+	if self.type == MT_NORMAL then
+		file = love.filesystem.load("maps/base.lua")()
+	else
+		file = love.filesystem.load("maps/top_base.lua")()
+	end
+
 	for i,v in ipairs(file.layers) do
 		if v.name == "main" then
 			self.data = v.data
@@ -42,26 +55,30 @@ function Map.create(section, level)
 
 	self.background = img.night
 
-	self.minenemy = 1
-	self.maxenemy = 1
-	if self.section >= 34 then
-		self.minenemy = 4
-		self.maxenemy = 7
-	elseif self.section >= 28 then
-		self.minenemy = 3
-		self.maxenemy = 6
-	elseif self.section >= 20 then
-		self.minenemy = 2
-		self.maxenemy = 5
-	elseif self.section >= 13 then
-		self.maxenemy = 4
-	elseif self.section >= 6 then
-		self.maxenemy = 3
-	elseif self.section >= 3 then
-		self.maxenemy = 2
+	if self.type == MT_NORMAL then
+		self.minenemy = 1
+		self.maxenemy = 1
+		if self.section >= 34 then
+			self.minenemy = 4
+			self.maxenemy = 7
+		elseif self.section >= 28 then
+			self.minenemy = 3
+			self.maxenemy = 6
+		elseif self.section >= 20 then
+			self.minenemy = 2
+			self.maxenemy = 5
+		elseif self.section >= 13 then
+			self.maxenemy = 4
+		elseif self.section >= 6 then
+			self.maxenemy = 3
+		elseif self.section >= 3 then
+			self.maxenemy = 2
+		end
+		self:populate()
+	else
+		self.startx = (self.width*16)/2
+		self.starty = 240
 	end
-
-	self:populate()
 
 	return self
 end
@@ -425,7 +442,7 @@ end
 -- @param cy Y coordinate of cell in tiles
 function Map:collideCell(cx,cy)
 	local tile = self:get(cx,cy)
-	if tile and tile > 0 and tile < 64 then
+	if tile and tile > 0 and tile < 60 then
 		return true
 	else
 		return false

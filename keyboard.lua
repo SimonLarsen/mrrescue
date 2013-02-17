@@ -15,10 +15,10 @@ end
 function keyboard.draw()
 	lg.push()
 	lg.scale(config.scale)
+	lg.setFont(font.bold)
 
 	drawBox(40, 41, 176, 134)
 
-	lg.setFont(font.bold)
 	lg.printf("SET KEYBOARD", 0, 26, WIDTH, "center")
 	for i,v in ipairs(keynames) do
 		if keyboard.waiting == true and i == keyboard.selection then
@@ -62,21 +62,7 @@ function keyboard.keypressed(k, uni)
 		end
 	else
 		if k ~= "escape" then
-			if keyboard.selection == 1 then	
-				config.keys.up = k
-			elseif keyboard.selection == 2 then	
-				config.keys.down = k
-			elseif keyboard.selection == 3 then	
-				config.keys.left = k
-			elseif keyboard.selection == 4 then	
-				config.keys.right = k
-			elseif keyboard.selection == 5 then	
-				config.keys.jump = k
-			elseif keyboard.selection == 6 then	
-				config.keys.shoot = k
-			elseif keyboard.selection == 7 then	
-				config.keys.action = k
-			end
+			config.keys[keynames[keyboard.selection]] = k
 		end
 		keyboard.waiting = false
 	end

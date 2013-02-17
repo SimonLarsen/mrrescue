@@ -437,11 +437,12 @@ function Player:updateClimbing(dt)
 	local idBottom = map:getPoint(self.x, self.y)
 	local idMid = map:getPoint(self.x, self.y-11)
 	local idTop = map:getPoint(self.x, self.y-22)
-	if idBottom == 2 or idBottom == nil then -- over ladder
+	if idBottom == 2 or idBottom == 26 or idBottom == nil then -- over ladder
 		self.y = oldy
 		self:setState(PS_RUN)
 	elseif idBottom ~= 5 and idBottom ~= 8 and idBottom ~= 137
-	and idBottom ~= 153 and idBottom ~= 247 then
+	and idBottom ~= 153 and idBottom ~= 247
+	and idBottom ~= 13 and idBottom ~= 63 and idBottom ~= 79 then
 		self:setState(PS_RUN)
 	end
 end
@@ -451,7 +452,8 @@ function Player:leaveLadder()
 	local idMid = map:getPoint(self.x, self.y-11)
 	local idTop = map:getPoint(self.x, self.y-22)
 	if  idBottom ~= 5 and idMid ~= 5 and idTop ~= 5
-	and idBottom ~= 8 and idMid ~= 8 and idTop ~= 8 then
+	and idBottom ~= 8 and idMid ~= 8 and idTop ~= 8
+	and idBottom ~= 13 and idMid ~= 13 and idTop ~= 13 then
 		self:setState(PS_RUN)
 	end
 end
@@ -585,7 +587,8 @@ function Player:climb()
 		local below = map:getPoint(self.x, self.y+1)
 		local top    = map:getPoint(self.x, self.y-22)
 		if below == 5 or below == 137 or below == 153 or below == 8 or below == 247
-		or top == 5 or top == 137 or top == 153 or top == 8 or top == 247 then
+		or top == 5 or top == 137 or top == 153 or top == 8 or top == 247
+		or top == 63 or top == 79 or below == 13 then
 			self:setState(PS_CLIMB)
 			return true
 		end
