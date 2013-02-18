@@ -486,6 +486,11 @@ function Player:action(action)
 		elseif self.state == PS_CLIMB then
 			self:leaveLadder()
 		end
+	elseif (action == "up" or action == "down") and self.shooting == false then
+		if self.state == PS_RUN then
+			self:climb()
+		end
+
 	elseif action == "left" or action == "right" then
 		-- Save last direction for conflicts
 		if action == "left" then
@@ -596,7 +601,7 @@ end
 --- Called when player tries to grab a ladder
 -- @return True if a ladder was grabbed
 function Player:climb()
-	if self.gundir == GD_UP or self.gundir == GD_DOWN then
+	--if self.gundir == GD_UP or self.gundir == GD_DOWN then
 		local below = map:getPoint(self.x, self.y+1)
 		local top    = map:getPoint(self.x, self.y-22)
 		if below == 5 or below == 137 or below == 153 or below == 8 or below == 247
@@ -605,7 +610,7 @@ function Player:climb()
 			self:setState(PS_CLIMB)
 			return true
 		end
-	end
+	--end
 	return false
 end
 
