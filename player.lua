@@ -151,8 +151,9 @@ function Player:update(dt)
 	self:collideFire(dt)
 	-- Add temperature over time
 	if map.type == MT_NORMAL then
-		self.temperature = cap(self.temperature + TIME_DAMAGE*dt, 0, self.max_temperature)
+		self.temperature = self.temperature + TIME_DAMAGE*dt
 	end
+	self.temperature = cap(self.temperature, 0, self.max_temperature)
 
 	-- Detect death
 	if self.temperature >= self.max_temperature and self.state ~= PS_DEAD then

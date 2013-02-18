@@ -1,4 +1,4 @@
-Boss = { MAX_HEALTH = 15, GRAVITY = 350, JUMP_POWER = 200, IDLE_TIME = 1, MAX_JUMP = 128 }
+Boss = { MAX_HEALTH = 15, GRAVITY = 350, JUMP_POWER = 200, IDLE_TIME = 1.5, MAX_JUMP = 128 }
 Boss.__index = Boss
 
 local BS_IDLE, BS_JUMP, BS_FLY, BS_LAND = 0,1,2,3
@@ -63,6 +63,7 @@ function Boss:update(dt)
 			if self.addedFire == false then
 				map:addFire(math.floor((self.x-8)/16), math.floor((self.y-5)/16))
 				map:addFire(math.floor((self.x+8)/16), math.floor((self.y-5)/16))
+				ingame.shake = 0.4
 				self.addedFire = true
 			end
 		else

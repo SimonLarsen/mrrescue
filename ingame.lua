@@ -14,6 +14,7 @@ end
 function ingame.newGame()
 	ingame_state = INGAME_PRESCREEN
 	max_casualties = 2+level
+	ingame.shake = 0
 
 	casualties = 0
 	score = 0
@@ -61,6 +62,9 @@ function ingame.update(dt)
 		-- Calculate translation offest
 		translate_x = cap(player.x-WIDTH/2, 0, MAPW-WIDTH)
 		translate_y = cap(player.y-11-HEIGHT/2, 0, MAPH-HEIGHT+30)
+		if ingame.shake > 0 then
+			ingame.shake = ingame.shake - dt
+		end
 
 		map:setDrawRange(translate_x, translate_y, WIDTH, HEIGHT)
 		map:update(dt)
@@ -118,7 +122,11 @@ function ingame.draw()
 	or ingame_state == INGAME_NEXTLEVEL_OUT or ingame_state == INGAME_FALL_OUT or ingame_state == INGAME_GAMEOVER_OUT then
 		-- Translate to center player
 		lg.push()
-		lg.translate(-math.floor(translate_x), -math.floor(translate_y))
+		if ingame.shake > 0 then
+			lg.translate(-math.floor(translate_x+math.random()*4-2), -math.floor(translate_y+math.random()*2.5))
+		else
+			lg.translate(-math.floor(translate_x), -math.floor(translate_y))
+		end
 
 		-- Draw back
 		map:drawBack()
