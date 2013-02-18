@@ -17,10 +17,16 @@ local floor_files = {
 function Map.create(section, level)
 	local self = setmetatable({}, Map)
 
-	self.type = MT_BOSS
-
 	-- Load base file
 	local file
+	if (level == 1 and section == 7) or
+	(level == 2 and section == 14) or
+	(level == 3 and section == 20) then
+		self.type = MT_BOSS
+	else
+		self.type = MT_NORMAL
+	end
+
 	if self.type == MT_NORMAL then
 		file = love.filesystem.load("maps/base.lua")()
 	else
@@ -76,8 +82,9 @@ function Map.create(section, level)
 		end
 		self:populate()
 	else
-		self.startx = (self.width*16)/2
+		self.startx = 280
 		self.starty = 240
+		self.boss = Boss.create((self.width*16)/2, MAPH-16)
 	end
 
 	return self
@@ -180,6 +187,11 @@ function Map:update(dt)
 		end
 	end
 
+	-- Update boss if any
+	if self.type == MT_BOSS then
+		self.boss:update(dt)
+	end
+
 	-- Recreate sprite batches
 	self:recreateSpriteBatches()
 end
@@ -187,8 +199,8 @@ end
 function Map:recreateSpriteBatches()
 	-- Recreate sprite batches if redraw is set
 	if self.redraw == true then
-		self:fillBatch(self.back_batch,  function(id) return id > 64 end)
-		self:fillBatch(self.front_batch, function(id) return id <= 64 end)
+		self:fillBatch(self.back_batch,  function(id) return id > 60 end)
+		self:fillBatch(self.front_batch, function(id) return id <= 60 end)
 		self.redraw = false
 	end
 	
@@ -257,6 +269,10 @@ function Map:drawBack()
 
 	-- Draw front tiles
 	lg.draw(self.front_batch, 0,0)
+
+	if self.type == MT_BOSS then
+		self.boss:draw()
+	end
 end
 
 --- Draws the foreground layer of the map.

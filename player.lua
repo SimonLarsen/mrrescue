@@ -150,8 +150,9 @@ function Player:update(dt)
 	-- Collide fire
 	self:collideFire(dt)
 	-- Add temperature over time
-	self.temperature = self.temperature + TIME_DAMAGE*dt
-	self.temperature = cap(self.temperature, 0, self.max_temperature)
+	if map.type == MT_NORMAL then
+		self.temperature = cap(self.temperature + TIME_DAMAGE*dt, 0, self.max_temperature)
+	end
 
 	-- Detect death
 	if self.temperature >= self.max_temperature and self.state ~= PS_DEAD then
@@ -375,6 +376,17 @@ function Player:updateStream(dt)
 			end
 		end
 	end
+	-- Collide with boss
+	if map.type == MT_BOSS then
+		if map.boss:collideBox(sbox) == true then
+			local dist = self:cutStream(map.boss:getBBox())
+			if dist < min then
+				closestHit = map.boss
+				min = dist
+			end
+			self.streamCollided = true
+		end
+	end
 	-- Collide with fire
 	for j,w in pairs(map.fire) do
 		for i,v in pairs(w) do
@@ -402,7 +414,7 @@ end
 function Player:cutStream(box)
 	if self.gundir == GD_HORIZONTAL then -- horizontal
 		if self.dir == -1 then -- left
-			return self.x - (box.x+box.w)-11
+			return self.x - (box.x+box.w)-13
 		else
 			return box.x - self.x-9
 		end
@@ -542,13 +554,13 @@ function Player:applyItem(item)
 		self.hasReserve = true
 	elseif item.id == "suit" then
 		self.num_suits = cap(self.num_suits + 1, 0, 3)
-		self.max_temperature = self.max_temperature + 0.2
+		self.max_temperature = cap(self.max_temperature + 0.2, 1, 1.6)
 	elseif item.id == "tank" then
 		self.num_tanks = cap(self.num_tanks + 1, 0, 3)
-		self.water_capacity = self.water_capacity + 1
+		self.water_capacity = cap(self.water_capacity + 1, 5, 8)
 	elseif item.id == "regen" then
 		self.num_regens = cap(self.num_regens + 1, 0, 3)
-		self.regen_rate = self.regen_rate + 0.5
+		self.regen_rate = cap(self.regen_rate + 0.5, 3, 4.5)
 	end
 end
 
@@ -559,13 +571,13 @@ function Player:stealItem()
 	local val = math.random(1,sum)
 	if self.num_suits > 0 and val <= self.num_suits then
 		self.num_suits = cap(self.num_suits - 1, 0, 3)
-		self.max_temperature = self.max_temperature + 0.2
+		self.max_temperature = self.max_temperature - 0.2
 	elseif self.num_tanks > 0 and val <= self.num_suits+self.num_tanks then
 		self.num_tanks = cap(self.num_tanks - 1, 0, 3)
-		self.water_capacity = self.water_capacity + 1
+		self.water_capacity = self.water_capacity - 1
 	else
 		self.num_regens = cap(self.num_regens - 1, 0, 3)
-		self.regen_rate = self.regen_rate + 0.5
+		self.regen_rate = self.regen_rate - 0.5
 	end
 
 	return true

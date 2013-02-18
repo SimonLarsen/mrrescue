@@ -302,6 +302,14 @@ function drawHUD()
 	lg.print("SCORE: "..score,150,186)
 	lg.setColor(255,255,255)
 
+	-- Draw boss health bar
+	if map.type == MT_BOSS then
+		lg.drawq(img.boss_health, quad.boss_health, 0, 11)
+		local boss_length = math.floor((map.boss.health/map.boss.MAX_HEALTH)*178+0.5)
+		lg.drawq(img.boss_health, quad.boss_bar, 64,22, 0, boss_length, 1)
+		lg.drawq(img.boss_health, quad.boss_bar_end, 64+boss_length,22, 0)
+	end
+
 	-- Draw panic/burning human icons
 	drawIcons()
 end
