@@ -415,7 +415,7 @@ end
 function Player:cutStream(box)
 	if self.gundir == GD_HORIZONTAL then -- horizontal
 		if self.dir == -1 then -- left
-			return self.x - (box.x+box.w)-13
+			return self.x - (box.x+box.w)-12
 		else
 			return box.x - self.x-9
 		end
@@ -476,9 +476,7 @@ function Player:action(action)
 		self:jump()
 	elseif action == "action" then
 		if self.state == PS_RUN then
-			if self:climb() == false then
-				self:grab()
-			end
+			self:grab()
 		elseif self.state == PS_CARRY then
 			self:setState(PS_THROW)
 			self.grabbed:throw(self.x, self.y, self.dir)
@@ -538,7 +536,6 @@ function Player:setState(state)
 		self.state = PS_CLIMB
 		self.anim = self.animClimb
 		self.xspeed, self.yspeed = 0,0
-		self.x = math.floor(self.x/16)*16+8 -- Align with middle of ladder
 	elseif state == PS_CARRY then
 		self.state = PS_CARRY
 	elseif state == PS_THROW then
@@ -608,6 +605,7 @@ function Player:climb()
 		or top == 5 or top == 137 or top == 153 or top == 8 or top == 247
 		or top == 63 or top == 79 or below == 13 then
 			self:setState(PS_CLIMB)
+			self.x = math.floor(self.x/16)*16+8 -- Align with middle of ladder
 			return true
 		end
 	--end
