@@ -54,6 +54,7 @@ function levelselection.keypressed(k, uni)
 		playSound("confirm")
 	elseif k == "escape" then
 		playSound("confirm")
+		playMusic("opening")
 		mainmenu.enter()
 	end
 end
@@ -64,6 +65,7 @@ function levelselection.joystickpressed(joy, k)
 		playSound("confirm")
 	elseif k == 4 then
 		playSound("confirm")
+		playMusic("opening")
 		mainmenu.enter()
 	end
 end

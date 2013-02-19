@@ -62,12 +62,14 @@ function splash.update(dt)
 end
 
 function splash.keypressed(k,uni)
-	if k == "return" or k == " " then
+	if k == "return" or k == " " or k == "escape" then
 		playSound("blip")
 		mainmenu.enter()
 	end
 end
 
 function splash.joystickpressed(joy, k)
+		playSound("blip")
+		mainmenu.enter()
 	mainmenu.enter()
 end

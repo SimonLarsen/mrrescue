@@ -199,7 +199,7 @@ function loadResources()
 		quad.popup_text[i] = lg.newQuad(0,i*8, 64,8, getSize(img.popup_text))
 	end
 
-	quad.level_buildings = lg.newQuad(0,0, 134,158, getSize(img.level_buildings))
+	quad.level_buildings = lg.newQuad(0,0, 134,159, getSize(img.level_buildings))
 	quad.building_outline1 = lg.newQuad(144,0, 37,40, getSize(img.level_buildings))
 	quad.building_outline2 = lg.newQuad(192,0, 43,75, getSize(img.level_buildings))
 	quad.building_outline3 = lg.newQuad(144,80, 64,83, getSize(img.level_buildings))
