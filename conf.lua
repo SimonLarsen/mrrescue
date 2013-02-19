@@ -1,6 +1,6 @@
 function love.conf(t)
-    t.title = "mrrescue"        
-    t.author = "Simon Larsen"        
+    t.title = "Mr. Rescue"        
+    t.author = "Tangram games"        
     t.url = "http://simonlarsen.github.com/mrrescue"
     t.identity = "mrrescue"
     t.version = "0.8.0"         
