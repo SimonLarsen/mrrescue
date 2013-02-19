@@ -198,11 +198,7 @@ function ingame.draw()
 		drawGameover()
 	end
 
-	-- Draw debug information
 	lg.pop()
-	if show_debug == true then
-		drawDebug()
-	end
 end
 
 function drawPrescreen()
@@ -387,27 +383,13 @@ function updateLightmap()
 	lg.setCanvas()
 end
 
---- Draws some simple debug information to the screen
-function drawDebug()
-	for i,v in ipairs({{0,0,0,255},{255,255,255,255}}) do
-		lg.setColor(v)
-		lg.print("x: "..player.flx.."   y: "..player.fly,10+i,10+i)
-		lg.print("xspeed: "..math.floor(player.xspeed).."   yspeed: "..math.floor(player.yspeed),10+i,30+i)
-		lg.print("streamLength: "..math.floor(player.streamLength).."   streamCollided: ".. (player.streamCollided and "true" or "false"),10+i,50+i)
-		lg.print("enemies: "..#map.enemies.."  humans: "..#map.humans,10+i,70+i)
-		lg.print("objects: "..#map.objects.."  particles: "..#map.particles,10+i,90+i)
-	end
+function ingame.action(a)
+	player:action(a)
 end
 
 function ingame.keypressed(k, uni)
 	if ingame_state == INGAME_ACTIVE then
-		if k == "f1" then
-			show_debug = not show_debug
-		elseif k == "i" then
-			map:addFire(math.floor(player.x/16), math.floor((player.y-8)/16))
-		else
-			player:keypressed(k)
-		end
+		player:keypressed(k)
 	elseif ingame_state == INGAME_PRESCREEN then
 		ingame_state = INGAME_FADE_IN
 		transition_time = 0
@@ -418,7 +400,7 @@ end
 
 function ingame.joystickpressed(joy, k)
 	if ingame_state == INGAME_ACTIVE then
-		player:joystickpressed(joy,k)
+		player:joystickpressed(joy, k)
 	elseif ingame_state == INGAME_PRESCREEN then
 		ingame_state = INGAME_FADE_IN
 		transition_time = 0

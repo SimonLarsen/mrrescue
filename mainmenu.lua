@@ -12,7 +12,7 @@ function mainmenu.enter()
 end
 
 function mainmenu.update(dt)
-
+	updateKeys()
 end
 
 function mainmenu.draw()
@@ -47,9 +47,30 @@ function mainmenu.keypressed(k, uni)
 			love.event.quit()
 		end
 		playSound("confirm")
+	elseif k == "escape" then
+		love.event.quit()
 	end
 end
 
 function mainmenu.joystickpressed(joy, k)
-	levelselection.enter()
+	if k == 3 then
+		if selection == 1 then
+			levelselection.enter()
+		elseif selection == 4 then
+			options.enter()
+		elseif selection == 6 then
+			love.event.quit()
+		end
+		playSound("confirm")
+	end
+end
+
+function mainmenu.action(a)
+	if a == "down" then
+		selection = wrap(selection + 1, 1,6)
+		playSound("blip")
+	elseif a == "up" then
+		selection = wrap(selection - 1, 1,6)
+		playSound("blip")
+	end
 end

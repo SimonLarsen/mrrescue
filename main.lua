@@ -62,13 +62,63 @@ function love.draw()
 end
 
 function love.keypressed(k, uni)
-	if k == "escape" then
-		love.event.quit()
-	end
-
 	gamestates[state].keypressed(k, uni)
 end
 
 function love.joystickpressed(joy, k)
-	gamestates[state].joystickpressed(joy, k)
+	if joy == config.joystick then
+		gamestates[state].joystickpressed(joy, k)
+	end
+end
+
+--- Updates keystates of ingame keys.
+--  Should only be called when ingame, as it
+--  makes call to Player
+function updateKeys()
+	-- Check keyboard keys
+	for action, key in pairs(config.keys) do
+		if love.keyboard.isDown(key) then
+			keystate[action] = true
+		else
+			keystate[action] = false
+		end
+	end
+
+	-- Check joystick axes
+	local axis1, axis2 = love.joystick.getAxes(config.joystick)
+	if axis1 and axis2 then
+		if axis1 < -0.5 then
+			keystate.left = true
+		elseif axis1 > 0.5 then
+			keystate.right = true
+		end
+		if axis2 < -0.5 then
+			keystate.up = true
+		elseif axis2 > 0.5 then
+			keystate.down = true
+		end
+		-- Check sudden movements (for ladders)
+		if math.abs(keystate.oldaxis1) < 0.05 then
+			if axis1 < -0.5 then
+				gamestates[state].action("left")
+			elseif axis1 > 0.5 then
+				gamestates[state].action("right") end
+		end
+		if math.abs(keystate.oldaxis2) < 0.05 then
+			if axis2 < -0.5 then
+				gamestates[state].action("up")
+			elseif axis2 > 0.5 then
+				gamestates[state].action("down") end
+		end
+		-- Write axis values for next update
+		keystate.oldaxis1 = axis1 or 0
+		keystate.oldaxis2 = axis2 or 0
+	end
+
+	-- Check joystick keys
+	for action, key in pairs(config.joykeys) do
+		if love.joystick.isDown(config.joystick, key) then
+			keystate[action] = true
+		end
+	end
 end

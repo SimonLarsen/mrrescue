@@ -508,24 +508,6 @@ function Player:action(action)
 	end
 end
 
-function Player:keypressed(k)
-	for a, key in pairs(config.keys) do
-		if k == key then
-			self:action(a)
-		end
-	end
-end
-
-function Player:joystickpressed(joy, k)
-	if joy == self.joystick then
-		for a, key in pairs(config.joykeys) do
-			if k == key then
-				self:action(a)
-			end
-		end
-	end
-end
-
 --- Changes the current state and resets current animation
 -- @param state New state
 function Player:setState(state)
@@ -726,5 +708,23 @@ function Player:drawWater()
 			end
 		end
 		lg.drawq(img.water, quad.water_out[frame], self.flx+self.dir*0.5, self.fly+2, math.pi/2, 1,1, 0,7.5)
+	end
+end
+
+function Player:keypressed(k)
+	for a, key in pairs(config.keys) do
+		if k == key then
+			self:action(a)
+		end
+	end
+end
+
+function Player:joystickpressed(joy, k)
+	if joy == config.joystick then
+		for a, key in pairs(config.joykeys) do
+			if k == key then
+				self:action(a)
+			end
+		end
 	end
 end

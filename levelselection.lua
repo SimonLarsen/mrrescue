@@ -9,7 +9,7 @@ function levelselection.enter()
 end
 
 function levelselection.update(dt)
-	
+	updateKeys()
 end
 
 function levelselection.draw()
@@ -52,9 +52,30 @@ function levelselection.keypressed(k, uni)
 	elseif k == "return" or k == " " then
 		ingame.enter(level)
 		playSound("confirm")
+	elseif k == "escape" then
+		playSound("confirm")
+		mainmenu.enter()
 	end
 end
 
 function levelselection.joystickpressed(joy, k)
-	
+	if k == 3 then
+		ingame.enter(level)
+		playSound("confirm")
+	elseif k == 4 then
+		playSound("confirm")
+		mainmenu.enter()
+	end
+end
+
+function levelselection.action(k)
+	if k == "right" or k == "down" then
+		level = level + 1
+		if level > 3 then level = 1 end
+		playSound("blip")
+	elseif k == "left" or k == "up" then
+		level = level - 1
+		if level < 1 then level = 3 end
+		playSound("blip")
+	end
 end
