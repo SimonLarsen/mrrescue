@@ -7,6 +7,7 @@ function Boss.create(x,y)
 	local self = setmetatable({}, Boss)
 
 	self.alive = true
+	self.hit = false
 	self.x, self.y = x,y
 	self.xspeed, self.yspeed = 0,0
 	self.time = self.IDLE_TIME
@@ -82,13 +83,26 @@ function Boss:draw()
 	self.flx = math.floor(self.x)
 	self.fly = math.floor(self.y)
 
-	if self.state == BS_IDLE then
-		self.anims[BS_JUMP]:draw(self.flx, self.fly, 0, self.dir, 1, 27, 64, 1)
-	elseif self.state == BS_FLY then
-		self.anims[BS_LAND]:draw(self.flx, self.fly, 0, self.dir, 1, 27, 64, 1)
+	if self.hit == false then
+		if self.state == BS_IDLE then
+			self.anims[BS_JUMP]:draw(self.flx, self.fly, 0, self.dir, 1, 27, 64, 1)
+		elseif self.state == BS_FLY then
+			self.anims[BS_LAND]:draw(self.flx, self.fly, 0, self.dir, 1, 27, 64, 1)
+		else
+			self.anim:draw(self.flx, self.fly, 0, self.dir, 1, 27, 64)
+		end
 	else
-		self.anim:draw(self.flx, self.fly, 0, self.dir, 1, 27, 64)
+		if self.state == BS_IDLE then
+			self.anims[BS_JUMP]:draw(self.flx, self.fly, 0, self.dir, 1, 27, 64, 1, img.boss_jump_hit)
+		elseif self.state == BS_FLY then
+			self.anims[BS_LAND]:draw(self.flx, self.fly, 0, self.dir, 1, 27, 64, 1, img.boss_land_hit)
+		elseif self.state == BS_JUMP then
+			self.anim:draw(self.flx, self.fly, 0, self.dir, 1, 27, 64, nil, img.boss_jump_hit)
+		elseif self.state == BS_LAND then
+			self.anim:draw(self.flx, self.fly, 0, self.dir, 1, 27, 64, nil, img.boss_land_hit)
+		end
 	end
+	self.hit = false
 end
 
 function Boss:collideBox(bbox)
@@ -111,4 +125,5 @@ end
 
 function Boss:shot(dt,dir)
 	self.health = self.health - dt
+	self.hit = true
 end

@@ -30,7 +30,7 @@ local IMAGE_FILES = {
 	"enemy_angryjumper_hit", "enemy_angryjumper_jump",
 	"enemy_volcano_run", "enemy_volcano_shoot", "enemy_volcano_hit",
 	"enemy_angryvolcano_run", "enemy_angryvolcano_shoot", "enemy_angryvolcano_hit", "enemy_fireball",
-	"boss_jump", "boss_land",
+	"boss_jump", "boss_land", "boss_jump_hit", "boss_land_hit",
 
 	"human_1_run", "human_2_run", "human_3_run", "human_4_run",
 	"human_1_carry_left", "human_2_carry_left", "human_3_carry_left", "human_4_carry_left",
