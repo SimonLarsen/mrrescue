@@ -19,7 +19,7 @@ function Map.create(section, level)
 
 	-- Load base file
 	local file
-	if (level == 1 and section == 7) or
+	if (level == 1 and section == 8) or
 	(level == 2 and section == 14) or
 	(level == 3 and section == 20) then
 		self.type = MT_BOSS
@@ -64,13 +64,13 @@ function Map.create(section, level)
 	if self.type == MT_NORMAL then
 		self.minenemy = 1
 		self.maxenemy = 1
-		if self.section >= 34 then
+		if self.section >= 26 then
 			self.minenemy = 4
 			self.maxenemy = 7
-		elseif self.section >= 28 then
+		elseif self.section >= 23 then
 			self.minenemy = 3
 			self.maxenemy = 6
-		elseif self.section >= 20 then
+		elseif self.section >= 16 then
 			self.minenemy = 2
 			self.maxenemy = 5
 		elseif self.section >= 13 then
