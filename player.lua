@@ -421,7 +421,7 @@ function Player:cutStream(box)
 		end
 	elseif self.gundir == GD_UP then -- up
 		return self.y - (box.y+box.h+18)
-	elseif self.gundir == GD_HORIZONTAL then -- down
+	elseif self.gundir == GD_DOWN then -- down
 		return box.y - self.y-4
 	else
 		return 0
