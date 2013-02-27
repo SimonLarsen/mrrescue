@@ -234,6 +234,17 @@ function Player:collideFire(dt)
 		end
 	end
 
+	-- Check collision with boss
+	if map.type == MT_BOSS then
+		if self:collideBox(map.boss:getBBox()) == true then
+			self.heat = 1
+		elseif map.boss.shockwaveActive == true then
+			if self:collideBox(map.boss:getShockwaveBBox()) == true then
+				self.heat = 1.0
+			end
+		end
+	end
+
 	local cx = math.floor(self.x/16)
 	local cy = math.floor((self.y-11)/16)
 

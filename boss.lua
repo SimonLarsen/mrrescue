@@ -14,6 +14,9 @@ function Boss.create(x,y)
 	self.dir = 1
 	self.health = self.MAX_HEALTH
 	self.addedFire = false
+	self.shockwaveActive = false
+	self.shockwaveFrame = 0
+	self.shockwaveX = 0
 
 	self.anims = {}
 	self.anims[BS_JUMP] = newAnimation(img.boss_jump, 58, 64, 0.14, 5,
@@ -62,10 +65,16 @@ function Boss:update(dt)
 			self.y = MAPH-16
 			self.yspeed = 0
 			if self.addedFire == false then
+				-- Add fire
 				map:addFire(math.floor((self.x-8)/16), math.floor((self.y-5)/16))
 				map:addFire(math.floor((self.x+8)/16), math.floor((self.y-5)/16))
-				ingame.shake = 0.4
 				self.addedFire = true
+				-- Set shake
+				ingame.shake = 0.4
+				-- Add shockwave
+				self.shockwaveX = math.floor(self.x)
+				self.shockwaveFrame = 0
+				self.shockwaveActive = true
 			end
 		else
 			self.x = self.x + self.xspeed*dt
@@ -74,7 +83,18 @@ function Boss:update(dt)
 
 	self.x = cap(self.x, 194, 464)
 
+	-- Update shockwave if active
+	if self.shockwaveActive == true then
+		self.shockwaveFrame = self.shockwaveFrame + dt*24
+		if self.shockwaveFrame >= 10 then
+			self.shockwaveFrame = 0
+			self.shockwaveActive = false
+		end
+	end
+
+	-- Check if out of health
 	if self.health <= 0 then
+		self.alive = false
 		self.y = 1000
 	end
 end
@@ -82,7 +102,15 @@ end
 function Boss:draw()
 	self.flx = math.floor(self.x)
 	self.fly = math.floor(self.y)
+	
+	-- Draw shockwave
+	if self.shockwaveActive == true then
+		local frame = math.floor(self.shockwaveFrame)
+		lg.drawq(img.shockwave, quad.shockwave[frame], self.shockwaveX, 240, 0, 1,1, 82, 32)
+		lg.drawq(img.shockwave, quad.shockwave[frame], self.shockwaveX, 240, 0,-1,1, 82, 32)
+	end
 
+	-- Draw boss
 	if self.hit == false then
 		if self.state == BS_IDLE then
 			self.anims[BS_JUMP]:draw(self.flx, self.fly, 0, self.dir, 1, 27, 64, 1)
@@ -116,6 +144,11 @@ end
 
 function Boss:getBBox()
 	return {x = self.x-11, y = self.y-33, w = 22, h = 26}
+end
+
+function Boss:getShockwaveBBox()
+	local swwidth = self.shockwaveFrame*6.08
+	return {x = self.x-swwidth, y = 235, w = 2*swwidth, h = 5}
 end
 
 function Boss:setState(state)

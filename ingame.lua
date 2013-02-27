@@ -47,7 +47,7 @@ function ingame.nextLevel()
 end
 
 function ingame.update(dt)
-	if love.keyboard.isDown("l") then
+	if love.keyboard.isDown("e") then
 		dt = dt/4
 	end
 
