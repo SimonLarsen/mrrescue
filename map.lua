@@ -61,30 +61,36 @@ function Map.create(section, level)
 
 	self.background = img.night
 
+	-- level 1 = 1 til 7
+	-- level 2 = 6 til 18
+	-- level 3 = 11 til 29
+
 	if self.type == MT_NORMAL then
 		self.minenemy = 1
 		self.maxenemy = 1
-		if self.section >= 26 then
-			self.minenemy = 4
-			self.maxenemy = 7
-		elseif self.section >= 23 then
-			self.minenemy = 3
-			self.maxenemy = 6
-		elseif self.section >= 16 then
-			self.minenemy = 2
-			self.maxenemy = 5
-		elseif self.section >= 13 then
-			self.maxenemy = 4
-		elseif self.section >= 6 then
-			self.maxenemy = 3
+		if self.section >= 22 then
+			self.maxenemy = 7 -- Allow Thief
+			self.minenemy = 4 -- Disallow Volcano
+		elseif self.section >= 19 then
+			self.maxenemy = 6 -- Allow Angry Volcano
+			self.minenemy = 3 -- Disallow Jumper
+		elseif self.section >= 12 then
+			self.maxenemy = 5 -- Allow Angry Jumper
+			self.minenemy = 2 -- Disallow Normal
+		elseif self.section >= 8 then
+			self.maxenemy = 4 -- Allow Angry Normal
+		elseif self.section >= 5 then
+			self.maxenemy = 3 -- Allow Volcano
 		elseif self.section >= 3 then
-			self.maxenemy = 2
+			self.maxenemy = 2 -- allow Jumper
 		end
 		self:populate()
 	else
 		self.startx = 280
 		self.starty = 240
 		self.boss = Boss.create((self.width*16)/2, MAPH-16)
+		table.insert(self.items, Item.create(16*16, 8*16, "coolant"))
+		table.insert(self.items, Item.create(24*16, 10*16, "coolant"))
 	end
 
 	return self
