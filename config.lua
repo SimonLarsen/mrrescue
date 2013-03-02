@@ -41,6 +41,22 @@ function loadConfig()
 			config[i] = v
 		end
 	end
+
+	-- Select first open joystick if current is not open
+	if love.joystick.isOpen(config.joystick) == false then
+		config.joystick = 1
+		nextJoystick()
+	end
+end
+
+function nextJoystick()
+	for i=0,14 do
+		local pos = (config.joystick+i)%16+1
+		if love.joystick.isOpen(pos) then
+			config.joystick = pos
+			break
+		end
+	end
 end
 
 function saveConfig()

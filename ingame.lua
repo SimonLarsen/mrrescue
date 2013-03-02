@@ -13,7 +13,7 @@ end
 
 function ingame.newGame()
 	ingame_state = INGAME_PRESCREEN
-	max_casualties = 2+level
+	max_casualties = 6-level
 	ingame.shake = 0
 
 	casualties = 0
@@ -312,6 +312,12 @@ function drawHUD()
 		local boss_length = math.floor((map.boss.health/map.boss.MAX_HEALTH)*178+0.5)
 		lg.drawq(img.boss_health, quad.boss_bar, 64,22, 0, boss_length, 1)
 		lg.drawq(img.boss_health, quad.boss_bar_end, 64+boss_length,22, 0)
+
+		local bossframe = 0
+		if map.boss.angry == true then bossframe = bossframe + 2 end
+		if map.boss.hit == true then bossframe = bossframe + 1 end
+		lg.drawq(img.boss_health, quad.boss_portrait[bossframe], 15,15)
+		map.boss.hit = false
 	end
 
 	-- Draw panic/burning human icons

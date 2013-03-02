@@ -49,7 +49,10 @@ function joystick.keypressed(k, uni)
 		joystick.selection = wrap(joystick.selection - 1, 1, 6)
 		playSound("blip")
 	elseif k == "return" then
-		if joystick.selection >= 2 and joystick.selection <= 4 then -- Keys
+		if joystick.selection == 1 then
+			playSound("blip")
+			nextJoystick()
+		elseif joystick.selection >= 2 and joystick.selection <= 4 then -- Keys
 			playSound("blip")
 			joystick.waiting = true
 		elseif joystick.selection == 5 then -- Default
@@ -73,7 +76,10 @@ end
 function joystick.joystickpressed(joy, k)
 	if joystick.waiting == false then
 		if k == 3 then
-			if joystick.selection >= 2 and joystick.selection <= 4 then -- Keys
+			if joystick.selection == 1 then
+				playSound("blip")
+				nextJoystick()
+			elseif joystick.selection >= 2 and joystick.selection <= 4 then -- Keys
 				joystick.waiting = true
 			elseif joystick.selection == 5 then -- Default
 				playSound("confirm")

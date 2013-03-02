@@ -20,8 +20,8 @@ function Map.create(section, level)
 	-- Load base file
 	local file
 	if (level == 1 and section == 8)
-	or (level == 2 and section == 14)
-	or (level == 3 and section == 20) then
+	or (level == 2 and section == 15)
+	or (level == 3 and section == 22) then
 		self.type = MT_BOSS
 	else
 		self.type = MT_NORMAL

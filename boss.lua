@@ -13,6 +13,7 @@ function Boss.create(x,y)
 	self.time = self.IDLE_TIME
 	self.dir = 1
 	self.health = self.MAX_HEALTH
+	self.angry = false
 	self.addedFire = false
 	self.shockwaveActive = false
 	self.shockwaveFrame = 0
@@ -72,9 +73,11 @@ function Boss:update(dt)
 				-- Set shake
 				ingame.shake = 0.4
 				-- Add shockwave
-				self.shockwaveX = math.floor(self.x)
-				self.shockwaveFrame = 0
-				self.shockwaveActive = true
+				if self.angry == true then
+					self.shockwaveX = math.floor(self.x)
+					self.shockwaveFrame = 0
+					self.shockwaveActive = true
+				end
 			end
 		else
 			self.x = self.x + self.xspeed*dt
@@ -93,9 +96,10 @@ function Boss:update(dt)
 	end
 
 	-- Check if out of health
-	if self.health <= 0 then
+	if self.health < self.MAX_HEALTH/2 then
+		self.angry = true
+	elseif self.health <= 0 then
 		self.alive = false
-		self.y = 1000
 	end
 end
 
@@ -112,12 +116,24 @@ function Boss:draw()
 
 	-- Draw boss
 	if self.hit == false then
-		if self.state == BS_IDLE then
-			self.anims[BS_JUMP]:draw(self.flx, self.fly, 0, self.dir, 1, 27, 64, 1)
-		elseif self.state == BS_FLY then
-			self.anims[BS_LAND]:draw(self.flx, self.fly, 0, self.dir, 1, 27, 64, 1)
+		if self.angry == false then
+			if self.state == BS_IDLE then
+				self.anims[BS_JUMP]:draw(self.flx, self.fly, 0, self.dir, 1, 27, 64, 1)
+			elseif self.state == BS_FLY then
+				self.anims[BS_LAND]:draw(self.flx, self.fly, 0, self.dir, 1, 27, 64, 1)
+			else
+				self.anim:draw(self.flx, self.fly, 0, self.dir, 1, 27, 64)
+			end
 		else
-			self.anim:draw(self.flx, self.fly, 0, self.dir, 1, 27, 64)
+			if self.state == BS_IDLE then
+				self.anims[BS_JUMP]:draw(self.flx, self.fly, 0, self.dir, 1, 27, 64, 1, img.boss_rage_jump)
+			elseif self.state == BS_FLY then
+				self.anims[BS_LAND]:draw(self.flx, self.fly, 0, self.dir, 1, 27, 64, 1, img.boss_rage_land)
+			elseif self.state == BS_JUMP then
+				self.anim:draw(self.flx, self.fly, 0, self.dir, 1, 27, 64, nil, img.boss_rage_jump)
+			elseif self.state == BS_LAND then
+				self.anim:draw(self.flx, self.fly, 0, self.dir, 1, 27, 64, nil, img.boss_rage_land)
+			end
 		end
 	else
 		if self.state == BS_IDLE then
@@ -130,7 +146,6 @@ function Boss:draw()
 			self.anim:draw(self.flx, self.fly, 0, self.dir, 1, 27, 64, nil, img.boss_land_hit)
 		end
 	end
-	self.hit = false
 end
 
 function Boss:collideBox(bbox)

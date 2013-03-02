@@ -241,6 +241,7 @@ function Player:collideFire(dt)
 		elseif map.boss.shockwaveActive == true then
 			if self:collideBox(map.boss:getShockwaveBBox()) == true then
 				self.heat = 1.0
+				self.xspeed = self.xspeed + math.sign(self.x-map.boss.x)*100
 			end
 		end
 	end
@@ -341,7 +342,6 @@ function Player:updateStream(dt)
 			end
 		end
 	elseif self.gundir == GD_HORIZONTAL then -- horizontal
-		--cx = cx - self.dir
 		for i = 1,span do
 			cx = cx + self.dir
 			if map:collideCell(cx,cy) == true then
