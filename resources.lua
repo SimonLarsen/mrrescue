@@ -6,7 +6,7 @@ font = {}   -- global Fonts
 local snd = {}	-- sound Sources
 
 local IMAGE_FILES = {
-	"splash", "tangram", "lovesplash",
+	"splash", "tangram", "lovesplash", "howto",
 	"tiles", "door", "boldfont", "captain_dialog", "boss_health",
 	"hud", "hud2", "hud_people", "item_slots",
 	"water_bar", "reserve_bar", "overloaded_bar", "temperature_bar",

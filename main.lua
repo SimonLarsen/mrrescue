@@ -22,6 +22,7 @@ require("options")
 require("keyboard")
 require("joystick")
 require("levelselection")
+require("howto")
 
 WIDTH = 256
 HEIGHT = 200
@@ -32,8 +33,8 @@ show_debug = false
 local MIN_FRAMERATE = 1/15
 local MAX_FRAMERATE = 1/120
 
-STATE_SPLASH, STATE_INGAME, STATE_MAINMENU, STATE_LEVELSELECTION, STATE_OPTIONS, STATE_KEYBOARD, STATE_JOYSTICK = 0,1,2,3,4,5,6
-gamestates = {[0]=splash, [1]=ingame, [2]=mainmenu, [3]=levelselection, [4]=options, [5]=keyboard, [6]=joystick}
+STATE_SPLASH, STATE_INGAME, STATE_MAINMENU, STATE_LEVELSELECTION, STATE_OPTIONS, STATE_KEYBOARD, STATE_JOYSTICK, STATE_HOWTO = 0,1,2,3,4,5,6,7
+gamestates = {[0]=splash, [1]=ingame, [2]=mainmenu, [3]=levelselection, [4]=options, [5]=keyboard, [6]=joystick, [7]=howto}
 
 function love.load()
 	loadConfig()
@@ -102,13 +103,15 @@ function updateKeys()
 			if axis1 < -0.5 then
 				gamestates[state].action("left")
 			elseif axis1 > 0.5 then
-				gamestates[state].action("right") end
+				gamestates[state].action("right")
+			end
 		end
 		if math.abs(keystate.oldaxis2) < 0.05 then
 			if axis2 < -0.5 then
 				gamestates[state].action("up")
 			elseif axis2 > 0.5 then
-				gamestates[state].action("down") end
+				gamestates[state].action("down")
+			end
 		end
 		-- Write axis values for next update
 		keystate.oldaxis1 = axis1 or 0

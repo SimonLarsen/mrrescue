@@ -41,6 +41,8 @@ function mainmenu.keypressed(k, uni)
 	elseif k == "return" or k == " " then
 		if selection == 1 then
 			levelselection.enter()
+		elseif selection == 2 then
+			howto.enter()
 		elseif selection == 4 then
 			options.enter()
 		elseif selection == 6 then
@@ -56,6 +58,8 @@ function mainmenu.joystickpressed(joy, k)
 	if k == 3 then
 		if selection == 1 then
 			levelselection.enter()
+		elseif selection == 2 then
+			howto.enter()
 		elseif selection == 4 then
 			options.enter()
 		elseif selection == 6 then
