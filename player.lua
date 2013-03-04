@@ -649,7 +649,7 @@ function Player:draw()
 		end
 	-- Climbing
 	elseif self.state == PS_CLIMB then
-		self.anim:draw(self.flx, self.fly, 0, 1,1, 7, 22)
+		self.anim:draw(self.flx, self.fly, 0, 1,1, 7, 20)
 	-- Carrying a human
 	elseif self.state == PS_CARRY then
 		if math.abs(self.xspeed) < 30 then

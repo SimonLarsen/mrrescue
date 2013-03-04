@@ -1,7 +1,8 @@
-Boss = { MAX_HEALTH = 15, GRAVITY = 350, JUMP_POWER = 200, IDLE_TIME = 1.5, MAX_JUMP = 128 }
+Boss = { MAX_HEALTH = 15, GRAVITY = 350, JUMP_POWER = 200, IDLE_TIME = 1.5, MAX_JUMP = 128,
+		 TRANSITION_TIME = 2, DEAD_TIME = 5 }
 Boss.__index = Boss
 
-local BS_IDLE, BS_JUMP, BS_FLY, BS_LAND = 0,1,2,3
+local BS_IDLE, BS_JUMP, BS_FLY, BS_LAND, BS_TRANSITION, BS_DEAD = 0,1,2,3,4
 
 function Boss.create(x,y)
 	local self = setmetatable({}, Boss)
@@ -14,7 +15,7 @@ function Boss.create(x,y)
 	self.dir = 1
 	self.health = self.MAX_HEALTH
 	self.angry = false
-	self.addedFire = false
+	self.hitGround = false
 	self.shockwaveActive = false
 	self.shockwaveFrame = 0
 	self.shockwaveX = 0
@@ -25,12 +26,14 @@ function Boss.create(x,y)
 			self:setState(BS_FLY)
 			self.yspeed = -self.JUMP_POWER
 			self.xspeed = 0.93*cap(cap(player.x,194,464) - self.x, -self.MAX_JUMP, self.MAX_JUMP)
-			self.addedFire = false
+			self.hitGround = false
 		end
 	)
 	self.anims[BS_LAND] = newAnimation(img.boss_land, 58, 64, 0.14, 7,
 		function()
-			self:setState(BS_JUMP)
+			if self.state ~= BS_TRANSITION then
+				self:setState(BS_JUMP)
+			end
 		end
 	)
 
@@ -47,8 +50,7 @@ function Boss:update(dt)
 	if self.state == BS_IDLE then
 		self.time = self.time - dt
 		if self.time <= 0 then
-			self.state = BS_JUMP
-			self.anim = self.anims[BS_JUMP]
+			self:setState(BS_JUMP)
 		end
 	elseif self.state == BS_FLY then
 		self.yspeed = self.yspeed + self.GRAVITY*dt
@@ -65,11 +67,11 @@ function Boss:update(dt)
 		if self.y > MAPH-16 then
 			self.y = MAPH-16
 			self.yspeed = 0
-			if self.addedFire == false then
+			if self.hitGround == false then
 				-- Add fire
 				map:addFire(math.floor((self.x-8)/16), math.floor((self.y-5)/16))
 				map:addFire(math.floor((self.x+8)/16), math.floor((self.y-5)/16))
-				self.addedFire = true
+				self.hitGround = true
 				-- Set shake
 				ingame.shake = 0.4
 				-- Add shockwave
@@ -81,6 +83,27 @@ function Boss:update(dt)
 			end
 		else
 			self.x = self.x + self.xspeed*dt
+		end
+	elseif self.state == BS_JUMP then
+		if self.health <= 0 then
+			self.time = self.DEAD_TIME
+			ingame.shake = self.DEAD_TIME
+			self:setState(BS_DEAD)
+		elseif self.angry == false and self.health < self.MAX_HEALTH/2 then
+			self:setState(BS_TRANSITION)
+			self.time = self.TRANSITION_TIME
+		end
+	elseif self.state == BS_TRANSITION then
+		self.time = self.time - dt
+		if self.time <= 0 then
+			self.angry = true
+			self:setState(BS_LAND)
+			 self.hitGround = true
+		end
+	elseif self.state == BS_DEAD then
+		self.time = self.time - dt
+		if self.time <= 0 then
+			ingame_state = INGAME_WON
 		end
 	end
 
@@ -95,12 +118,7 @@ function Boss:update(dt)
 		end
 	end
 
-	-- Check if out of health
-	if self.health < self.MAX_HEALTH/2 then
-		self.angry = true
-	elseif self.health <= 0 then
-		self.alive = false
-	end
+	self.health = cap(self.health, 0, self.MAX_HEALTH)
 end
 
 function Boss:draw()
@@ -115,25 +133,22 @@ function Boss:draw()
 	end
 
 	-- Draw boss
-	if self.hit == false then
-		if self.angry == false then
-			if self.state == BS_IDLE then
-				self.anims[BS_JUMP]:draw(self.flx, self.fly, 0, self.dir, 1, 27, 64, 1)
-			elseif self.state == BS_FLY then
-				self.anims[BS_LAND]:draw(self.flx, self.fly, 0, self.dir, 1, 27, 64, 1)
-			else
-				self.anim:draw(self.flx, self.fly, 0, self.dir, 1, 27, 64)
-			end
-		else
-			if self.state == BS_IDLE then
-				self.anims[BS_JUMP]:draw(self.flx, self.fly, 0, self.dir, 1, 27, 64, 1, img.boss_rage_jump)
-			elseif self.state == BS_FLY then
-				self.anims[BS_LAND]:draw(self.flx, self.fly, 0, self.dir, 1, 27, 64, 1, img.boss_rage_land)
-			elseif self.state == BS_JUMP then
-				self.anim:draw(self.flx, self.fly, 0, self.dir, 1, 27, 64, nil, img.boss_rage_jump)
-			elseif self.state == BS_LAND then
-				self.anim:draw(self.flx, self.fly, 0, self.dir, 1, 27, 64, nil, img.boss_rage_land)
-			end
+	if self.state == BS_TRANSITION or self.state == BS_DEAD then
+		self.anims[BS_LAND]:draw(self.flx, self.fly, 0, self.dir, 1, 27, 64, 1,
+		(self.time*16) % 2 < 1 and img.boss_rage_land)
+	elseif self.hit == false then
+		if self.state == BS_IDLE then
+			self.anims[BS_JUMP]:draw(self.flx, self.fly, 0, self.dir, 1, 27, 64, 1,
+			self.angry == true and img.boss_rage_jump)
+		elseif self.state == BS_FLY then
+			self.anims[BS_LAND]:draw(self.flx, self.fly, 0, self.dir, 1, 27, 64, 1,
+			self.angry == true and img.boss_rage_land)
+		elseif self.state == BS_JUMP then
+			self.anim:draw(self.flx, self.fly, 0, self.dir, 1, 27, 64, nil,
+			self.angry == true and img.boss_rage_jump)
+		elseif self.state == BS_LAND then
+			self.anim:draw(self.flx, self.fly, 0, self.dir, 1, 27, 64, nil,
+			self.angry == true and img.boss_rage_land)
 		end
 	else
 		if self.state == BS_IDLE then
@@ -169,9 +184,14 @@ end
 function Boss:setState(state)
 	self.state = state
 	self.anim = self.anims[state]
+	if self.anim then
+		self.anim:reset()
+	end
 end
 
 function Boss:shot(dt,dir)
-	self.health = self.health - dt
-	self.hit = true
+	if self.state ~= BS_TRANSITION and self.state ~= BS_DEAD then
+		self.health = self.health - dt
+		self.hit = true
+	end
 end

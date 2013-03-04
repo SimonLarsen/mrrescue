@@ -253,7 +253,11 @@ function Map:drawBack()
 	-- Draw background
 	local xin = translate_x/(MAPW-WIDTH)
 	local yin = translate_y/(MAPH-HEIGHT)
-	lg.draw(self.background, translate_x-xin*(512-WIDTH), translate_y-yin*(228-HEIGHT))
+	if translate_y < 0 then
+		lg.draw(self.background, translate_x-xin*(512-WIDTH), math.floor(translate_y))
+	else
+		lg.draw(self.background, translate_x-xin*(512-WIDTH), translate_y-yin*(228-HEIGHT))
+	end
 
 	-- Draw back tiles
 	lg.draw(self.back_batch, 0,0)

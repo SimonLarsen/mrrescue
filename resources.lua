@@ -56,6 +56,7 @@ NO_CASUALTIES_MESSAGES = {
 
 BUILDING_NAMES = {{"SMALL","BUSINESS"},{"APARTMENT","COMPLEX"},{"BIG","CORPORATION"}}
 DIFFICULTY_NAMES = {"EASY", "NORMAL", "HARD"}
+BOSS_MESSAGE = {"PLACEHOLDER"}
 
 --- Returns size of an Image as two return values
 -- Saves some typing when creating quads

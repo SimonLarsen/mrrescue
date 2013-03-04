@@ -1,7 +1,7 @@
 ingame = {}
 
 local lg = love.graphics
-INGAME_ACTIVE, INGAME_FADE_IN, INGAME_NEXTLEVEL_OUT, INGAME_FALL_OUT, INGAME_PRESCREEN, INGAME_GAMEOVER_OUT, INGAME_GAMEOVER = 0,1,2,3,4,5,6
+INGAME_ACTIVE, INGAME_FADE_IN, INGAME_NEXTLEVEL_OUT, INGAME_FALL_OUT, INGAME_PRESCREEN, INGAME_GAMEOVER_OUT, INGAME_GAMEOVER, INGAME_WON = 0,1,2,3,4,5,6,7
 
 function ingame.enter()
 	state = STATE_INGAME
@@ -53,7 +53,6 @@ function ingame.update(dt)
 
 	-- INGAME STATE
 	if ingame_state == INGAME_ACTIVE then
-
 		updateKeys()
 
 		-- Update entities
@@ -83,7 +82,8 @@ function ingame.update(dt)
 		warning_frame = (warning_frame + dt*2) % 2
 
 	-- Transition TO or FROM next level
-	elseif ingame_state == INGAME_NEXTLEVEL_OUT or ingame_state == INGAME_FALL_OUT or ingame_state == INGAME_FADE_IN or ingame_state == INGAME_GAMEOVER_OUT then
+	elseif ingame_state == INGAME_NEXTLEVEL_OUT or ingame_state == INGAME_FALL_OUT
+	or ingame_state == INGAME_FADE_IN or ingame_state == INGAME_GAMEOVER_OUT then
 		transition_time = transition_time + dt*15
 
 		-- Calculate translation offest
@@ -110,6 +110,12 @@ function ingame.update(dt)
 		end
 	elseif ingame_state == INGAME_PRESCREEN or ingame_state == INGAME_GAMEOVER then
 		transition_time = transition_time + dt*3
+	elseif ingame_state == INGAME_WON then
+		if translate_y > -HEIGHT then
+			translate_y = translate_y - dt*20
+		end
+		map:setDrawRange(translate_x, translate_y, WIDTH, HEIGHT)
+		map:update(dt)
 	end
 end
 
@@ -119,7 +125,8 @@ function ingame.draw()
 	lg.scale(config.scale)
 
 	if ingame_state == INGAME_ACTIVE or ingame_state == INGAME_FADE_IN
-	or ingame_state == INGAME_NEXTLEVEL_OUT or ingame_state == INGAME_FALL_OUT or ingame_state == INGAME_GAMEOVER_OUT then
+	or ingame_state == INGAME_NEXTLEVEL_OUT or ingame_state == INGAME_FALL_OUT
+	or ingame_state == INGAME_GAMEOVER_OUT or ingame_state == INGAME_WON then
 		-- Translate to center player
 		lg.push()
 		if ingame.shake > 0 then
@@ -204,7 +211,11 @@ end
 function drawPrescreen()
 	local floor = section*3-2
 	lg.setFont(font.bold)
-	lg.printf("FLOOR ".. floor .. "-" .. floor+2, 0, 40, WIDTH, "center")
+	if map.type == MT_NORMAL then
+		lg.printf("FLOOR ".. floor .. "-" .. floor+2, 0, 40, WIDTH, "center")
+	else
+		lg.printf("ROOF", 0, 40, WIDTH, "center")
+	end
 
 	local fr = math.floor(transition_time) % 2
 	lg.drawq(img.captain_dialog, quad.captain_dialog[fr], 28, 72)
@@ -236,10 +247,11 @@ function setPrescreenMessage()
 
 	elseif player.state == PS_DEAD then
 		prescreen_message = {"OVERHEATED!"}
-
 	else
 		if section == 1 then
 			prescreen_message = table.random(GOODLUCK_MESSAGES)
+		elseif map.type == MT_BOSS then
+			prescreen_message = BOSS_MESSAGE
 		elseif last_missed > 0 then
 			if last_missed == 1 then
 				prescreen_message = {"HEY THERE, BUDDY!","YOU MISSED 1 PERSON.","TRY A LITTLE HARDER."}
@@ -315,7 +327,7 @@ function drawHUD()
 
 		local bossframe = 0
 		if map.boss.angry == true then bossframe = bossframe + 2 end
-		if map.boss.hit == true then bossframe = bossframe + 1 end
+		if map.boss.hit == true or map.boss.state == BS_DEAD then bossframe = bossframe + 1 end
 		lg.drawq(img.boss_health, quad.boss_portrait[bossframe], 15,15)
 		map.boss.hit = false
 	end
