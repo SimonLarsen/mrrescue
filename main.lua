@@ -48,13 +48,6 @@ function love.load()
 end
 
 function love.update(dt)
-	-- Cap framerate
-	if dt > MIN_FRAMERATE then dt = MIN_FRAMERATE end
-	if dt < MAX_FRAMERATE then
-		love.timer.sleep(MAX_FRAMERATE - dt)
-		dt = MAX_FRAMERATE
-	end
-
 	gamestates[state].update(dt)
 end
 
@@ -124,4 +117,54 @@ function updateKeys()
 			keystate[action] = true
 		end
 	end
+end
+
+function love.run()
+    math.randomseed(os.time())
+    math.random() math.random()
+    if love.load then love.load(arg) end
+    local dt = 0
+
+    -- Main loop time.
+    while true do
+		local frame_start = love.timer.getMicroTime()
+        -- Process events.
+        if love.event then
+            love.event.pump()
+            for e,a,b,c,d in love.event.poll() do
+                if e == "quit" then
+                    if not love.quit or not love.quit() then
+                        if love.audio then
+                            love.audio.stop()
+                        end
+                        return
+                    end
+                end
+                love.handlers[e](a,b,c,d)
+            end
+        end
+
+        -- Update dt, as we'll be passing it to update
+        if love.timer then
+            love.timer.step()
+            dt = love.timer.getDelta()
+			dt = cap(dt, MAX_FRAMERATE, MIN_FRAMERATE)
+        end
+
+        -- Call update and draw
+        if love.update then love.update(dt) end -- will pass 0 if love.timer is disabled
+        if love.graphics then
+            love.graphics.clear()
+            if love.draw then love.draw() end
+        end
+
+		-- Update screen
+        if love.graphics then love.graphics.present() end
+
+		-- Sleep to compensate for framerate cap
+		local elapsed_time = love.timer.getMicroTime() - frame_start
+		if elapsed_time < MAX_FRAMERATE then
+			love.timer.sleep(MAX_FRAMERATE - elapsed_time)
+		end
+    end
 end
