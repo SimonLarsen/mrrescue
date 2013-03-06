@@ -235,7 +235,7 @@ function Player:collideFire(dt)
 	end
 
 	-- Check collision with boss
-	if map.type == MT_BOSS then
+	if map.type == MT_BOSS and map.boss.state ~= BS_DEAD then
 		if self:collideBox(map.boss:getBBox()) == true then
 			self.heat = 1
 		elseif map.boss.shockwaveActive == true then

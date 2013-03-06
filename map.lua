@@ -202,6 +202,16 @@ function Map:update(dt)
 	self:recreateSpriteBatches()
 end
 
+function Map:clearFire()
+	for iy=0,self.height-1 do
+		for ix=0,self.width-1 do
+			if self.fire[ix][iy] then
+				self.fire[ix][iy].alive = false
+			end
+		end
+	end
+end
+
 function Map:recreateSpriteBatches()
 	-- Recreate sprite batches if redraw is set
 	if self.redraw == true then

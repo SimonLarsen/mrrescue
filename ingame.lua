@@ -208,62 +208,6 @@ function ingame.draw()
 	lg.pop()
 end
 
-function drawPrescreen()
-	local floor = section*3-2
-	lg.setFont(font.bold)
-	if map.type == MT_NORMAL then
-		lg.printf("FLOOR ".. floor .. "-" .. floor+2, 0, 40, WIDTH, "center")
-	else
-		lg.printf("ROOF", 0, 40, WIDTH, "center")
-	end
-
-	local fr = math.floor(transition_time) % 2
-	lg.drawq(img.captain_dialog, quad.captain_dialog[fr], 28, 72)
-	drawPrescreenMessage()
-
-	lg.printf("PRESS ANY KEY TO CONTINUE", 0, 150, WIDTH, "center")
-end
-
-function drawGameover()
-	local fr = math.floor(transition_time) % 2
-	lg.drawq(img.captain_dialog, quad.captain_dialog[fr], 28, 72)
-
-	if casualties >= max_casualties then
-		drawPrescreenMessage()
-	elseif player.state == PS_DEAD then
-		drawPrescreenMessage()
-	end
-end
-
-function drawPrescreenMessage()
-	for i=1,#prescreen_message do
-		lg.print(prescreen_message[i], 73, 69+i*11)
-	end
-end
-
-function setPrescreenMessage()
-	if casualties >= max_casualties then
-		prescreen_message = {"TOO MANY CASUALTIES!"}
-
-	elseif player.state == PS_DEAD then
-		prescreen_message = {"OVERHEATED!"}
-	else
-		if section == 1 then
-			prescreen_message = table.random(GOODLUCK_MESSAGES)
-		elseif map.type == MT_BOSS then
-			prescreen_message = BOSS_MESSAGE
-		elseif last_missed > 0 then
-			if last_missed == 1 then
-				prescreen_message = {"HEY THERE, BUDDY!","YOU MISSED 1 PERSON.","TRY A LITTLE HARDER."}
-			else
-				prescreen_message = {"HEY THERE, BUDDY!","YOU LET "..last_missed.." PEOPLE","BURN TO DEATH.","TRY A LITTLE HARDER."}
-			end
-		else
-			prescreen_message = table.random(NO_CASUALTIES_MESSAGES)
-		end
-	end
-end
-
 function drawHUD()
 	lg.draw(img.hud, 0, HEIGHT-32)
 
@@ -319,7 +263,7 @@ function drawHUD()
 	lg.setColor(255,255,255)
 
 	-- Draw boss health bar
-	if map.type == MT_BOSS then
+	if map.type == MT_BOSS and ingame_state ~= INGAME_WON then
 		lg.drawq(img.boss_health, quad.boss_health, 0, 11)
 		local boss_length = math.floor((map.boss.health/map.boss.MAX_HEALTH)*178+0.5)
 		lg.drawq(img.boss_health, quad.boss_bar, 64,22, 0, boss_length, 1)
@@ -334,6 +278,62 @@ function drawHUD()
 
 	-- Draw panic/burning human icons
 	drawIcons()
+end
+
+function drawPrescreen()
+	local floor = section*3-2
+	lg.setFont(font.bold)
+	if map.type == MT_NORMAL then
+		lg.printf("FLOOR ".. floor .. "-" .. floor+2, 0, 40, WIDTH, "center")
+	else
+		lg.printf("ROOF", 0, 40, WIDTH, "center")
+	end
+
+	local fr = math.floor(transition_time) % 2
+	lg.drawq(img.captain_dialog, quad.captain_dialog[fr], 28, 72)
+	drawPrescreenMessage()
+
+	lg.printf("PRESS ANY KEY TO CONTINUE", 0, 150, WIDTH, "center")
+end
+
+function drawGameover()
+	local fr = math.floor(transition_time) % 2
+	lg.drawq(img.captain_dialog, quad.captain_dialog[fr], 28, 72)
+
+	if casualties >= max_casualties then
+		drawPrescreenMessage()
+	elseif player.state == PS_DEAD then
+		drawPrescreenMessage()
+	end
+end
+
+function drawPrescreenMessage()
+	for i=1,#prescreen_message do
+		lg.print(prescreen_message[i], 73, 69+i*11)
+	end
+end
+
+function setPrescreenMessage()
+	if casualties >= max_casualties then
+		prescreen_message = {"TOO MANY CASUALTIES!"}
+
+	elseif player.state == PS_DEAD then
+		prescreen_message = {"OVERHEATED!"}
+	else
+		if section == 1 then
+			prescreen_message = table.random(GOODLUCK_MESSAGES)
+		elseif map.type == MT_BOSS then
+			prescreen_message = BOSS_MESSAGE
+		elseif last_missed > 0 then
+			if last_missed == 1 then
+				prescreen_message = {"HEY THERE, BUDDY!","YOU MISSED 1 PERSON.","TRY A LITTLE HARDER."}
+			else
+				prescreen_message = {"HEY THERE, BUDDY!","YOU LET "..last_missed.." PEOPLE","BURN TO DEATH.","TRY A LITTLE HARDER."}
+			end
+		else
+			prescreen_message = table.random(NO_CASUALTIES_MESSAGES)
+		end
+	end
 end
 
 --- Draws warning icons for panicing/burning/dead enemies

@@ -1,5 +1,5 @@
 Boss = { MAX_HEALTH = 15, GRAVITY = 350, JUMP_POWER = 200, IDLE_TIME = 1.5, MAX_JUMP = 128,
-		 TRANSITION_TIME = 2, DEAD_TIME = 5 }
+		 TRANSITION_TIME = 2, DEAD_TIME = 5, DEAD_SMOKE_INTERVAL = 0.5 }
 Boss.__index = Boss
 
 local BS_IDLE, BS_JUMP, BS_FLY, BS_LAND, BS_TRANSITION, BS_DEAD = 0,1,2,3,4
@@ -87,8 +87,10 @@ function Boss:update(dt)
 	elseif self.state == BS_JUMP then
 		if self.health <= 0 then
 			self.time = self.DEAD_TIME
+			self.yspeed = self.DEAD_SMOKE_INTERVAL
 			ingame.shake = self.DEAD_TIME
 			self:setState(BS_DEAD)
+			map:clearFire()
 		elseif self.angry == false and self.health < self.MAX_HEALTH/2 then
 			self:setState(BS_TRANSITION)
 			self.time = self.TRANSITION_TIME
@@ -102,6 +104,14 @@ function Boss:update(dt)
 		end
 	elseif self.state == BS_DEAD then
 		self.time = self.time - dt
+		self.yspeed = self.yspeed + dt
+		if self.yspeed > 0.5 then
+			self.yspeed = 0
+			if ingame_state ~= INGAME_WON then
+				map:addParticle(BlackSmoke.create(self.x+math.random(-16,16),self.y-math.random(0,40)))
+				playSound("endexplosion")
+			end
+		end
 		if self.time <= 0 then
 			ingame_state = INGAME_WON
 		end
