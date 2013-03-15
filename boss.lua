@@ -1,4 +1,4 @@
-Boss = { MAX_HEALTH = 15, GRAVITY = 350, JUMP_POWER = 200, IDLE_TIME = 1.5, MAX_JUMP = 128,
+Boss = { MAX_HEALTH = 12, GRAVITY = 350, JUMP_POWER = 200, IDLE_TIME = 1.5, MAX_JUMP = 128,
 		 TRANSITION_TIME = 2, DEAD_TIME = 5, DEAD_SMOKE_INTERVAL = 0.5 }
 Boss.__index = Boss
 
@@ -91,7 +91,7 @@ function Boss:update(dt)
 			ingame.shake = self.DEAD_TIME
 			self:setState(BS_DEAD)
 			map:clearFire()
-		elseif self.angry == false and self.health < self.MAX_HEALTH/2 then
+		elseif self.angry == false and self.health < self.MAX_HEALTH*0.75 then
 			self:setState(BS_TRANSITION)
 			self.time = self.TRANSITION_TIME
 		end

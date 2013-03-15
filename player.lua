@@ -581,10 +581,10 @@ end
 
 --- Makes the player jump
 function Player:jump()
-	if self.onGround == true then
-		self.yspeed = -JUMP_POWER
-	elseif self.state == PS_CLIMB then
+	if self.state == PS_CLIMB then
 		self:leaveLadder()
+	elseif self.onGround == true and self.state ~= PS_DEAD then
+		self.yspeed = -JUMP_POWER
 	end
 end
 
