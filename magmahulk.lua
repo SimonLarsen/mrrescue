@@ -1,11 +1,11 @@
-Boss = { MAX_HEALTH = 12, GRAVITY = 350, JUMP_POWER = 200, IDLE_TIME = 1.5, MAX_JUMP = 128,
+MagmaHulk = { MAX_HEALTH = 12, GRAVITY = 350, JUMP_POWER = 200, IDLE_TIME = 1.5, MAX_JUMP = 128,
 		 TRANSITION_TIME = 2, DEAD_TIME = 5, DEAD_SMOKE_INTERVAL = 0.5 }
-Boss.__index = Boss
+MagmaHulk.__index = MagmaHulk
 
 local BS_IDLE, BS_JUMP, BS_FLY, BS_LAND, BS_TRANSITION, BS_DEAD = 0,1,2,3,4
 
-function Boss.create(x,y)
-	local self = setmetatable({}, Boss)
+function MagmaHulk.create(x,y)
+	local self = setmetatable({}, MagmaHulk)
 
 	self.alive = true
 	self.hit = false
@@ -21,7 +21,7 @@ function Boss.create(x,y)
 	self.shockwaveX = 0
 
 	self.anims = {}
-	self.anims[BS_JUMP] = newAnimation(img.boss_jump, 58, 64, 0.14, 5,
+	self.anims[BS_JUMP] = newAnimation(img.magmahulk_jump, 58, 64, 0.14, 5,
 		function() 
 			self:setState(BS_FLY)
 			self.yspeed = -self.JUMP_POWER
@@ -29,7 +29,7 @@ function Boss.create(x,y)
 			self.hitGround = false
 		end
 	)
-	self.anims[BS_LAND] = newAnimation(img.boss_land, 58, 64, 0.14, 7,
+	self.anims[BS_LAND] = newAnimation(img.magmahulk_land, 58, 64, 0.14, 7,
 		function()
 			if self.state ~= BS_TRANSITION then
 				self:setState(BS_JUMP)
@@ -42,7 +42,7 @@ function Boss.create(x,y)
 	return self
 end
 
-function Boss:update(dt)
+function MagmaHulk:update(dt)
 	if self.anim then
 		self.anim:update(dt)
 	end
@@ -69,8 +69,8 @@ function Boss:update(dt)
 			self.yspeed = 0
 			if self.hitGround == false then
 				-- Add fire
-				map:addFire(math.floor((self.x-8)/16), math.floor((self.y-5)/16), Fire.max_health)
-				map:addFire(math.floor((self.x+8)/16), math.floor((self.y-5)/16), Fire.max_health)
+				map:addFire(math.floor((self.x-8)/16), math.floor((self.y-5)/16))
+				map:addFire(math.floor((self.x+8)/16), math.floor((self.y-5)/16))
 				self.hitGround = true
 				-- Set shake
 				ingame.shake = 0.4
@@ -100,12 +100,12 @@ function Boss:update(dt)
 		if self.time <= 0 then
 			self.angry = true
 			self:setState(BS_LAND)
-			 self.hitGround = true
+			self.hitGround = true
 		end
 	elseif self.state == BS_DEAD then
 		self.time = self.time - dt
 		self.yspeed = self.yspeed + dt
-		if self.yspeed > 0.5 then
+		if self.yspeed > self.DEAD_SMOKE_INTERVAL then
 			self.yspeed = 0
 			if ingame_state ~= INGAME_WON then
 				map:addParticle(BlackSmoke.create(self.x+math.random(-16,16),self.y-math.random(0,40)))
@@ -131,7 +131,7 @@ function Boss:update(dt)
 	self.health = cap(self.health, 0, self.MAX_HEALTH)
 end
 
-function Boss:draw()
+function MagmaHulk:draw()
 	self.flx = math.floor(self.x)
 	self.fly = math.floor(self.y)
 	
@@ -145,35 +145,35 @@ function Boss:draw()
 	-- Draw boss
 	if self.state == BS_TRANSITION or self.state == BS_DEAD then
 		self.anims[BS_LAND]:draw(self.flx, self.fly, 0, self.dir, 1, 27, 64, 1,
-		(self.time*16) % 2 < 1 and img.boss_rage_land)
+		(self.time*16) % 2 < 1 and img.magmahulk_rage_land)
 	elseif self.hit == false then
 		if self.state == BS_IDLE then
 			self.anims[BS_JUMP]:draw(self.flx, self.fly, 0, self.dir, 1, 27, 64, 1,
-			self.angry == true and img.boss_rage_jump)
+			self.angry == true and img.magmahulk_rage_jump)
 		elseif self.state == BS_FLY then
 			self.anims[BS_LAND]:draw(self.flx, self.fly, 0, self.dir, 1, 27, 64, 1,
-			self.angry == true and img.boss_rage_land)
+			self.angry == true and img.magmahulk_rage_land)
 		elseif self.state == BS_JUMP then
 			self.anim:draw(self.flx, self.fly, 0, self.dir, 1, 27, 64, nil,
-			self.angry == true and img.boss_rage_jump)
+			self.angry == true and img.magmahulk_rage_jump)
 		elseif self.state == BS_LAND then
 			self.anim:draw(self.flx, self.fly, 0, self.dir, 1, 27, 64, nil,
-			self.angry == true and img.boss_rage_land)
+			self.angry == true and img.magmahulk_rage_land)
 		end
 	else
 		if self.state == BS_IDLE then
-			self.anims[BS_JUMP]:draw(self.flx, self.fly, 0, self.dir, 1, 27, 64, 1, img.boss_jump_hit)
+			self.anims[BS_JUMP]:draw(self.flx, self.fly, 0, self.dir, 1, 27, 64, 1, img.magmahulk_jump_hit)
 		elseif self.state == BS_FLY then
-			self.anims[BS_LAND]:draw(self.flx, self.fly, 0, self.dir, 1, 27, 64, 1, img.boss_land_hit)
+			self.anims[BS_LAND]:draw(self.flx, self.fly, 0, self.dir, 1, 27, 64, 1, img.magmahulk_land_hit)
 		elseif self.state == BS_JUMP then
-			self.anim:draw(self.flx, self.fly, 0, self.dir, 1, 27, 64, nil, img.boss_jump_hit)
+			self.anim:draw(self.flx, self.fly, 0, self.dir, 1, 27, 64, nil, img.magmahulk_jump_hit)
 		elseif self.state == BS_LAND then
-			self.anim:draw(self.flx, self.fly, 0, self.dir, 1, 27, 64, nil, img.boss_land_hit)
+			self.anim:draw(self.flx, self.fly, 0, self.dir, 1, 27, 64, nil, img.magmahulk_land_hit)
 		end
 	end
 end
 
-function Boss:collideBox(bbox)
+function MagmaHulk:collideBox(bbox)
 	if self.x-11 > bbox.x+bbox.w or self.x+11 < bbox.x
 	or self.y-33 > bbox.y+bbox.h or self.y-7 < bbox.y then
 		return false
@@ -182,16 +182,16 @@ function Boss:collideBox(bbox)
 	end
 end
 
-function Boss:getBBox()
+function MagmaHulk:getBBox()
 	return {x = self.x-11, y = self.y-33, w = 22, h = 26}
 end
 
-function Boss:getShockwaveBBox()
+function MagmaHulk:getShockwaveBBox()
 	local swwidth = self.shockwaveFrame*6.08
 	return {x = self.x-swwidth, y = 235, w = 2*swwidth, h = 5}
 end
 
-function Boss:setState(state)
+function MagmaHulk:setState(state)
 	self.state = state
 	self.anim = self.anims[state]
 	if self.anim then
@@ -199,9 +199,13 @@ function Boss:setState(state)
 	end
 end
 
-function Boss:shot(dt,dir)
+function MagmaHulk:shot(dt,dir)
 	if self.state ~= BS_TRANSITION and self.state ~= BS_DEAD then
 		self.health = self.health - dt
 		self.hit = true
 	end
+end
+
+function MagmaHulk:getPortraitImage()
+	return img.magmahulk_portrait
 end

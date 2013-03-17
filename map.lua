@@ -26,6 +26,7 @@ function Map.create(section, level)
 	else
 		self.type = MT_NORMAL
 	end
+	self.type = MT_BOSS
 
 	if self.type == MT_NORMAL then
 		file = love.filesystem.load("maps/base.lua")()
@@ -84,7 +85,8 @@ function Map.create(section, level)
 	else
 		self.startx = 280
 		self.starty = 240
-		self.boss = Boss.create((self.width*16)/2, MAPH-16)
+		--self.boss = MagmaHulk.create((self.width*16)/2, MAPH-16)
+		self.boss = GasLeak.create(368, MAPH-16)
 		table.insert(self.items, Item.create(16*16, 8*16, "coolant"))
 		table.insert(self.items, Item.create(24*16, 10*16, "coolant"))
 	end

@@ -288,7 +288,7 @@ function drawHUD()
 		local bossframe = 0
 		if map.boss.angry == true then bossframe = bossframe + 2 end
 		if map.boss.hit == true or map.boss.state == BS_DEAD then bossframe = bossframe + 1 end
-		lg.drawq(img.boss_health, quad.boss_portrait[bossframe], 15,15)
+		lg.drawq(map.boss:getPortraitImage(), quad.boss_portrait[bossframe], 15,15)
 		map.boss.hit = false
 	end
 

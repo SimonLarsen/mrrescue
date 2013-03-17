@@ -30,8 +30,12 @@ local IMAGE_FILES = {
 	"enemy_angryjumper_hit", "enemy_angryjumper_jump",
 	"enemy_volcano_run", "enemy_volcano_shoot", "enemy_volcano_hit",
 	"enemy_angryvolcano_run", "enemy_angryvolcano_shoot", "enemy_angryvolcano_hit", "enemy_fireball",
-	"boss_jump", "boss_land", "boss_jump_hit", "boss_land_hit",
-	"boss_rage_jump", "boss_rage_land", "shockwave",
+
+	"magmahulk_jump", "magmahulk_land", "magmahulk_jump_hit", "magmahulk_land_hit",
+	"magmahulk_rage_jump", "magmahulk_rage_land", "shockwave", "magmahulk_portrait",
+
+	"gasleak_idle", "gasleak_hit", "gasleak_walk", "gasleak_rage_walk",
+	"gasleak_transition", "gasleak_portrait",
 
 	"human_1_run", "human_2_run", "human_3_run", "human_4_run",
 	"human_1_carry_left", "human_2_carry_left", "human_3_carry_left", "human_4_carry_left",
@@ -227,7 +231,7 @@ function loadResources()
 
 	quad.boss_portrait = {}
 	for i=0,3 do
-		quad.boss_portrait[i] = lg.newQuad(i*48, 64, 46, 30, getSize(img.boss_health))
+		quad.boss_portrait[i] = lg.newQuad(i*48, 0, 46, 30, getSize(img.magmahulk_portrait))
 	end
 
 	quad.shockwave = {}
