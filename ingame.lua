@@ -197,6 +197,11 @@ function ingame.draw()
 				end
 			end
 		end
+		if ingame_state == INGAME_WON then
+			if translate_y < 0 then
+				printWonMessage()
+			end
+		end
 
 	elseif ingame_state == INGAME_PRESCREEN then
 		drawPrescreen()
@@ -206,6 +211,17 @@ function ingame.draw()
 	end
 
 	lg.pop()
+end
+ 
+function printWonMessage()
+	local alpha = cap((-translate_y)/100, 0, 1)
+	lg.setColor(0,0,0,alpha*255)
+	lg.rectangle("fill", 0, 40, WIDTH,  #WON_MESSAGES[level]*10+8)
+	lg.setColor(255,255,255,alpha*255)
+	for i,v in ipairs(WON_MESSAGES[level]) do
+		lg.printf(v, 0, 48+(i-1)*10, WIDTH, "center")
+	end
+	lg.setColor(255,255,255,255)
 end
 
 function drawHUD()
@@ -413,6 +429,8 @@ function ingame.keypressed(k, uni)
 		transition_time = 0
 	elseif ingame_state == INGAME_GAMEOVER then
 		levelselection.enter()
+	elseif ingame_state == INGAME_WON then
+		levelselection.enter()
 	end
 end
 
@@ -423,6 +441,8 @@ function ingame.joystickpressed(joy, k)
 		ingame_state = INGAME_FADE_IN
 		transition_time = 0
 	elseif ingame_state == INGAME_GAMEOVER then
+		levelselection.enter()
+	elseif ingame_state == INGAME_WON then
 		levelselection.enter()
 	end
 end
