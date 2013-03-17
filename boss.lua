@@ -69,8 +69,8 @@ function Boss:update(dt)
 			self.yspeed = 0
 			if self.hitGround == false then
 				-- Add fire
-				map:addFire(math.floor((self.x-8)/16), math.floor((self.y-5)/16))
-				map:addFire(math.floor((self.x+8)/16), math.floor((self.y-5)/16))
+				map:addFire(math.floor((self.x-8)/16), math.floor((self.y-5)/16), Fire.max_health)
+				map:addFire(math.floor((self.x+8)/16), math.floor((self.y-5)/16), Fire.max_health)
 				self.hitGround = true
 				-- Set shake
 				ingame.shake = 0.4

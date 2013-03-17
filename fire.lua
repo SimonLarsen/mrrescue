@@ -4,11 +4,11 @@ Fire.__index = Fire
 local REGEN_RATE = 0.05
 local SCORE = 20
 
-function Fire.create(x,y,map)
+function Fire.create(x,y,map,health)
 	local self = setmetatable({}, Fire)
 
 	self.alive = true
-	self.health = Fire.max_health/4
+	self.health = health or Fire.max_health/4
 	self.cx, self.cy = x,y
 	self.x, self.y = x*16, y*16
 	self.frame = math.random()*5

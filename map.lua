@@ -61,10 +61,6 @@ function Map.create(section, level)
 
 	self.background = img.night
 
-	-- level 1 = 1 til 7
-	-- level 2 = 6 til 18
-	-- level 3 = 11 til 29
-
 	if self.type == MT_NORMAL then
 		self.minenemy = 1
 		self.maxenemy = 1
@@ -223,13 +219,14 @@ function Map:recreateSpriteBatches()
 end
 
 --- Adds a fire block if possible
-function Map:addFire(x,y)
+function Map:addFire(x,y,health)
 	if self:canBurnCell(x,y) == false or x < 3 or x > 37 then
-		return
+		return nil
 	end
 
 	if self.fire[x][y] == nil then
-		self.fire[x][y] = Fire.create(x,y,self)
+		self.fire[x][y] = Fire.create(x,y,self,health)
+		return self.fire[x][y]
 	end
 end
 
@@ -594,5 +591,17 @@ function Map:getHeight()
 end
 
 function Map:getStart()
-	return self.startx, self.starty
+	if self.type == MT_NORMAL then
+		return self.startx, self.starty
+	else
+		if ingame_state == INGAME_PRESCREEN then
+			return self.startx, self.starty
+		else
+			if player.x < MAPW/2 then
+				return 168, 224
+			else
+				return 488, 224
+			end
+		end
+	end
 end
