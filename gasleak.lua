@@ -1,5 +1,6 @@
 GasLeak = { MAX_HEALTH = 12, IDLE_TIME = 1.5, WALK_SPEED = 40, PUSHED_COOLDOWN = 0.2,
-		    PUSHED_SPEED = 40, DEAD_TIME = 5, DEAD_SMOKE_INTERVAL = 0.5, GHOST_DELAY = 2, HAS_SHOT_TIME = 0.4 }
+		    PUSHED_SPEED = 40, DEAD_TIME = 5, DEAD_SMOKE_INTERVAL = 0.5,
+			GHOST_DELAY = 2.5, GHOST_DELAY_ANGRY = 1.5, HAS_SHOT_TIME = 0.4 }
 GasLeak.__index = GasLeak
 setmetatable(GasLeak, Boss)
 
@@ -27,6 +28,7 @@ function GasLeak.create(x,y)
 			self:setState(BS_WALK)
 		end
 	)
+	self.anims[BS_DEAD] = newAnimation(img.gasleak_transition, 40, 128, 0.17, 2)
 
 	self:setState(BS_IDLE)
 
@@ -48,8 +50,21 @@ function GasLeak:update(dt)
 		self.x = self.x + self.dir*self.WALK_SPEED*dt
 		self.nextGhost = self.nextGhost - dt
 		if self.nextGhost < 0 then
-			table.insert(map.enemies, GasGhost.create(self.x+self.dir*14, self.y-46, self.dir))
-			self.nextGhost = self.GHOST_DELAY
+			if self.angry == false then
+				self.nextGhost = self.GHOST_DELAY
+				table.insert(map.enemies, GasGhost.create(self.x+self.dir*14, self.y-46, self.dir))
+			else
+				local rand = math.random(1,5)
+				if rand >= 4 then
+					table.insert(map.enemies, GasGhost.create(self.x+self.dir*14, self.y-46, self.dir))
+				elseif rand >= 2 then
+					table.insert(map.enemies, GasGhost.create(self.x+self.dir*14, self.y-46, self.dir, 1.67))
+				else
+					table.insert(map.enemies, GasGhost.create(self.x+self.dir*14, self.y-46, self.dir))
+					table.insert(map.enemies, GasGhost.create(self.x+self.dir*14, self.y-46, self.dir, 1.67))
+				end
+				self.nextGhost = self.GHOST_DELAY_ANGRY
+			end
 			self.hasShot = self.HAS_SHOT_TIME
 		end
 
@@ -135,10 +150,8 @@ function GasLeak:draw()
 		self.anim:draw(self.flx, self.fly, 0, self.dir, 1, 20, 128)
 	elseif self.state == BS_PUSHED then
 		self.anim:draw(self.flx, self.fly, 0, self.dir, 1, 20, 64)
-	elseif self.state == BS_TRANSITION then
+	elseif self.state == BS_TRANSITION or self.state == BS_DEAD then
 		self.anim:draw(self.flx, self.fly, 0, self.dir, 1, 20, 128)
-	elseif self.state == BS_DEAD then
-
 	end
 end
 

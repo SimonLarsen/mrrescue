@@ -33,7 +33,13 @@ function levelselection.draw()
 	lg.printf(BUILDING_NAMES[level][1], 16, 54, 107, "center")
 	lg.printf(BUILDING_NAMES[level][2], 16, 66, 107, "center")
 	lg.print(DIFFICULTY_NAMES[level], 16, 92)
-	lg.print("FLOORS: "..level*7*3, 16, 106)
+	if level == 1 then	
+		lg.print("FLOORS: " .. 21, 16, 106)
+	elseif level == 2 then
+		lg.print("FLOORS: " .. 30, 16, 106)
+	else
+		lg.print("FLOORS: " .. 42, 16, 106)
+	end
 	lg.print("MISSES: "..string.rep("@",6-level), 16, 120)
 	lg.print("BEST: "..level*1234, 16, 134)
 

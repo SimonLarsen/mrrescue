@@ -1,7 +1,7 @@
 Map = {}
 Map.__index = Map
 
-LAST_SECTION = 40
+LAST_SECTION = 26
 
 MT_NORMAL, MT_BOSS = 0,1
 
@@ -20,8 +20,8 @@ function Map.create(section, level)
 	-- Load base file
 	local file
 	if (level == 1 and section == 8)
-	or (level == 2 and section == 15)
-	or (level == 3 and section == 22) then
+	or (level == 2 and section == 11)
+	or (level == 3 and section == 15) then
 		self.type = MT_BOSS
 	else
 		self.type = MT_NORMAL
@@ -64,20 +64,24 @@ function Map.create(section, level)
 	if self.type == MT_NORMAL then
 		self.minenemy = 1
 		self.maxenemy = 1
-		if self.section >= 22 then
+
+		-- easy:   section 1  - 8
+		-- medium: section 6  - 16
+		-- hard:   section 11 - 25
+		if self.section >= 20 then
 			self.maxenemy = 7 -- Allow Thief
 			self.minenemy = 4 -- Disallow Volcano
-		elseif self.section >= 19 then
+		elseif self.section >= 14 then
 			self.maxenemy = 6 -- Allow Angry Volcano
 			self.minenemy = 3 -- Disallow Jumper
-		elseif self.section >= 12 then
+		elseif self.section >= 10 then
 			self.maxenemy = 5 -- Allow Angry Jumper
 			self.minenemy = 2 -- Disallow Normal
 		elseif self.section >= 8 then
 			self.maxenemy = 4 -- Allow Angry Normal
-		elseif self.section >= 5 then
+		elseif self.section >= 4 then
 			self.maxenemy = 3 -- Allow Volcano
-		elseif self.section >= 3 then
+		elseif self.section >= 2 then
 			self.maxenemy = 2 -- allow Jumper
 		end
 		self:populate()
@@ -436,7 +440,13 @@ function Map:addRoom(x,y,width,room)
 	-- Enemy room
 	elseif random == 2 then
 		local count = 1
-		if self.section >= 15 and math.random(1,5) == 1 then count = 2 end
+		if self.section >= 20 then
+			if math.random(1,3) == 1 then
+				count = 2
+			end
+		elseif self.section >= 12 and math.random(1,5) == 1 then
+			count = 2
+		end
 		local sep = math.floor(width/(count+1))
 
 		for i=1,count do

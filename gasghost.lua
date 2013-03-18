@@ -1,14 +1,14 @@
 GasGhost = { MAX_HEALTH = 0.25, SPEED = 80, SCORE = 50 }
 GasGhost.__index = GasGhost
 
-function GasGhost.create(x,y,dir)
+function GasGhost.create(x,y,dir,time)
 	local self = setmetatable({}, GasGhost)
 	self.x, self.y = x,y
 	self.starty = y
 	self.alive = true
 	self.hit = false
 	self.dir = dir
-	self.time = 0
+	self.time = time or 0
 	self.health = self.MAX_HEALTH
 	self.anim = newAnimation(img.gasghost, 24, 32, 0.15, 3)
 	return self
@@ -20,6 +20,20 @@ function GasGhost:update(dt)
 
 	self.x = self.x + self.dir*self.SPEED*dt
 	if self.x < -32 or self.x > MAPW+32 then
+		self.alive = false
+	end
+
+	if player:collideBox(self:getBBox()) == true then
+		local cx, cy = math.floor(self.x/16), math.floor(self.y/16)
+		map:addFire(cx,   cy)
+		map:addFire(cx-1, cy)
+		map:addFire(cx+1, cy)
+		map:addFire(cx, cy-1)
+		map:addFire(cx, cy+1)
+
+		map:addParticle(BlackSmoke.create(self.x, self.y-8))
+		map:addParticle(BlackSmoke.create(self.x-6, self.y-18))
+		map:addParticle(BlackSmoke.create(self.x+6, self.y-18))
 		self.alive = false
 	end
 
@@ -45,8 +59,8 @@ function GasGhost:shot(dt,dir)
 end
 
 function GasGhost:collideBox(bbox)
-	if self.x-7 > bbox.x+bbox.w or self.x+7 < bbox.x
-	or self.y-6 > bbox.y+bbox.h or self.y+6 < bbox.y then
+	if self.x-6 > bbox.x+bbox.w or self.x+6 < bbox.x
+	or self.y-5 > bbox.y+bbox.h or self.y+5 < bbox.y then
 		return false
 	else
 		return true
@@ -54,5 +68,5 @@ function GasGhost:collideBox(bbox)
 end
 
 function GasGhost:getBBox()
-	return {x = self.x-8, y = self.y-7, w = 14, h = 12}
+	return {x = self.x-6, y = self.y-5, w = 12, h = 10}
 end

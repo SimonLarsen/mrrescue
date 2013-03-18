@@ -199,7 +199,7 @@ function ingame.draw()
 		end
 		if ingame_state == INGAME_WON then
 			if translate_y < 0 then
-				printWonMessage()
+				drawWonMessage()
 			end
 		end
 
@@ -213,10 +213,10 @@ function ingame.draw()
 	lg.pop()
 end
  
-function printWonMessage()
+function drawWonMessage()
 	local alpha = cap((-translate_y)/100, 0, 1)
 	lg.setColor(0,0,0,alpha*255)
-	lg.rectangle("fill", 0, 40, WIDTH,  #WON_MESSAGES[level]*10+8)
+	lg.rectangle("fill", 0, 40, WIDTH,  #WON_MESSAGES[level]*10+12)
 	lg.setColor(255,255,255,alpha*255)
 	for i,v in ipairs(WON_MESSAGES[level]) do
 		lg.printf(v, 0, 48+(i-1)*10, WIDTH, "center")
