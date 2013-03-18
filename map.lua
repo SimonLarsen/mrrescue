@@ -26,7 +26,6 @@ function Map.create(section, level)
 	else
 		self.type = MT_NORMAL
 	end
-	self.type = MT_BOSS
 
 	if self.type == MT_NORMAL then
 		file = love.filesystem.load("maps/base.lua")()
@@ -210,6 +209,12 @@ function Map:clearFire()
 	end
 end
 
+function Map:clearEnemies()
+	for i,v in ipairs(self.enemies) do
+		v:shot(120, 1)
+	end
+end
+
 function Map:recreateSpriteBatches()
 	-- Recreate sprite batches if redraw is set
 	if self.redraw == true then
@@ -280,17 +285,18 @@ function Map:drawBack()
 		end
 	end
 
-	-- Draw entities, enemies and particles
-	for i,v in ipairs(self.humans) do
-		v:draw() end
-	for i,v in ipairs(self.enemies) do
-		v:draw() end
-
 	-- Draw front tiles
 	lg.draw(self.front_batch, 0,0)
 
+	-- Draw entities, enemies and particles
+	for i,v in ipairs(self.humans) do
+		v:draw()
+	end
 	if self.type == MT_BOSS then
 		self.boss:draw()
+	end
+	for i,v in ipairs(self.enemies) do
+		v:draw()
 	end
 end
 

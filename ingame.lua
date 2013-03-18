@@ -429,7 +429,7 @@ function ingame.keypressed(k, uni)
 		transition_time = 0
 	elseif ingame_state == INGAME_GAMEOVER then
 		levelselection.enter()
-	elseif ingame_state == INGAME_WON then
+	elseif ingame_state == INGAME_WON and translate_y < 0 then
 		levelselection.enter()
 	end
 end
@@ -442,7 +442,7 @@ function ingame.joystickpressed(joy, k)
 		transition_time = 0
 	elseif ingame_state == INGAME_GAMEOVER then
 		levelselection.enter()
-	elseif ingame_state == INGAME_WON then
+	elseif ingame_state == INGAME_WON and translate_y < 0 then
 		levelselection.enter()
 	end
 end

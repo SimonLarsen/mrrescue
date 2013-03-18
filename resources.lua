@@ -30,6 +30,7 @@ local IMAGE_FILES = {
 	"enemy_angryjumper_hit", "enemy_angryjumper_jump",
 	"enemy_volcano_run", "enemy_volcano_shoot", "enemy_volcano_hit",
 	"enemy_angryvolcano_run", "enemy_angryvolcano_shoot", "enemy_angryvolcano_hit", "enemy_fireball",
+	"gasghost", "gasghost_hit",
 
 	"magmahulk_jump", "magmahulk_land", "magmahulk_jump_hit", "magmahulk_land_hit",
 	"magmahulk_rage_jump", "magmahulk_rage_land", "shockwave", "magmahulk_portrait",

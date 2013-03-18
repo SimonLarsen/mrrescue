@@ -1,8 +1,7 @@
 GasLeak = { MAX_HEALTH = 12, IDLE_TIME = 1.5, WALK_SPEED = 40, PUSHED_COOLDOWN = 0.2,
-		    PUSHED_SPEED = 40, DEAD_TIME = 5, DEAD_SMOKE_INTERVAL = 0.5 }
+		    PUSHED_SPEED = 40, DEAD_TIME = 5, DEAD_SMOKE_INTERVAL = 0.5, GHOST_DELAY = 2 }
 GasLeak.__index = GasLeak
-
-local BS_IDLE, BS_WALK, BS_PUSHED, BS_SHOOT, BS_TRANSITION, BS_DEAD = 0,1,2,3,4,5
+setmetatable(GasLeak, Boss)
 
 function GasLeak.create(x,y)
 	local self = setmetatable({}, GasLeak)
@@ -15,6 +14,7 @@ function GasLeak.create(x,y)
 	self.health = self.MAX_HEALTH
 	self.shockwaveActive = false
 	self.angry = false
+	self.nextGhost = self.GHOST_DELAY
 
 	self.anims = {}
 	self.anims[BS_IDLE] = newAnimation(img.gasleak_idle, 40, 128, 1, 1)
@@ -44,16 +44,26 @@ function GasLeak:update(dt)
 		end
 	elseif self.state == BS_WALK then
 		self.x = self.x + self.dir*self.WALK_SPEED*dt
+		self.nextGhost = self.nextGhost - dt
+		if self.nextGhost < 0 then
+			table.insert(map.enemies, GasGhost.create(self.x+self.dir*8, self.y-46, self.dir))
+			self.nextGhost = self.GHOST_DELAY
+		end
+
+		-- Move towards player
 		local dist = player.x - self.x
 		if math.abs(dist) > 32 then
 			self.dir = math.sign(dist)
 		end
+
+		-- Check if dead or ready to get angry
 		if self.health <= 0 then
 			self.time = self.DEAD_TIME
 			self.yspeed = self.DEAD_SMOKE_INTERVAL
 			ingame.shake = self.DEAD_TIME
 			self:setState(BS_DEAD)
 			map:clearFire()
+			map:clearEnemies()
 		elseif self.angry == false and self.health < self.MAX_HEALTH*0.75 then
 			self:setState(BS_TRANSITION)
 			self.time = self.TRANSITION_TIME
@@ -106,7 +116,7 @@ function GasLeak:draw()
 end
 
 function GasLeak:collideBox(bbox)
-	if self.x-11 > bbox.x+bbox.w or self.x+10 < bbox.x
+	if self.x-10 > bbox.x+bbox.w or self.x+10 < bbox.x
 	or self.y-60 > bbox.y+bbox.h or self.y < bbox.y then
 		return false
 	else
