@@ -30,7 +30,8 @@ function GasGhost:draw()
 	self.flx = math.floor(self.x)
 	self.fly = math.floor(self.y)
 
-	self.anim:draw(self.flx, self.fly, 0, self.dir, 1, 16, 25)
+	self.anim:draw(self.flx, self.fly, 0, self.dir, 1, 16, 25, nil, self.hit and img.gasghost_hit)
+	self.hit = false
 end
 
 function GasGhost:shot(dt,dir)

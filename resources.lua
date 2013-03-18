@@ -30,13 +30,13 @@ local IMAGE_FILES = {
 	"enemy_angryjumper_hit", "enemy_angryjumper_jump",
 	"enemy_volcano_run", "enemy_volcano_shoot", "enemy_volcano_hit",
 	"enemy_angryvolcano_run", "enemy_angryvolcano_shoot", "enemy_angryvolcano_hit", "enemy_fireball",
-	"gasghost", "gasghost_hit",
 
 	"magmahulk_jump", "magmahulk_land", "magmahulk_jump_hit", "magmahulk_land_hit",
 	"magmahulk_rage_jump", "magmahulk_rage_land", "shockwave", "magmahulk_portrait",
 
-	"gasleak_idle", "gasleak_hit", "gasleak_walk", "gasleak_rage_walk",
-	"gasleak_transition", "gasleak_portrait",
+	"gasleak_idle", "gasleak_hit", "gasleak_walk", "gasleak_shot_walk",
+	"gasleak_rage_walk", "gasleak_rage_shot_walk", "gasleak_idle_shot", "gasleak_rage_idle_shot", "gasleak_rage_idle",
+	"gasleak_transition", "gasleak_portrait", "gasghost", "gasghost_hit",
 
 	"human_1_run", "human_2_run", "human_3_run", "human_4_run",
 	"human_1_carry_left", "human_2_carry_left", "human_3_carry_left", "human_4_carry_left",

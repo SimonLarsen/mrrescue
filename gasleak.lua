@@ -1,5 +1,5 @@
 GasLeak = { MAX_HEALTH = 12, IDLE_TIME = 1.5, WALK_SPEED = 40, PUSHED_COOLDOWN = 0.2,
-		    PUSHED_SPEED = 40, DEAD_TIME = 5, DEAD_SMOKE_INTERVAL = 0.5, GHOST_DELAY = 2 }
+		    PUSHED_SPEED = 40, DEAD_TIME = 5, DEAD_SMOKE_INTERVAL = 0.5, GHOST_DELAY = 2, HAS_SHOT_TIME = 0.4 }
 GasLeak.__index = GasLeak
 setmetatable(GasLeak, Boss)
 
@@ -15,6 +15,7 @@ function GasLeak.create(x,y)
 	self.shockwaveActive = false
 	self.angry = false
 	self.nextGhost = self.GHOST_DELAY
+	self.hasShot = 0
 
 	self.anims = {}
 	self.anims[BS_IDLE] = newAnimation(img.gasleak_idle, 40, 128, 1, 1)
@@ -36,6 +37,7 @@ function GasLeak:update(dt)
 	if self.anim then
 		self.anim:update(dt)
 	end
+	if self.hasShot > 0 then self.hasShot = self.hasShot - dt end
 
 	if self.state == BS_IDLE then
 		self.time = self.time - dt
@@ -46,8 +48,9 @@ function GasLeak:update(dt)
 		self.x = self.x + self.dir*self.WALK_SPEED*dt
 		self.nextGhost = self.nextGhost - dt
 		if self.nextGhost < 0 then
-			table.insert(map.enemies, GasGhost.create(self.x+self.dir*8, self.y-46, self.dir))
+			table.insert(map.enemies, GasGhost.create(self.x+self.dir*14, self.y-46, self.dir))
 			self.nextGhost = self.GHOST_DELAY
+			self.hasShot = self.HAS_SHOT_TIME
 		end
 
 		-- Move towards player
@@ -99,10 +102,34 @@ function GasLeak:draw()
 	self.fly = math.floor(self.y)
 
 	if self.state == BS_WALK then
-		if self.x <= 194 or self.x >= 462 then
-			self.anims[BS_IDLE]:draw(self.flx, self.fly, 0, self.dir, 1, 20, 128)
+		if self.angry == false then
+			if self.x <= 194 or self.x >= 462 then
+				if self.hasShot > 0 then
+					self.anims[BS_IDLE]:draw(self.flx, self.fly, 0, self.dir, 1, 20, 128, nil, img.gasleak_idle_shot)
+				else
+					self.anims[BS_IDLE]:draw(self.flx, self.fly, 0, self.dir, 1, 20, 128)
+				end
+			else
+				if self.hasShot > 0 then
+					self.anim:draw(self.flx, self.fly, 0, self.dir, 1, 20, 128, nil, img.gasleak_shot_walk)
+				else
+					self.anim:draw(self.flx, self.fly, 0, self.dir, 1, 20, 128)
+				end
+			end
 		else
-			self.anim:draw(self.flx, self.fly, 0, self.dir, 1, 20, 128, nil, self.hit and img.gasleak_rage_walk)
+			if self.x <= 194 or self.x >= 462 then
+				if self.hasShot > 0 then
+					self.anims[BS_IDLE]:draw(self.flx, self.fly, 0, self.dir, 1, 20, 128, nil, img.gasleak_rage_idle_shot)
+				else
+					self.anims[BS_IDLE]:draw(self.flx, self.fly, 0, self.dir, 1, 20, 128, nil, img.gasleak_rage_idle)
+				end
+			else
+				if self.hasShot > 0 then
+					self.anim:draw(self.flx, self.fly, 0, self.dir, 1, 20, 128, nil, img.gasleak_rage_shot_walk)
+				else
+					self.anim:draw(self.flx, self.fly, 0, self.dir, 1, 20, 128, nil, img.gasleak_rage_walk)
+				end
+			end
 		end
 	elseif self.state == BS_IDLE then
 		self.anim:draw(self.flx, self.fly, 0, self.dir, 1, 20, 128)
