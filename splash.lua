@@ -31,15 +31,15 @@ function splash.draw()
 		if transition_time < 5 then
 			local alpha = cap(255*(transition_time-4), 0,255)
 			lg.setColor(255,255,255,alpha)
-			lg.drawq(img.lovesplash, quad.splash, 0,0)
+			lg.drawq(img.lovesplashpixel, quad.splash, 0,0)
 			lg.setColor(255,255,255,255)
 		elseif transition_time > 7 then
 			local alpha = cap(255*(1-(transition_time-7)), 0,255)
 			lg.setColor(255,255,255,alpha)
-			lg.drawq(img.lovesplash, quad.splash, 0,0)
+			lg.drawq(img.lovesplashpixel, quad.splash, 0,0)
 			lg.setColor(255,255,255,255)
 		else
-			lg.drawq(img.lovesplash, quad.splash, 0,0)
+			lg.drawq(img.lovesplashpixel, quad.splash, 0,0)
 		end
 	elseif transition_time < 10 then
 		local alpha = cap(128*(transition_time-8), 0, 255)

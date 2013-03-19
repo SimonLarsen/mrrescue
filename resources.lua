@@ -6,15 +6,16 @@ font = {}   -- global Fonts
 local snd = {}	-- sound Sources
 
 local IMAGE_FILES = {
-	"splash", "tangram", "lovesplash", "howto",
+	"splash", "tangram", "lovesplashpixel", "howto",
 	"tiles", "door", "boldfont", "captain_dialog", "boss_health",
+	"highscore_panes",
 	"hud", "hud2", "hud_people", "item_slots",
 	"water_bar", "reserve_bar", "overloaded_bar", "temperature_bar",
 	"stream", "water", "shards", "level_buildings", "menu_box",
 
 	"fire_wall", "fire_wall_small", "fire_floor",
 
-	"black_smoke", "black_smoke_small", "ashes", "sparkles", "savebeam",
+	"black_smoke", "black_smoke_small", "ashes", "sparkles",
 	"red_screen", "circles", "warning_icons", "popup_text",
 	
 	"light_player", "light_fire", "light_fireball",
@@ -192,11 +193,6 @@ function loadResources()
 		quad.circles[i] = lg.newQuad(i*32, 0, 32, 32, getSize(img.circles))
 	end
 
-	quad.savebeam = {}
-	for i=0,7 do
-		quad.savebeam[i] = lg.newQuad(i*32, 0, 32, 32, getSize(img.savebeam))
-	end
-
 	quad.warning_icons = {}
 	for i=0,4 do
 		quad.warning_icons[i] = lg.newQuad(i*22, 0, 22, 20, getSize(img.warning_icons))
@@ -238,6 +234,11 @@ function loadResources()
 	quad.shockwave = {}
 	for i=0,9 do
 		quad.shockwave[i] = lg.newQuad(0, i*32, 73, 32, getSize(img.shockwave))
+	end
+
+	quad.highscore_pane = {}
+	for i=1,3 do
+		quad.highscore_pane[i] = lg.newQuad(0, (i-1)*12, 256, 12, getSize(img.highscore_panes))
 	end
 
 	-- Set audio tag volumes

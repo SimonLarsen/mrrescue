@@ -268,7 +268,7 @@ end
 -- %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 -- %     Angry Jumper enemy     %
 -- %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-AngryJumperEnemy = { MAX_HEALTH = 3.0, MIN_FIRE_TIME = 3, MAX_FIRE_TIME = 8 }
+AngryJumperEnemy = { MAX_HEALTH = 3.0, MIN_FIRE_TIME = 3, MAX_FIRE_TIME = 8, SCORE = 200 }
 AngryJumperEnemy.__index = AngryJumperEnemy
 setmetatable(AngryJumperEnemy, JumperEnemy)
 
@@ -416,7 +416,7 @@ end
 -- %%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 -- %    Angry Volcano enemy    %
 -- %%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-AngryVolcanoEnemy = { MAX_HEALTH = 3.0 }
+AngryVolcanoEnemy = { MAX_HEALTH = 3.0, SCORE = 300 }
 AngryVolcanoEnemy.__index = AngryVolcanoEnemy
 setmetatable(AngryVolcanoEnemy, VolcanoEnemy)
 
@@ -461,7 +461,7 @@ end
 -- %%%%%%%%%%%%%%%%%%%%%%%%%
 -- %      Thief enemy      %
 -- %%%%%%%%%%%%%%%%%%%%%%%%%
-ThiefEnemy = { MAX_HEALTH = 1.5 }
+ThiefEnemy = { MAX_HEALTH = 1.5, SCORE = 350 }
 ThiefEnemy.__index = ThiefEnemy
 setmetatable(ThiefEnemy, NormalEnemy)
 

@@ -417,20 +417,22 @@ function updateLightmap()
 	lg.setCanvas()
 end
 
-function ingame.action(a)
-	player:action(a)
-end
-
 function ingame.keypressed(k, uni)
 	if ingame_state == INGAME_ACTIVE then
 		player:keypressed(k)
 	elseif ingame_state == INGAME_PRESCREEN then
-		ingame_state = INGAME_FADE_IN
-		transition_time = 0
+		if k == "return" or k == " " then
+			ingame_state = INGAME_FADE_IN
+			transition_time = 0
+		end
 	elseif ingame_state == INGAME_GAMEOVER then
-		levelselection.enter()
+		if k == "return" or k == " " then
+			levelselection.enter()
+		end
 	elseif ingame_state == INGAME_WON and translate_y < 0 then
-		levelselection.enter()
+		if k == "return" or k == " " then
+			levelselection.enter()
+		end
 	end
 end
 
@@ -445,4 +447,8 @@ function ingame.joystickpressed(joy, k)
 	elseif ingame_state == INGAME_WON and translate_y < 0 then
 		levelselection.enter()
 	end
+end
+
+function ingame.action(a)
+	player:action(a)
 end

@@ -43,6 +43,8 @@ function mainmenu.keypressed(k, uni)
 			levelselection.enter()
 		elseif selection == 2 then
 			howto.enter()
+		elseif selection == 3 then
+			highscore_list.enter()
 		elseif selection == 4 then
 			options.enter()
 		elseif selection == 6 then
@@ -60,6 +62,8 @@ function mainmenu.joystickpressed(joy, k)
 			levelselection.enter()
 		elseif selection == 2 then
 			howto.enter()
+		elseif selection == 3 then
+			highscore_list.enter()
 		elseif selection == 4 then
 			options.enter()
 		elseif selection == 6 then
