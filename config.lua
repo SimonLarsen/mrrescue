@@ -15,6 +15,8 @@ default_config = {
 keynames = {"up","down","left","right","jump","shoot","action"}
 joykeynames = {"jump","shoot","action"}
 
+highscores = { {}, {}, {} }
+
 keystate = {
 	up = false, down = false, left = false, right = false,
 	jump = false, shoot = false, action = false,
@@ -49,12 +51,14 @@ function loadConfig()
 	end
 end
 
-function nextJoystick()
-	for i=0,14 do
-		local pos = (config.joystick+i)%16+1
-		if love.joystick.isOpen(pos) then
-			config.joystick = pos
-			break
+function loadHighscores()
+	if love.filesystem.exists("highscores") then
+		local data = love.filesystem.read("highscores")
+		local file = TSerial.unpack(data)
+		for i=1,3 do
+			if file[i] then
+				highscores[i] = file[i]
+			end
 		end
 	end
 end
@@ -62,6 +66,11 @@ end
 function saveConfig()
 	local data = TSerial.pack(config)
 	love.filesystem.write("settings", data)
+end
+
+function saveHighscores()
+	local data = TSerial.pack(highscores)
+	love.filesystem.write("highscores", data)
 end
 
 function setMode()
@@ -82,5 +91,15 @@ end
 function defaultJoyKeys()
 	for i,v in pairs(default_config.joykeys) do
 		config.joykeys[i] = v
+	end
+end
+
+function nextJoystick()
+	for i=0,14 do
+		local pos = (config.joystick+i)%16+1
+		if love.joystick.isOpen(pos) then
+			config.joystick = pos
+			break
+		end
 	end
 end

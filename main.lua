@@ -26,6 +26,7 @@ require("keyboard")
 require("joystick")
 require("levelselection")
 require("highscore_list")
+require("highscore_entry")
 require("howto")
 
 WIDTH = 256
@@ -37,11 +38,12 @@ show_debug = false
 local MIN_FRAMERATE = 1/15
 local MAX_FRAMERATE = 1/120
 
-STATE_SPLASH, STATE_INGAME, STATE_MAINMENU, STATE_LEVELSELECTION, STATE_OPTIONS, STATE_KEYBOARD, STATE_JOYSTICK, STATE_HOWTO, STATE_HIGHSCORE_LIST = 0,1,2,3,4,5,6,7,8
-gamestates = {[0]=splash, [1]=ingame, [2]=mainmenu, [3]=levelselection, [4]=options, [5]=keyboard, [6]=joystick, [7]=howto, [8]=highscore_list}
+STATE_SPLASH, STATE_INGAME, STATE_MAINMENU, STATE_LEVELSELECTION, STATE_OPTIONS, STATE_KEYBOARD, STATE_JOYSTICK, STATE_HOWTO, STATE_HIGHSCORE_LIST, STATE_HIGHSCORE_ENTRY = 0,1,2,3,4,5,6,7,8,9
+gamestates = {[0]=splash, [1]=ingame, [2]=mainmenu, [3]=levelselection, [4]=options, [5]=keyboard, [6]=joystick, [7]=howto, [8]=highscore_list, [9]=highscore_entry}
 
 function love.load()
 	loadConfig()
+	loadHighscores()
 
 	love.graphics.setBackgroundColor(0,0,0)
 	love.graphics.setMode(WIDTH*config.scale, HEIGHT*config.scale, false, config.vsync)
@@ -171,4 +173,9 @@ function love.run()
 			love.timer.sleep(MAX_FRAMERATE - elapsed_time)
 		end
     end
+end
+
+function love.quit()
+	saveConfig()
+	saveHighscores()
 end
