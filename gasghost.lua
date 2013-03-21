@@ -1,4 +1,4 @@
-GasGhost = { MAX_HEALTH = 0.25, SPEED = 80, SCORE = 50 }
+GasGhost = { MAX_HEALTH = 0.25, SPEED = 100, SCORE = 50 }
 GasGhost.__index = GasGhost
 
 function GasGhost.create(x,y,dir,time)
@@ -16,7 +16,7 @@ end
 
 function GasGhost:update(dt)
 	self.anim:update(dt)
-	self.time = self.time + dt*2.5
+	self.time = self.time + dt*2.8
 
 	self.x = self.x + self.dir*self.SPEED*dt
 	if self.x < -32 or self.x > MAPW+32 then

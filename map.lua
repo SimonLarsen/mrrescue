@@ -26,6 +26,7 @@ function Map.create(section, level)
 	else
 		self.type = MT_NORMAL
 	end
+	self.type = MT_BOSS
 
 	if self.type == MT_NORMAL then
 		file = love.filesystem.load("maps/base.lua")()

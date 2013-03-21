@@ -77,7 +77,8 @@ function highscore_entry.delete()
 end
 
 function highscore_entry.confirm()
-	local entry = {name=highscore_entry.name, score=score}
+	local newname = highscore_entry.name:gsub("_"," ")
+	local entry = {name=newname, score=score}
 	table.insert(highscores[level], highscore_entry.rank, entry)
 	highscore_list.enter(level,highscore_entry.rank)
 	playSound("confirm")

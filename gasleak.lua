@@ -93,6 +93,19 @@ function GasLeak:update(dt)
 		if self.time <= 0 then
 			self:setState(BS_WALK)
 		end
+
+		-- Check if dead or ready to get angry
+		if self.health <= 0 then
+			self.time = self.DEAD_TIME
+			self.yspeed = self.DEAD_SMOKE_INTERVAL
+			ingame.shake = self.DEAD_TIME
+			self:setState(BS_DEAD)
+			map:clearFire()
+			map:clearEnemies()
+		elseif self.angry == false and self.health < self.MAX_HEALTH*0.75 then
+			self:setState(BS_TRANSITION)
+			self.time = self.TRANSITION_TIME
+		end
 	elseif self.state == BS_DEAD then
 		self.time = self.time - dt
 		self.yspeed = self.yspeed + dt

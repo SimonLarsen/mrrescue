@@ -723,9 +723,6 @@ function Player:drawWater()
 end
 
 function Player:keypressed(k)
-	if k == "f9" then
-		self.temperature = 1000
-	end
 	for a, key in pairs(config.keys) do
 		if k == key then
 			self:action(a)

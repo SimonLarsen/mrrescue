@@ -47,10 +47,10 @@ end
 
 function highscore_list.keypressed(k, uni)
 	if k == "right" then
-		highscore_list.level = cap(highscore_list.level + 1, 1, 3)
+		highscore_list.level = wrap(highscore_list.level + 1, 1, 3)
 		playSound("blip")
 	elseif k == "left" then
-		highscore_list.level = cap(highscore_list.level - 1, 1, 3)
+		highscore_list.level = wrap(highscore_list.level - 1, 1, 3)
 		playSound("blip")
 	elseif k == "return" or k == "escape" then
 		playSound("confirm")
@@ -69,10 +69,10 @@ end
 
 function highscore_list.action(k)
 	if k == "right" then
-		highscore_list.level = cap(highscore_list.level + 1, 1, 3)
+		highscore_list.level = wrap(highscore_list.level + 1, 1, 3)
 		playSound("blip")
 	elseif k == "left" then
-		highscore_list.level = cap(highscore_list.level - 1, 1, 3)
+		highscore_list.level = wrap(highscore_list.level - 1, 1, 3)
 		playSound("blip")
 	end
 end
