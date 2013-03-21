@@ -69,11 +69,11 @@ WON_MESSAGES = {
 	 "","YOU ARE NOW TRUE","MR. RESCUE STAR IN HEART!","","PRESS RETURN TO CONTINUE"}
 }
 
-
-
 BUILDING_NAMES = {{"SMALL","BUSINESS"},{"APARTMENT","COMPLEX"},{"BIG","CORPORATION"}}
 DIFFICULTY_NAMES = {"EASY", "NORMAL", "HARD"}
 BOSS_MESSAGE = {"PLACEHOLDER"}
+
+KEYBOARD = "ABCDEFGHIJKLMNOPQRSTUVWXYZ_-<$"
 
 --- Returns size of an Image as two return values
 -- Saves some typing when creating quads
@@ -111,7 +111,8 @@ function loadResources()
 	img.stream:setWrap("repeat", "clamp")
 
 	-- Create fonts
-	font.bold = lg.newImageFont(img.boldfont, " ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789.,!'-:*@<>+/")
+	font.bold = lg.newImageFont(img.boldfont, " ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789.,!'-:*@<>+/_$")
+	lg.setFont(font.bold)
 
 	-- Create quads
 	quad.player_gun = {}

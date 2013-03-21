@@ -431,7 +431,7 @@ function ingame.keypressed(k, uni)
 		end
 	elseif ingame_state == INGAME_WON and translate_y < 0 then
 		if k == "return" or k == " " then
-			levelselection.enter()
+			highscore_entry.enter()
 		end
 	end
 end
@@ -445,7 +445,7 @@ function ingame.joystickpressed(joy, k)
 	elseif ingame_state == INGAME_GAMEOVER then
 		highscore_entry.enter()
 	elseif ingame_state == INGAME_WON and translate_y < 0 then
-		levelselection.enter()
+		highscore_entry.enter()
 	end
 end
 

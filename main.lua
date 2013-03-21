@@ -13,10 +13,6 @@ require("door")
 require("item")
 require("fire")
 require("particles")
--- 3rd party libraries
-require("AnAL")
-require("slam")
-require("TSerial")
 -- gamestates
 require("splash")
 require("mainmenu")
@@ -28,6 +24,10 @@ require("levelselection")
 require("highscore_list")
 require("highscore_entry")
 require("howto")
+-- 3rd party libraries
+require("AnAL")
+require("slam")
+require("TSerial")
 
 WIDTH = 256
 HEIGHT = 200
