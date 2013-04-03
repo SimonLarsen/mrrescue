@@ -1,4 +1,4 @@
-GasLeak = { MAX_HEALTH = 12, IDLE_TIME = 1.5, WALK_SPEED = 40, PUSHED_COOLDOWN = 0.2,
+GasLeak = { MAX_HEALTH = 12, WALK_SPEED = 40, PUSHED_COOLDOWN = 0.2,
 		    PUSHED_SPEED = 40, DEAD_TIME = 5, DEAD_SMOKE_INTERVAL = 0.5,
 			GHOST_DELAY = 2.5, GHOST_DELAY_ANGRY = 1.5, HAS_SHOT_TIME = 0.4 }
 GasLeak.__index = GasLeak
@@ -84,7 +84,6 @@ function GasLeak:update(dt)
 			map:clearEnemies()
 		elseif self.angry == false and self.health < self.MAX_HEALTH*0.75 then
 			self:setState(BS_TRANSITION)
-			self.time = self.TRANSITION_TIME
 		end
 	elseif self.state == BS_PUSHED then
 		self.hit = true
@@ -104,7 +103,6 @@ function GasLeak:update(dt)
 			map:clearEnemies()
 		elseif self.angry == false and self.health < self.MAX_HEALTH*0.75 then
 			self:setState(BS_TRANSITION)
-			self.time = self.TRANSITION_TIME
 		end
 	elseif self.state == BS_DEAD then
 		self.time = self.time - dt

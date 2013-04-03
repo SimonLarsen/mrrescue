@@ -32,10 +32,12 @@ function highscore_list.draw()
 			if highscore_list.level == highscore_list.hllevel
 			and highscore_list.hlpos == i then
 				lg.setColor(25,118,115,255)
-				lg.print(scores[i].name.."   "..scores[i].score, 48, 14+i*16)
+				lg.print(scores[i].name,   48, 14+i*16)
+				lg.print(scores[i].score, 105, 14+i*16)
 				lg.setColor(255,255,255,255)
 			else
-				lg.print(scores[i].name.."   "..scores[i].score, 48, 14+i*16)
+				lg.print(scores[i].name,   48, 14+i*16)
+				lg.print(scores[i].score, 105, 14+i*16)
 			end
 		else
 			lg.print("---", 48, 14+i*16)

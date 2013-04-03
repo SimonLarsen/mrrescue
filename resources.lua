@@ -39,6 +39,10 @@ local IMAGE_FILES = {
 	"gasleak_rage_walk", "gasleak_rage_shot_walk", "gasleak_idle_shot", "gasleak_rage_idle_shot", "gasleak_rage_idle",
 	"gasleak_transition", "gasleak_portrait", "gasghost", "gasghost_hit",
 
+	"charcoal_bump", "charcoal_daze", "charcoal_daze_hit", "charcoal_idle",
+	"charcoal_projectile", "charcoal_roll", "charcoal_shards",
+	"charcoal_transform", "charcoal_transition", "charcoal_portrait",
+
 	"human_1_run", "human_2_run", "human_3_run", "human_4_run",
 	"human_1_carry_left", "human_2_carry_left", "human_3_carry_left", "human_4_carry_left",
 	"human_1_carry_right", "human_2_carry_right", "human_3_carry_right", "human_4_carry_right",

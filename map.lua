@@ -89,7 +89,8 @@ function Map.create(section, level)
 		self.startx = 280
 		self.starty = 240
 		--self.boss = MagmaHulk.create((self.width*16)/2, MAPH-16)
-		self.boss = GasLeak.create(368, MAPH-16)
+		--self.boss = GasLeak.create(368, MAPH-16)
+		self.boss = Charcoal.create(368, MAPH-16)
 		table.insert(self.items, Item.create(16*16, 8*16, "coolant"))
 		table.insert(self.items, Item.create(24*16, 10*16, "coolant"))
 	end

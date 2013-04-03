@@ -1,4 +1,4 @@
-MagmaHulk = { MAX_HEALTH = 12, GRAVITY = 350, JUMP_POWER = 200, IDLE_TIME = 1.5, MAX_JUMP = 128,
+MagmaHulk = { MAX_HEALTH = 12, GRAVITY = 350, JUMP_POWER = 200, MAX_JUMP = 128,
 		 TRANSITION_TIME = 2 }
 MagmaHulk.__index = MagmaHulk
 setmetatable(MagmaHulk, Boss)
