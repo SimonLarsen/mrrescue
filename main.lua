@@ -38,8 +38,8 @@ MAPW = 41*16
 MAPH = 16*16
 show_debug = false
 
-local MIN_FRAMERATE = 1/15
-local MAX_FRAMERATE = 1/120
+local MAX_FRAMETIME = 1/15
+local MIN_FRAMETIME = 1/120
 
 STATE_SPLASH, STATE_INGAME, STATE_MAINMENU, STATE_LEVELSELECTION, STATE_OPTIONS, STATE_KEYBOARD, STATE_JOYSTICK, STATE_HOWTO, STATE_HIGHSCORE_LIST, STATE_HIGHSCORE_ENTRY, STATE_INGAME_MENU = 0,1,2,3,4,5,6,7,8,9,10
 gamestates = {[0]=splash, [1]=ingame, [2]=mainmenu, [3]=levelselection, [4]=options, [5]=keyboard, [6]=joystick, [7]=howto, [8]=highscore_list, [9]=highscore_entry, [10]=ingame_menu}
@@ -157,7 +157,7 @@ function love.run()
         if love.timer then
             love.timer.step()
             dt = love.timer.getDelta()
-			dt = cap(dt, MAX_FRAMERATE, MIN_FRAMERATE)
+			dt = cap(dt, MIN_FRAMETIME, MAX_FRAMETIME)
         end
 
         -- Call update and draw
@@ -172,8 +172,8 @@ function love.run()
 
 		-- Sleep to compensate for framerate cap
 		local elapsed_time = love.timer.getMicroTime() - frame_start
-		if elapsed_time < MAX_FRAMERATE then
-			love.timer.sleep(MAX_FRAMERATE - elapsed_time)
+		if elapsed_time < MIN_FRAMETIME then
+			love.timer.sleep(MIN_FRAMETIME - elapsed_time)
 		end
     end
 end
