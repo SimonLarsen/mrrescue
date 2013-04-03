@@ -213,3 +213,21 @@ end
 function PopupText:draw()
 	lg.drawq(img.popup_text, quad.popup_text[self.id], self.x, self.y-math.sqrt(self.time)*32, 0, 1, 1, 32, 0)
 end
+
+CoalBallBreak = {}
+CoalBallBreak.__index = CoalBallBreak
+
+function CoalBallBreak.create(x,y)
+	local self = setmetatable({}, CoalBallBreak)
+	self.alive = true
+	self.x, self.y = math.floor(x), math.floor(y)
+	return self
+end
+
+function CoalBallBreak:update(dt)
+	
+end
+
+function CoalBallBreak:draw()
+	
+end

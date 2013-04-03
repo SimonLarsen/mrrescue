@@ -10,6 +10,7 @@ require("magmahulk")
 require("gasleak")
 require("gasghost")
 require("charcoal")
+require("coalball")
 require("door")
 require("item")
 require("fire")
@@ -18,6 +19,7 @@ require("particles")
 require("splash")
 require("mainmenu")
 require("ingame")
+require("ingame_menu")
 require("options")
 require("keyboard")
 require("joystick")
@@ -39,8 +41,8 @@ show_debug = false
 local MIN_FRAMERATE = 1/15
 local MAX_FRAMERATE = 1/120
 
-STATE_SPLASH, STATE_INGAME, STATE_MAINMENU, STATE_LEVELSELECTION, STATE_OPTIONS, STATE_KEYBOARD, STATE_JOYSTICK, STATE_HOWTO, STATE_HIGHSCORE_LIST, STATE_HIGHSCORE_ENTRY = 0,1,2,3,4,5,6,7,8,9
-gamestates = {[0]=splash, [1]=ingame, [2]=mainmenu, [3]=levelselection, [4]=options, [5]=keyboard, [6]=joystick, [7]=howto, [8]=highscore_list, [9]=highscore_entry}
+STATE_SPLASH, STATE_INGAME, STATE_MAINMENU, STATE_LEVELSELECTION, STATE_OPTIONS, STATE_KEYBOARD, STATE_JOYSTICK, STATE_HOWTO, STATE_HIGHSCORE_LIST, STATE_HIGHSCORE_ENTRY, STATE_INGAME_MENU = 0,1,2,3,4,5,6,7,8,9,10
+gamestates = {[0]=splash, [1]=ingame, [2]=mainmenu, [3]=levelselection, [4]=options, [5]=keyboard, [6]=joystick, [7]=howto, [8]=highscore_list, [9]=highscore_entry, [10]=ingame_menu}
 
 function love.load()
 	loadConfig()

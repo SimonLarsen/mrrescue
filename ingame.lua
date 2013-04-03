@@ -419,7 +419,11 @@ end
 
 function ingame.keypressed(k, uni)
 	if ingame_state == INGAME_ACTIVE then
-		player:keypressed(k)
+		if k == "escape" then
+			ingame_menu.enter()
+		else
+			player:keypressed(k)
+		end
 	elseif ingame_state == INGAME_PRESCREEN then
 		if k == "return" or k == " " then
 			ingame_state = INGAME_FADE_IN

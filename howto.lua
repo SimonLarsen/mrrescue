@@ -23,10 +23,20 @@ function howto.draw()
 end
 
 function howto.keypressed(k, uni)
-	if k == "right" or k == "down" or k == "return" then
+	if k == "right" or k == "down" then
 		howto.slide = cap(howto.slide + 1, 0, 8)
 		howto.quad:setViewport(0,howto.slide*200,256,200)
 		playSound("blip")
+	elseif k == "return" then
+		if howto.slide < 8 then
+			howto.slide = cap(howto.slide + 1, 0, 8)
+			howto.quad:setViewport(0,howto.slide*200,256,200)
+			playSound("blip")
+		else
+			playSound("confirm")
+			playMusic("opening")
+			mainmenu.enter()
+		end
 	elseif k == "left" or k == "up" then
 		howto.slide = cap(howto.slide - 1, 0, 8)
 		howto.quad:setViewport(0,howto.slide*200,256,200)

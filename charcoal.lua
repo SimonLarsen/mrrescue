@@ -1,4 +1,4 @@
-Charcoal = { MAX_HEALTH = 1.2, GRAVITY = 350, ROLL_SPEED = 100, DAZED_TIME = 3, TRANSITION_TIME = 2 }
+Charcoal = { MAX_HEALTH = 10, GRAVITY = 350, ROLL_SPEED = 100, DAZED_TIME = 3, TRANSITION_TIME = 2 }
 Charcoal.__index = Charcoal
 setmetatable(Charcoal, Boss)
 
@@ -63,6 +63,9 @@ function Charcoal:update(dt)
 			ingame.shake = 0.4
 			self:setState(BS_DAZED)
 			self.time = self.DAZED_TIME
+			for i=1,6 do
+				table.insert(map.enemies, CoalBall.create(math.random(185, MAPW-185), math.random(-100,0)))
+			end
 		end
 
 	elseif self.state == BS_DAZED then
@@ -130,11 +133,20 @@ function Charcoal:draw()
 end
 
 function Charcoal:collideBox(bbox)
-	if self.x-12 > bbox.x+bbox.w or self.x+12 < bbox.x
-	or self.y-26 > bbox.y+bbox.h or self.y < bbox.y then
-		return false
+	if self.state == BS_ROLL then
+		if self.x-12 > bbox.x+bbox.w or self.x+12 < bbox.x
+		or self.y-26 > bbox.y+bbox.h or self.y < bbox.y then
+			return false
+		else
+			return true
+		end
 	else
-		return true
+		if self.x-12 > bbox.x+bbox.w or self.x+12 < bbox.x
+		or self.y-34 > bbox.y+bbox.h or self.y < bbox.y then
+			return false
+		else
+			return true
+		end
 	end
 	return false
 end
