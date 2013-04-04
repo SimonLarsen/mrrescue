@@ -27,6 +27,10 @@ function keyboard.draw()
 		lg.print(string.upper(v), 65, 40+i*13)
 		if config.keys[v] == " " then
 			lg.print("SPACE", 154, 40+i*13)
+		elseif config.keys[v] == "none" then
+			lg.setColor(118,31,25)
+			lg.print("NONE", 154, 40+i*13)
+			lg.setColor(255,255,255)
 		else
 			lg.print(string.upper(config.keys[v]:sub(1,7)), 154, 40+i*13)
 		end
@@ -66,6 +70,11 @@ function keyboard.keypressed(k, uni)
 		end
 	else
 		if k ~= "escape" then
+			for i,v in ipairs(keynames) do
+				if config.keys[v] == k then
+					config.keys[v] = "none"
+				end
+			end
 			config.keys[keynames[keyboard.selection]] = k
 		end
 		playSound("blip")
