@@ -28,7 +28,7 @@ function keyboard.draw()
 		if config.keys[v] == " " then
 			lg.print("SPACE", 154, 40+i*13)
 		else
-			lg.print(string.upper(config.keys[v]), 154, 40+i*13)
+			lg.print(string.upper(config.keys[v]:sub(1,7)), 154, 40+i*13)
 		end
 		lg.setColor(255,255,255)
 	end
