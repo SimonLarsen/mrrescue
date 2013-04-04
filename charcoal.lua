@@ -25,7 +25,7 @@ function Charcoal.create(x,y)
 	end)
 	self.anims[BS_TRANSITION] = newAnimation(img.charcoal_transition, 40, 64, 0.14, 2)
 	self.anims[BS_DEAD] = self.anims[BS_TRANSITION]
-	self.anims[BS_ROLL] = newAnimation(img.charcoal_roll, 32, 32, 0.05, 19)
+	self.anims[BS_ROLL] = newAnimation(img.charcoal_roll, 32, 32, 0.04, 19)
 	self.anims[BS_DAZED] = newAnimation(img.charcoal_daze, 40, 64, 0.14, 4)
 
 	self:setState(BS_IDLE)
@@ -63,7 +63,8 @@ function Charcoal:update(dt)
 			ingame.shake = 0.4
 			self:setState(BS_DAZED)
 			self.time = self.DAZED_TIME
-			for i=1,6 do
+			local ballcount = self.angry == true and 10 or 6
+			for i=1,ballcount do
 				table.insert(map.enemies, CoalBall.create(math.random(185, MAPW-185), math.random(-100,0)))
 			end
 		end

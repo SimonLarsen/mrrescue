@@ -237,7 +237,7 @@ function Human:throw(x,y,dir)
 	self.x = x
 	self.y = y
 	self.xspeed = THROW_SPEED*dir
-	self.yspeed = -100
+	self.yspeed = -130
 	self.dir = dir
 	self.buttHit = 0
 end

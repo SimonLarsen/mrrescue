@@ -309,7 +309,7 @@ function drawPrescreen()
 	lg.drawq(img.captain_dialog, quad.captain_dialog[fr], 28, 72)
 	drawPrescreenMessage()
 
-	lg.printf("PRESS ANY KEY TO CONTINUE", 0, 150, WIDTH, "center")
+	lg.printf("PRESS RETURN TO CONTINUE", 0, 150, WIDTH, "center")
 end
 
 function drawGameover()

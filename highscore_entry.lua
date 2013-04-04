@@ -61,10 +61,11 @@ function highscore_entry.draw()
 	lg.pop()
 end
 
-function highscore_entry.addChar()
+function highscore_entry.addChar(c)
+	local char = c or KEYBOARD:sub(highscore_entry.selection,highscore_entry.selection)
 	local head = highscore_entry.name:sub(1,highscore_entry.position-1)
 	local tail = highscore_entry.name:sub(highscore_entry.position+1, 5)
-	highscore_entry.name = head .. KEYBOARD:sub(highscore_entry.selection,highscore_entry.selection) .. tail
+	highscore_entry.name = head .. char .. tail
 	highscore_entry.position = cap(highscore_entry.position + 1, 1, 6)
 	playSound("confirm")
 end
@@ -113,7 +114,7 @@ function highscore_entry.keypressed(k, uni)
 			highscore_entry.selection = highscore_entry.selection - 10
 		end
 		playSound("blip")
-	elseif k == "return" or k == " " then
+	elseif k == "return" then
 		if highscore_entry.selection <= 28 then
 			if highscore_entry.position <= 5 then
 				highscore_entry.addChar()
@@ -123,6 +124,16 @@ function highscore_entry.keypressed(k, uni)
 		else
 			highscore_entry.confirm()
 		end
+	elseif (uni >= 97 and 122) or k == " " or k == "-" then
+		if highscore_entry.position <= 5 then
+			if k == " " then
+				highscore_entry.addChar("_")
+			else
+				highscore_entry.addChar(string.upper(k))
+			end
+		end
+	elseif k == "backspace" then
+		highscore_entry.delete()
 	end
 end
 

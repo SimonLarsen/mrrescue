@@ -1,4 +1,4 @@
-CoalBall = { MAX_HEALTH = 0.25, SPEED = 100, SCORE = 50 }
+CoalBall = { MAX_HEALTH = 0.25, SPEED = 120, SCORE = 50 }
 CoalBall.__index = CoalBall
 
 function CoalBall.create(x,y)
