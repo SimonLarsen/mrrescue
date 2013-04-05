@@ -132,6 +132,7 @@ function highscore_entry.keypressed(k, uni)
 				highscore_entry.addChar(string.upper(k))
 			end
 		end
+		highscore_entry.selection = 30
 	elseif k == "backspace" then
 		highscore_entry.delete()
 	end
