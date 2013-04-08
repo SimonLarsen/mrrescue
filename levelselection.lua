@@ -41,7 +41,11 @@ function levelselection.draw()
 		lg.print("FLOORS: " .. 42, 16, 106)
 	end
 	lg.print("MISSES: "..string.rep("@",6-level), 16, 120)
-	lg.print("BEST: "..level*1234, 16, 134)
+	if highscores[level][1] then
+		lg.print("BEST: "..highscores[level][1].score, 16, 134)
+	else
+		lg.print("BEST:", 16, 134)
+	end
 
 	lg.pop()
 end

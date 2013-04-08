@@ -65,7 +65,8 @@ function Charcoal:update(dt)
 			self.time = self.DAZED_TIME
 			local ballcount = self.angry == true and 10 or 6
 			for i=1,ballcount do
-				table.insert(map.enemies, CoalBall.create(math.random(185, MAPW-185), math.random(-100,0)))
+				local ball = CoalBall.create(205+(290/ballcount)*(i-1), math.random(-100,0))
+				table.insert(map.enemies, ball)
 			end
 		end
 
@@ -87,6 +88,7 @@ function Charcoal:update(dt)
 			map:clearFire()
 			map:clearEnemies()
 		elseif self.time <= 0 then
+			self.y = MAPH-16
 			self:setState(BS_TRANSFORM)
 		elseif self.angry == false and self.health < self.MAX_HEALTH*0.75 then
 			self:setState(BS_TRANSITION)

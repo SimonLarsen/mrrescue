@@ -1,4 +1,4 @@
-CoalBall = { MAX_HEALTH = 0.25, SPEED = 120, SCORE = 50 }
+CoalBall = { MAX_HEALTH = 0.25, SPEED = 140, SCORE = 50 }
 CoalBall.__index = CoalBall
 
 function CoalBall.create(x,y)
@@ -14,7 +14,22 @@ function CoalBall:update(dt)
 	self.anim:update(dt)
 	self.y = self.y + self.SPEED*dt
 
+	if player:collideBox(self:getBBox()) == true then
+		local cx, cy = math.floor(self.x/16), math.floor(self.y/16)
+		map:addFire(cx,   cy)
+		map:addFire(cx-1, cy)
+		map:addFire(cx+1, cy)
+		map:addFire(cx, cy-1)
+		map:addFire(cx, cy+1)
+
+		map:addParticle(BlackSmoke.create(self.x, self.y-8))
+		map:addParticle(BlackSmoke.create(self.x-6, self.y-18))
+		map:addParticle(BlackSmoke.create(self.x+6, self.y-18))
+		self.alive = false
+	end
+
 	if self.y >= MAPH-22 then
+		map:addParticle(BlackSmoke.create(self.x, MAPH-20))
 		self.alive = false
 	end
 end
