@@ -20,7 +20,7 @@ local GD_UP, GD_HORIZONTAL, GD_DOWN = 0,2,4 -- Gun directions
 
 local lg = love.graphics
 
-function Player.create(x,y)
+function Player.create(x,y,level)
 	local self = setmetatable({}, Player)
 
 	self.x, self.y = x, y
@@ -30,7 +30,10 @@ function Player.create(x,y)
 	self.onGround = false
 	self.time = 0
 	self.lastDir = 1
+	self.state = PS_RUN
+	self.dir = 1 -- -1 for left, 1 for right
 
+	self.gundir = GD_HORIZONTAL -- gun direction
 	self.shooting = false
 	self.streamLength = 0
 	self.streamCollided = false
@@ -49,16 +52,18 @@ function Player.create(x,y)
 
 	-- Temperature stats
 	self.temperature = 0 -- current temperature
-	self.max_temperature = 1 -- temperature player can withstand
+	if level == 1 then
+		self.max_temperature = 1.5 -- temperature player can withstand
+	elseif level == 2 then
+		self.max_temperature = 1.2
+	else
+		self.max_temperature = 1.0
+	end
 	self.heat = 0 -- how much heat is currently taken
 
+	-- Grabbing civilians
 	self.canGrab = false
 	self.grabbed = nil -- grabbed human
-
-	self.state = PS_RUN
-	self.gundir = GD_HORIZONTAL -- gun direction
-
-	self.dir = 1 -- -1 for left, 1 for right
 
 	-- Animations
 	self.animRun 	    = newAnimation(img.player_running, 16, 22, 0.12, 4)

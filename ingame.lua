@@ -26,7 +26,8 @@ function ingame.newGame()
 	warning_frame = 0
 
 	map = Map.create(section, level)
-	player = Player.create(map:getStart())
+	local startx, starty = map:getStart()
+	player = Player.create(startx,starty,level)
 
 	setPrescreenMessage()
 end
