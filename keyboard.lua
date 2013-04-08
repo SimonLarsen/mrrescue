@@ -82,21 +82,6 @@ function keyboard.keypressed(k, uni)
 	end
 end
 
-function keyboard.joystickpressed(joy, k)
-	if k == 3 then
-		if keyboard.selection >= 1 and keyboard.selection <= 7 then
-			playSound("blip")
-			keyboard.waiting = true
-		elseif keyboard.selection == 8 then -- DEFAULT
-			playSound("confirm")
-			defaultKeys()
-		elseif keyboard.selection == 9 then -- BACK
-			playSound("confirm")
-			options.enter()
-		end
-	end
-end
-
 function keyboard.action(k)
 	if keyboard.waiting == false then
 		if k == "down" then
@@ -105,6 +90,20 @@ function keyboard.action(k)
 		elseif k == "up" then
 			keyboard.selection = wrap(keyboard.selection - 1, 1, 9)
 			playSound("blip")
+		elseif k == "jump" then
+			if keyboard.selection >= 1 and keyboard.selection <= 7 then
+				playSound("blip")
+				keyboard.waiting = true
+			elseif keyboard.selection == 8 then -- DEFAULT
+				playSound("confirm")
+				defaultKeys()
+			elseif keyboard.selection == 9 then -- BACK
+				playSound("confirm")
+				options.enter()
+			end
+		elseif k == "action" then
+			playSound("confirm")
+			options.enter()
 		end
 	end
 end

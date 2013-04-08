@@ -51,8 +51,14 @@ function ingame_menu.keypressed(k, uni)
 	end
 end
 
-function ingame_menu.joystickpressed(joy, k)
-	if k == 3 then
+function ingame_menu.action(k)
+	if k == "down" then
+		ingame_menu.selection = wrap(ingame_menu.selection+1, 1,2)
+		playSound("blip")
+	elseif k == "up" then
+		ingame_menu.selection = wrap(ingame_menu.selection-1, 1,2)
+		playSound("blip")
+	elseif k == "jump" then
 		if ingame_menu.selection == 1 then
 			state = STATE_INGAME
 			playSound("confirm")
@@ -61,18 +67,8 @@ function ingame_menu.joystickpressed(joy, k)
 			playSound("confirm")
 			playMusic("opening")
 		end
-	elseif k == 4 then
+	elseif k == "action" then
 		state = STATE_INGAME
-		playSound("blip")
-	end
-end
-
-function ingame_menu.action(k)
-	if k == "down" then
-		ingame_menu.selection = wrap(ingame_menu.selection+1, 1,2)
-		playSound("blip")
-	elseif k == "up" then
-		ingame_menu.selection = wrap(ingame_menu.selection-1, 1,2)
 		playSound("blip")
 	end
 end

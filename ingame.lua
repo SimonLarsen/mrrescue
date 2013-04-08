@@ -417,12 +417,16 @@ function updateLightmap()
 	lg.setCanvas()
 end
 
-function ingame.keypressed(k, uni)
+function ingame.keypressed(k,uni)
 	if ingame_state == INGAME_ACTIVE then
 		if k == "escape" then
 			ingame_menu.enter()
 		else
-			player:keypressed(k)
+			for a, key in pairs(config.keys) do
+				if k == key then
+					player:action(a)
+				end
+			end
 		end
 	elseif ingame_state == INGAME_PRESCREEN then
 		if k == "return" or k == " " then
@@ -440,9 +444,9 @@ function ingame.keypressed(k, uni)
 	end
 end
 
-function ingame.joystickpressed(joy, k)
+function ingame.action(a)
 	if ingame_state == INGAME_ACTIVE then
-		player:joystickpressed(joy, k)
+		player:action(a)
 	elseif ingame_state == INGAME_PRESCREEN then
 		ingame_state = INGAME_FADE_IN
 		transition_time = 0
@@ -451,8 +455,4 @@ function ingame.joystickpressed(joy, k)
 	elseif ingame_state == INGAME_WON and translate_y < 0 then
 		highscore_entry.enter()
 	end
-end
-
-function ingame.action(a)
-	player:action(a)
 end

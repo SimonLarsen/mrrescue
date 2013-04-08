@@ -65,17 +65,6 @@ function levelselection.keypressed(k, uni)
 	end
 end
 
-function levelselection.joystickpressed(joy, k)
-	if k == 3 then
-		ingame.enter(level)
-		playSound("confirm")
-	elseif k == 4 then
-		playSound("confirm")
-		playMusic("opening")
-		mainmenu.enter()
-	end
-end
-
 function levelselection.action(k)
 	if k == "right" or k == "down" then
 		level = level + 1
@@ -85,5 +74,12 @@ function levelselection.action(k)
 		level = level - 1
 		if level < 1 then level = 3 end
 		playSound("blip")
+	elseif k == "jump" then
+		ingame.enter(level)
+		playSound("confirm")
+	elseif k == "action" then
+		playSound("confirm")
+		playMusic("opening")
+		mainmenu.enter()
 	end
 end

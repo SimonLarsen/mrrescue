@@ -136,7 +136,7 @@ end
 function Charcoal:collideBox(bbox)
 	if self.state == BS_ROLL then
 		if self.x-12 > bbox.x+bbox.w or self.x+12 < bbox.x
-		or self.y-26 > bbox.y+bbox.h or self.y < bbox.y then
+		or self.y-22 > bbox.y+bbox.h or self.y < bbox.y then
 			return false
 		else
 			return true
@@ -153,7 +153,7 @@ function Charcoal:collideBox(bbox)
 end
 
 function Charcoal:getBBox()
-	return {x = self.x-12, y = self.y-22, w = 25, h = 26}
+	return {x = self.x-12, y = self.y-22, w = 24, h = 22}
 end
 
 function Charcoal:setState(state)

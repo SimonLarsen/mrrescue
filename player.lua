@@ -591,17 +591,15 @@ end
 --- Called when player tries to grab a ladder
 -- @return True if a ladder was grabbed
 function Player:climb()
-	--if self.gundir == GD_UP or self.gundir == GD_DOWN then
-		local below = map:getPoint(self.x, self.y+1)
-		local top    = map:getPoint(self.x, self.y-22)
-		if below == 5 or below == 137 or below == 153 or below == 8 or below == 247
-		or top == 5 or top == 137 or top == 153 or top == 8 or top == 247
-		or top == 63 or top == 79 or below == 13 then
-			self:setState(PS_CLIMB)
-			self.x = math.floor(self.x/16)*16+8 -- Align with middle of ladder
-			return true
-		end
-	--end
+	local below = map:getPoint(self.x, self.y+1)
+	local top    = map:getPoint(self.x, self.y-22)
+	if below == 5 or below == 137 or below == 153 or below == 8 or below == 247
+	or top == 5 or top == 137 or top == 153 or top == 8 or top == 247
+	or top == 63 or top == 79 or below == 13 then
+		self:setState(PS_CLIMB)
+		self.x = math.floor(self.x/16)*16+8 -- Align with middle of ladder
+		return true
+	end
 	return false
 end
 
@@ -719,23 +717,5 @@ function Player:drawWater()
 			end
 		end
 		lg.drawq(img.water, quad.water_out[frame], self.flx+self.dir*0.5, self.fly+2, math.pi/2, 1,1, 0,7.5)
-	end
-end
-
-function Player:keypressed(k)
-	for a, key in pairs(config.keys) do
-		if k == key then
-			self:action(a)
-		end
-	end
-end
-
-function Player:joystickpressed(joy, k)
-	if joy == config.joystick then
-		for a, key in pairs(config.joykeys) do
-			if k == key then
-				self:action(a)
-			end
-		end
 	end
 end

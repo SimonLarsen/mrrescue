@@ -93,29 +93,6 @@ function options.keypressed(k, uni)
 	end
 end
 
-function options.joystickpressed(joy, k)
-	if k == 3 then
-		if options.selection == 2 then -- VSYNC
-			toggleVSync()
-			playSound("blip")
-		elseif options.selection == 5 then -- KEYBOARD
-			playSound("confirm")
-			keyboard.enter()
-		elseif options.selection == 6 then -- JOYSTICK
-			playSound("confirm")
-			joystick.enter()
-		elseif options.selection == 7 then -- BACK
-			playSound("confirm")
-			mainmenu.enter()
-			saveConfig()
-		end
-	elseif k == 4 then
-		playSound("confirm")
-		mainmenu.enter()
-		saveConfig()
-	end
-end
-
 function options.action(k)
 	if k == "down" then
 		options.selection = wrap(options.selection + 1, 1,7)
@@ -153,5 +130,24 @@ function options.action(k)
 			love.audio.tags.music.setVolume(config.music_volume)
 			playSound("blip")
 		end
+	elseif k == "jump" then
+		if options.selection == 2 then -- VSYNC
+			toggleVSync()
+			playSound("blip")
+		elseif options.selection == 5 then -- KEYBOARD
+			playSound("confirm")
+			keyboard.enter()
+		elseif options.selection == 6 then -- JOYSTICK
+			playSound("confirm")
+			joystick.enter()
+		elseif options.selection == 7 then -- BACK
+			playSound("confirm")
+			mainmenu.enter()
+			saveConfig()
+		end
+	elseif k == "action" then
+		playSound("confirm")
+		mainmenu.enter()
+		saveConfig()
 	end
 end

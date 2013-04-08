@@ -61,14 +61,6 @@ function highscore_list.keypressed(k, uni)
 	end
 end
 
-function highscore_list.joystickpressed(joy, k)
-	if k == 3 or k == 4 then
-		playSound("confirm")
-		playMusic("opening")
-		mainmenu.enter()
-	end
-end
-
 function highscore_list.action(k)
 	if k == "right" then
 		highscore_list.level = wrap(highscore_list.level + 1, 1, 3)
@@ -76,5 +68,9 @@ function highscore_list.action(k)
 	elseif k == "left" then
 		highscore_list.level = wrap(highscore_list.level - 1, 1, 3)
 		playSound("blip")
+	elseif k == "jump" or k == "action" then
+		playSound("confirm")
+		playMusic("opening")
+		mainmenu.enter()
 	end
 end

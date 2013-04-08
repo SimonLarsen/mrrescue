@@ -75,18 +75,9 @@ end
 
 function joystick.joystickpressed(joy, k)
 	if joystick.waiting == false then
-		if k == 3 then
-			if joystick.selection == 1 then
-				playSound("blip")
-				nextJoystick()
-			elseif joystick.selection >= 2 and joystick.selection <= 4 then -- Keys
-				joystick.waiting = true
-			elseif joystick.selection == 5 then -- Default
-				playSound("confirm")
-				defaultJoyKeys()
-			elseif joystick.selection == 6 then -- BACK
-				playSound("confirm")
-				options.enter()
+		for a, key in pairs(config.joykeys) do
+			if k == key then
+				gamestates[state].action(a)
 			end
 		end
 	else
@@ -103,5 +94,18 @@ function joystick.action(k)
 	elseif k == "up" then
 		joystick.selection = wrap(joystick.selection - 1, 1, 6)
 		playSound("blip")
+	elseif k == "jump" then
+		if joystick.selection == 1 then
+			playSound("blip")
+			nextJoystick()
+		elseif joystick.selection >= 2 and joystick.selection <= 4 then -- Keys
+			joystick.waiting = true
+		elseif joystick.selection == 5 then -- DEFAULT
+			playSound("confirm")
+			defaultJoyKeys()
+		elseif joystick.selection == 6 then -- BACK
+			playSound("confirm")
+			options.enter()
+		end
 	end
 end

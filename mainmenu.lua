@@ -56,8 +56,14 @@ function mainmenu.keypressed(k, uni)
 	end
 end
 
-function mainmenu.joystickpressed(joy, k)
-	if k == 3 then
+function mainmenu.action(k)
+	if k == "down" then
+		selection = wrap(selection + 1, 1,6)
+		playSound("blip")
+	elseif k == "up" then
+		selection = wrap(selection - 1, 1,6)
+		playSound("blip")
+	elseif k == "jump" then
 		if selection == 1 then
 			levelselection.enter()
 		elseif selection == 2 then
@@ -70,15 +76,5 @@ function mainmenu.joystickpressed(joy, k)
 			love.event.quit()
 		end
 		playSound("confirm")
-	end
-end
-
-function mainmenu.action(k)
-	if k == "down" then
-		selection = wrap(selection + 1, 1,6)
-		playSound("blip")
-	elseif k == "up" then
-		selection = wrap(selection - 1, 1,6)
-		playSound("blip")
 	end
 end

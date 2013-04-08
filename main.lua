@@ -70,7 +70,15 @@ end
 
 function love.joystickpressed(joy, k)
 	if joy == config.joystick then
-		gamestates[state].joystickpressed(joy, k)
+		if gamestates[state].joystickpressed then
+			gamestates[state].joystickpressed(joy, k)
+		else
+			for a, key in pairs(config.joykeys) do
+				if k == key then
+					gamestates[state].action(a)
+				end
+			end
+		end
 	end
 end
 

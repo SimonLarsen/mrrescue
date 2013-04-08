@@ -138,22 +138,6 @@ function highscore_entry.keypressed(k, uni)
 	end
 end
 
-function highscore_entry.joystickpressed(joy, k)
-	if k == 3 then
-		if highscore_entry.selection <= 28 then
-			if highscore_entry.position <= 5 then
-				highscore_entry.addChar()
-			end
-		elseif highscore_entry.selection == 29 then
-			highscore_entry.delete()
-		else
-			highscore_entry.confirm()
-		end
-	elseif k == 4 then
-		highscore_entry.delete()
-	end
-end
-
 function highscore_entry.action(k)
 	if k == "right" then
 		if highscore_entry.selection % 10 == 0 then
@@ -183,5 +167,17 @@ function highscore_entry.action(k)
 			highscore_entry.selection = highscore_entry.selection - 10
 		end
 		playSound("blip")
+	elseif k == "jump" then
+		if highscore_entry.selection <= 28 then
+			if highscore_entry.position <= 5 then
+				highscore_entry.addChar()
+			end
+		elseif highscore_entry.selection == 29 then
+			highscore_entry.delete()
+		else
+			highscore_entry.confirm()
+		end
+	elseif k == "action" then
+		highscore_entry.delete()
 	end
 end

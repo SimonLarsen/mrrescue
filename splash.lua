@@ -68,8 +68,8 @@ function splash.keypressed(k,uni)
 	end
 end
 
-function splash.joystickpressed(joy, k)
-		playSound("blip")
-		mainmenu.enter()
+function splash.action(k)
+	playSound("blip")
+	mainmenu.enter()
 	mainmenu.enter()
 end
