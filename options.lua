@@ -109,6 +109,10 @@ function options.joystickpressed(joy, k)
 			mainmenu.enter()
 			saveConfig()
 		end
+	elseif k == 4 then
+		playSound("confirm")
+		mainmenu.enter()
+		saveConfig()
 	end
 end
 

@@ -138,7 +138,7 @@ function highscore_entry.keypressed(k, uni)
 	end
 end
 
-function highscore_entry.joystickpressed()
+function highscore_entry.joystickpressed(joy, k)
 	if k == 3 then
 		if highscore_entry.selection <= 28 then
 			if highscore_entry.position <= 5 then
@@ -149,6 +149,8 @@ function highscore_entry.joystickpressed()
 		else
 			highscore_entry.confirm()
 		end
+	elseif k == 4 then
+		highscore_entry.delete()
 	end
 end
 

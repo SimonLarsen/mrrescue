@@ -52,7 +52,19 @@ function ingame_menu.keypressed(k, uni)
 end
 
 function ingame_menu.joystickpressed(joy, k)
-	
+	if k == 3 then
+		if ingame_menu.selection == 1 then
+			state = STATE_INGAME
+			playSound("confirm")
+		elseif ingame_menu.selection == 2 then
+			mainmenu.enter()
+			playSound("confirm")
+			playMusic("opening")
+		end
+	elseif k == 4 then
+		state = STATE_INGAME
+		playSound("blip")
+	end
 end
 
 function ingame_menu.action(k)

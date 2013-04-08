@@ -73,11 +73,11 @@ function mainmenu.joystickpressed(joy, k)
 	end
 end
 
-function mainmenu.action(a)
-	if a == "down" then
+function mainmenu.action(k)
+	if k == "down" then
 		selection = wrap(selection + 1, 1,6)
 		playSound("blip")
-	elseif a == "up" then
+	elseif k == "up" then
 		selection = wrap(selection - 1, 1,6)
 		playSound("blip")
 	end
