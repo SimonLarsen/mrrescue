@@ -1,4 +1,5 @@
-Charcoal = { MAX_HEALTH = 10, GRAVITY = 350, ROLL_SPEED = 100, DAZED_TIME = 3, TRANSITION_TIME = 2 }
+Charcoal = { MAX_HEALTH = 10, GRAVITY = 350, ROLL_SPEED = 100, DAZED_TIME = 3,
+			 TRANSITION_TIME = 2, SHOT_TIME = 1 }
 Charcoal.__index = Charcoal
 setmetatable(Charcoal, Boss)
 
@@ -22,10 +23,11 @@ function Charcoal.create(x,y)
 	self.anims[BS_TRANSFORM] = newAnimation(img.charcoal_transform, 40, 64, 0.14, 19,
 	function()
 		self:setState(BS_ROLL)
+		self.nextShot = 0
 	end)
 	self.anims[BS_TRANSITION] = newAnimation(img.charcoal_transition, 40, 64, 0.14, 2)
 	self.anims[BS_DEAD] = self.anims[BS_TRANSITION]
-	self.anims[BS_ROLL] = newAnimation(img.charcoal_roll, 32, 32, 0.04, 19)
+	self.anims[BS_ROLL] = newAnimation(img.charcoal_roll, 32, 32, 0.034, 19)
 	self.anims[BS_DAZED] = newAnimation(img.charcoal_daze, 40, 64, 0.14, 4)
 
 	self:setState(BS_IDLE)
@@ -55,6 +57,15 @@ function Charcoal:update(dt)
 	elseif self.state == BS_ROLL then
 		self.x = self.x + self.dir * self.ROLL_SPEED * dt
 
+		if self.angry == true then
+			ingame.shake = 0.1
+			self.nextShot = self.nextShot - dt
+			if self.nextShot <= 0 then
+				table.insert(map.enemies, CoalBall.create(player.x, 0))
+				self.nextShot = self.SHOT_TIME
+			end
+		end
+
 		if self.x < 190 or self.x > 466 then
 			self.y = MAPH-16
 			self.yspeed = -100
@@ -65,7 +76,7 @@ function Charcoal:update(dt)
 			self.time = self.DAZED_TIME
 			local ballcount = self.angry == true and 10 or 6
 			for i=1,ballcount do
-				local ball = CoalBall.create(205+(290/ballcount)*(i-1), math.random(-100,0))
+				local ball = CoalBall.create(168+(320/(ballcount-1))*(i-1), math.random(-100,0))
 				table.insert(map.enemies, ball)
 			end
 		end
@@ -124,12 +135,15 @@ function Charcoal:draw()
 		if self.hit == true then
 			self.anim:draw(self.flx, self.fly, 0, self.dir, 1, 20, 64, nil, img.charcoal_daze_hit)
 		else
-			self.anim:draw(self.flx, self.fly, 0, self.dir, 1, 20, 64)
+			self.anim:draw(self.flx, self.fly, 0, self.dir, 1, 20, 64, nil,
+			self.angry == true and img.charcoal_daze_rage)
 		end
 	elseif self.state == BS_TRANSFORM then
-		self.anim:draw(self.flx, self.fly, 0, self.dir, 1, 20, 64)
+		self.anim:draw(self.flx, self.fly, 0, self.dir, 1, 20, 64, nil,
+		self.angry == true and img.charcoal_transform_rage)
 	elseif self.state == BS_ROLL then
-		self.anim:draw(self.flx, self.fly, 0, self.dir, 1, 16, 32)
+		self.anim:draw(self.flx, self.fly, 0, self.dir, 1, 16, 32, nil,
+		self.angry == true and img.charcoal_roll_rage)
 	elseif self.state == BS_TRANSITION or self.state == BS_DEAD then
 		self.anim:draw(self.flx, self.fly, 0, self.dir, 1, 20, 64)
 	end

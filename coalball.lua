@@ -28,7 +28,10 @@ function CoalBall:update(dt)
 		self.alive = false
 	end
 
-	if self.y >= MAPH-22 then
+	if (self.x < 176 or self.x > 480) and self.y >= MAPH-38 then
+		map:addParticle(BlackSmoke.create(self.x, MAPH-36))
+		self.alive = false
+	elseif self.y >= MAPH-22 then
 		map:addParticle(BlackSmoke.create(self.x, MAPH-20))
 		self.alive = false
 	end

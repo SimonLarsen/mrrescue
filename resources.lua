@@ -24,6 +24,7 @@ local IMAGE_FILES = {
 	"player_gun", "player_throw", "player_climb_down",
 	"player_climb_up", "player_running", "player_death",
 
+	"enemy_healthbar",
 	"enemy_normal_run", "enemy_normal_hit", "enemy_normal_recover",
 	"enemy_thief_run", "enemy_thief_hit", "enemy_thief_recover",
 	"enemy_angrynormal_run", "enemy_angrynormal_hit", "enemy_angrynormal_recover",
@@ -42,6 +43,7 @@ local IMAGE_FILES = {
 	"charcoal_bump", "charcoal_daze", "charcoal_daze_hit", "charcoal_idle",
 	"charcoal_projectile", "charcoal_roll", "charcoal_shards",
 	"charcoal_transform", "charcoal_transition", "charcoal_portrait",
+	"charcoal_transform_rage", "charcoal_daze_rage", "charcoal_roll_rage",
 
 	"human_1_run", "human_2_run", "human_3_run", "human_4_run",
 	"human_1_carry_left", "human_2_carry_left", "human_3_carry_left", "human_4_carry_left",
@@ -245,6 +247,9 @@ function loadResources()
 	for i=1,3 do
 		quad.highscore_pane[i] = lg.newQuad(0, (i-1)*12, 256, 12, getSize(img.highscore_panes))
 	end
+
+	quad.enemy_healthbar_base = lg.newQuad(0, 0, 20, 8, getSize(img.enemy_healthbar))
+	quad.enemy_healthbar_bar  = lg.newQuad(21, 2, 1, 4, getSize(img.enemy_healthbar))
 
 	-- Set audio tag volumes
 	love.audio.tags.sfx.setVolume(config.sfx_volume)

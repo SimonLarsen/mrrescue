@@ -1,3 +1,9 @@
+function drawHealthBar(x,y, health, max_health)
+	local length = math.floor((health/max_health)*16+0.5)
+	lg.drawq(img.enemy_healthbar, quad.enemy_healthbar_base, x-10, y, 0, 1, 1, 0, 4)
+	lg.drawq(img.enemy_healthbar, quad.enemy_healthbar_bar,  x-8, y, 0, length, 1, 0, 2)
+end
+
 -- %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 -- %           Normal enemy           %
 -- %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -78,8 +84,6 @@ function NormalEnemy:update(dt)
 		end
 	end
 
-	self.hit = false
-
 	self.anim:update(dt)
 end
 
@@ -88,6 +92,12 @@ function NormalEnemy:draw()
 	self.fly = math.floor(self.y)
 
 	self.anim:draw(self.flx, self.fly, 0, self.dir,1, 8, 26)
+
+	if self.hit == true then
+		drawHealthBar(self.flx, self.fly - 30, self.health, self.MAX_HEALTH)
+	end
+
+	self.hit = false
 end
 
 function NormalEnemy:drawLight()
@@ -124,7 +134,7 @@ end
 -- %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 -- %        Angry Normal enemy        %
 -- %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-AngryNormalEnemy = { SCORE = 200, MAX_HEALTH = 3.0, RECOVER_TIME = 0.35 }
+AngryNormalEnemy = { SCORE = 200, MAX_HEALTH = 2.0, RECOVER_TIME = 0.35 }
 AngryNormalEnemy.__index = AngryNormalEnemy
 setmetatable(AngryNormalEnemy, NormalEnemy)
 
@@ -132,6 +142,7 @@ function AngryNormalEnemy.create(x,y)
 	local self = NormalEnemy.create(x,y)
 	setmetatable(self, AngryNormalEnemy)
 
+	self.health = self.MAX_HEALTH
 	self.anims[EN_RUN].img = img.enemy_angrynormal_run
 	self.anims[EN_HIT].img = img.enemy_angrynormal_hit
 	self.anims[EN_RECOVER].img = img.enemy_angrynormal_recover
@@ -235,6 +246,11 @@ function JumperEnemy:draw()
 	elseif self.state == EN_JUMPING then
 		self.anim:draw(self.flx, self.fly, 0, self.dir, 1,8, 32, 1, self.hit and img.enemy_jumper_hit)
 	end
+
+	if self.hit == true then
+		drawHealthBar(self.flx, self.fly - 36, self.health, self.MAX_HEALTH)
+	end
+	
 	self.hit = false
 end
 
@@ -268,7 +284,7 @@ end
 -- %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 -- %     Angry Jumper enemy     %
 -- %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-AngryJumperEnemy = { MAX_HEALTH = 3.0, MIN_FIRE_TIME = 3, MAX_FIRE_TIME = 8, SCORE = 200 }
+AngryJumperEnemy = { MAX_HEALTH = 2.0, MIN_FIRE_TIME = 3, MAX_FIRE_TIME = 8, SCORE = 200 }
 AngryJumperEnemy.__index = AngryJumperEnemy
 setmetatable(AngryJumperEnemy, JumperEnemy)
 
@@ -276,6 +292,7 @@ function AngryJumperEnemy.create(x,y)
 	local self = JumperEnemy.create(x,y)
 	setmetatable(self, AngryJumperEnemy)
 
+	self.health = self.MAX_HEALTH
 	self.anims[EN_JUMPING].img = img.enemy_angryjumper_jump
 
 	return self
@@ -309,6 +326,11 @@ function AngryJumperEnemy:draw()
 	elseif self.state == EN_JUMPING then
 		self.anim:draw(self.flx, self.fly, 0, self.dir, 1,8, 32, 1, self.hit and img.enemy_angryjumper_hit)
 	end
+
+	if self.hit == true then
+		drawHealthBar(self.flx, self.fly - 36, self.health, self.MAX_HEALTH)
+	end
+
 	self.hit = false
 end
 
@@ -383,6 +405,11 @@ function VolcanoEnemy:draw()
 			self.anim:draw(self.flx, self.fly, 0, self.dir,1, 8, 32, nil, img.enemy_volcano_hit)
 		end
 	end
+
+	if self.hit == true then
+		drawHealthBar(self.flx, self.fly - 36, self.health, self.MAX_HEALTH)
+	end
+
 	self.hit = false
 end
 
@@ -416,7 +443,7 @@ end
 -- %%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 -- %    Angry Volcano enemy    %
 -- %%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-AngryVolcanoEnemy = { MAX_HEALTH = 3.0, SCORE = 300 }
+AngryVolcanoEnemy = { MAX_HEALTH = 2.0, SCORE = 300 }
 AngryVolcanoEnemy.__index = AngryVolcanoEnemy
 setmetatable(AngryVolcanoEnemy, VolcanoEnemy)
 
@@ -424,6 +451,7 @@ function AngryVolcanoEnemy.create(x,y)
 	local self = VolcanoEnemy.create(x,y)
 	setmetatable(self, AngryVolcanoEnemy)
 
+	self.health = self.MAX_HEALTH
 	self.anims[EN_RUN].img = img.enemy_angryvolcano_run
 
 	return self
@@ -455,13 +483,18 @@ function AngryVolcanoEnemy:draw()
 			self.anim:draw(self.flx, self.fly, 0, self.dir,1, 8, 32, nil, img.enemy_angryvolcano_hit)
 		end
 	end
+
+	if self.hit == true then
+		drawHealthBar(self.flx, self.fly - 36, self.health, self.MAX_HEALTH)
+	end
+
 	self.hit = false
 end
 
 -- %%%%%%%%%%%%%%%%%%%%%%%%%
 -- %      Thief enemy      %
 -- %%%%%%%%%%%%%%%%%%%%%%%%%
-ThiefEnemy = { MAX_HEALTH = 1.5, SCORE = 350 }
+ThiefEnemy = { MOVE_SPEED = 120, MAX_HEALTH = 1.5, SCORE = 350 }
 ThiefEnemy.__index = ThiefEnemy
 setmetatable(ThiefEnemy, NormalEnemy)
 
@@ -520,6 +553,12 @@ function ThiefEnemy:draw()
 	self.fly = math.floor(self.y)
 
 	self.anim:draw(self.flx, self.fly, 0, self.dir,1, 9, 32)
+
+	if self.hit == true then
+		drawHealthBar(self.flx, self.fly - 36, self.health, self.MAX_HEALTH)
+	end
+
+	self.hit = false
 end
 
 -- %%%%%%%%%%%%%%%%%%%%%%%%%%
