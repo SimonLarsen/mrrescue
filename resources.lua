@@ -8,9 +8,9 @@ local snd = {}	-- sound Sources
 local IMAGE_FILES = {
 	"splash", "tangram", "lovesplashpixel", "howto",
 	"tiles", "door", "boldfont", "captain_dialog", "boss_health",
-	"highscore_panes",
-	"hud", "hud2", "hud_people", "item_slots",
-	"water_bar", "reserve_bar", "overloaded_bar", "temperature_bar",
+	"highscore_panes", "exclamation",
+	"hud", "hud2", "hud_people", "item_slots", "water_bar",
+	"reserve_bar", "overloaded_bar", "temperature_bar", "temperature_bar_blink",
 	"stream", "water", "shards", "level_buildings", "menu_box",
 
 	"fire_wall", "fire_wall_small", "fire_floor",
@@ -179,7 +179,7 @@ function loadResources()
 
 	quad.water_bar = lg.newQuad(0,0, 1,1, getSize(img.water_bar))
 	quad.temperature_bar = lg.newQuad(0,0,1,1, getSize(img.temperature_bar))
-	quad.temperature_bar_end = lg.newQuad(81,0,2,6, getSize(img.temperature_bar))
+	quad.temperature_bar_end = lg.newQuad(82,0,2,6, getSize(img.temperature_bar))
 
 	quad.red_screen = lg.newQuad(0,0, 256,169, 256,256)
 

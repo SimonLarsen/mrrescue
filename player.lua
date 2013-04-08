@@ -52,6 +52,7 @@ function Player.create(x,y)
 	self.max_temperature = 1 -- temperature player can withstand
 	self.heat = 0 -- how much heat is currently taken
 
+	self.canGrab = false
 	self.grabbed = nil -- grabbed human
 
 	self.state = PS_RUN
@@ -218,6 +219,13 @@ function Player:updateRunning(dt)
 	self.y = self.y + self.yspeed*dt
 	if collideY(self) == true then
 		self.yspeed = 0
+	end
+
+	self.canGrab = false
+	for i,v in ipairs(map.humans) do
+		if self:collideBox(v:getBBox()) and v:canGrab() == true then
+			self.canGrab = true
+		end
 	end
 
 	-- Set animation speeds
@@ -614,6 +622,10 @@ function Player:grab()
 	end
 end
 
+function Player:isDying()
+	return self.temperature > self.max_temperature*0.75
+end
+
 function Player:collideBox(bbox)
 	if self.x-6  > bbox.x+bbox.w or self.x+5 < bbox.x
 	or self.y-22 > bbox.y+bbox.h or self.y   < bbox.y then
@@ -644,6 +656,11 @@ function Player:draw()
 		-- Draw water
 		if self.shooting == true then
 			self:drawWater()
+		end
+
+		-- Draw exclamation
+		if self.canGrab == true then
+			lg.draw(img.exclamation, self.flx, self.fly, 0, 1,1, 2, 40)
 		end
 	-- Climbing
 	elseif self.state == PS_CLIMB then

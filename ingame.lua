@@ -216,7 +216,7 @@ end
 function drawWonMessage()
 	local alpha = cap((-translate_y)/100, 0, 1)
 	lg.setColor(0,0,0,alpha*255)
-	lg.rectangle("fill", 0, 40, WIDTH,  #WON_MESSAGES[level]*10+12)
+	lg.rectangle("fill", 0, 40, WIDTH, #WON_MESSAGES[level]*10+12)
 	lg.setColor(255,255,255,alpha*255)
 	for i,v in ipairs(WON_MESSAGES[level]) do
 		lg.printf(v, 0, 48+(i-1)*10, WIDTH, "center")
@@ -241,7 +241,7 @@ function drawHUD()
 	end
 
 	-- Draw temperature bar
-	local temp_length = math.floor((player.temperature/player.max_temperature)*81+0.5)
+	local temp_length = math.floor((player.temperature/player.max_temperature)*82+0.5)
 	quad.temperature_bar:setViewport(0,0, temp_length, 6)
 	lg.drawq(img.temperature_bar, quad.temperature_bar, 75, HEIGHT-25)
 	lg.drawq(img.temperature_bar, quad.temperature_bar_end, 75+temp_length, HEIGHT-25)
@@ -255,7 +255,21 @@ function drawHUD()
 		end
 	end
 
+	-- Draw second HUD layer
 	lg.draw(img.hud2, 0, HEIGHT-32)
+
+	-- Blink temperature bar if needed
+	if player:isDying() then
+		local color = 0
+		if warning_frame <= 1 then
+			color = 30 + warning_frame * 225
+		else
+			color = 255 - (warning_frame % 1)*225
+		end
+		lg.setColor(255,color,color)
+		lg.draw(img.temperature_bar_blink, 74, HEIGHT-26)
+		lg.setColor(255,255,255)
+	end
 
 	-- Draw item slots
 	for i=1,3 do
