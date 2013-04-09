@@ -8,7 +8,7 @@ end
 -- %           Normal enemy           %
 -- %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 NormalEnemy = { MOVE_SPEED = 80, FIRE_SPAWN_MIN = 7,FIRE_SPAWN_MAX = 25,
-				MAX_HEALTH = 1.5, SCORE = 100, RECOVER_TIME = 0.7 }
+				MAX_HEALTH = 1.3, SCORE = 100, RECOVER_TIME = 0.7 }
 NormalEnemy.__index = NormalEnemy
 
 local EN_RUN, EN_HIT, EN_RECOVER, EN_IDLE, EN_JUMPING, EN_SHOOT = 0,1,2,3,4,5
@@ -134,7 +134,7 @@ end
 -- %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 -- %        Angry Normal enemy        %
 -- %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-AngryNormalEnemy = { SCORE = 200, MAX_HEALTH = 2.0, RECOVER_TIME = 0.35 }
+AngryNormalEnemy = { SCORE = 200, MAX_HEALTH = 1.8, RECOVER_TIME = 0.35 }
 AngryNormalEnemy.__index = AngryNormalEnemy
 setmetatable(AngryNormalEnemy, NormalEnemy)
 
@@ -170,7 +170,7 @@ end
 -- %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 -- %           Jumper enemy           %
 -- %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-JumperEnemy = { MOVE_SPEED = 100, JUMP_DELAY = 1, JUMP_POWER = 150, MAX_HEALTH = 1.5, SCORE = 125,
+JumperEnemy = { MOVE_SPEED = 100, JUMP_DELAY = 1, JUMP_POWER = 150, MAX_HEALTH = 1.3, SCORE = 125,
 				GRAVITY = 350, corners = {-6, 6, -24, -0.5 }, MIN_FIRE_TIME = 3, MAX_FIRE_TIME = 13}
 JumperEnemy.__index = JumperEnemy
 
@@ -284,7 +284,7 @@ end
 -- %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 -- %     Angry Jumper enemy     %
 -- %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-AngryJumperEnemy = { MAX_HEALTH = 2.0, MIN_FIRE_TIME = 3, MAX_FIRE_TIME = 8, SCORE = 200 }
+AngryJumperEnemy = { MAX_HEALTH = 1.8, MIN_FIRE_TIME = 3, MAX_FIRE_TIME = 8, SCORE = 200 }
 AngryJumperEnemy.__index = AngryJumperEnemy
 setmetatable(AngryJumperEnemy, JumperEnemy)
 
@@ -443,7 +443,7 @@ end
 -- %%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 -- %    Angry Volcano enemy    %
 -- %%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-AngryVolcanoEnemy = { MAX_HEALTH = 2.0, SCORE = 300 }
+AngryVolcanoEnemy = { MAX_HEALTH = 1.9, SCORE = 300 }
 AngryVolcanoEnemy.__index = AngryVolcanoEnemy
 setmetatable(AngryVolcanoEnemy, VolcanoEnemy)
 

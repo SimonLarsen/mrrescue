@@ -316,6 +316,7 @@ function drawPrescreen()
 	lg.setFont(font.bold)
 	if map.type == MT_NORMAL then
 		lg.printf("FLOOR ".. floor .. "-" .. floor+2, 0, 40, WIDTH, "center")
+		lg.drawq(img.captain_dialog, quad.prescreen_music, 7, 183)
 	else
 		lg.printf("ROOF", 0, 40, WIDTH, "center")
 	end
@@ -447,6 +448,10 @@ function ingame.keypressed(k,uni)
 		if k == "return" or k == " " then
 			ingame_state = INGAME_FADE_IN
 			transition_time = 0
+		elseif k == "left" then
+			prevSong()
+		elseif k == "right" then
+			nextSong()
 		end
 	elseif ingame_state == INGAME_GAMEOVER then
 		if k == "return" or k == " " then
@@ -463,8 +468,14 @@ function ingame.action(a)
 	if ingame_state == INGAME_ACTIVE then
 		player:action(a)
 	elseif ingame_state == INGAME_PRESCREEN then
-		ingame_state = INGAME_FADE_IN
-		transition_time = 0
+		if k == "left" then
+			prevSong()
+		elseif k == "right" then
+			nextSong()
+		else
+			ingame_state = INGAME_FADE_IN
+			transition_time = 0
+		end
 	elseif ingame_state == INGAME_GAMEOVER then
 		highscore_entry.enter()
 	elseif ingame_state == INGAME_WON and translate_y < 0 then

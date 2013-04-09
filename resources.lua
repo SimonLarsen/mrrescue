@@ -209,6 +209,8 @@ function loadResources()
 	quad.captain_dialog[0] = lg.newQuad(0,0,200,56, getSize(img.captain_dialog))
 	quad.captain_dialog[1] = lg.newQuad(0,64,200,56, getSize(img.captain_dialog))
 
+	quad.prescreen_music = lg.newQuad(224, 0, 26, 11, getSize(img.captain_dialog))
+
 	quad.splash = lg.newQuad(0, 0, 256, 200, getSize(img.splash))
 
 	quad.player_death_up   = lg.newQuad( 0, 0, 16, 24, getSize(img.player_death))
@@ -260,18 +262,35 @@ function playSound(name)
 end
 
 function playMusic(name)
-	if disable_music == true then
-		return
-	end
-
 	-- Stop previously playing music if any
 	if music then
 		music:stop()
 	end
 	-- Play new file
+	music_name = name
 	music = love.audio.newSource("data/sfx/"..name..".ogg", "stream")
 	music:addTags("music")
 	music:setLooping(true)
 	love.audio.tags.music.setVolume(config.music_volume)
 	love.audio.play(music)
+end
+
+function nextSong()
+	if music_name == "rockerronni" then
+		playMusic("bundesliga")
+	elseif music_name == "bundesliga" then
+		playMusic("scooterfest")
+	elseif music_name == "scooterfest" then
+		playMusic("rockerronni")
+	end
+end
+
+function prevSong()
+	if music_name == "bundesliga" then
+		playMusic("rockerronni")
+	elseif music_name == "scooterfest" then
+		playMusic("bundesliga")
+	elseif music_name == "rockerronni" then
+		playMusic("scooterfest")
+	end
 end
