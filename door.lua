@@ -40,6 +40,7 @@ function Door:update(dt)
 			self.state = 1
 			self.xspeed = math.random(-50,50)
 			self.yspeed = -100
+			playSound("door")
 		end
 
 	elseif self.state == 1 then
@@ -65,6 +66,7 @@ function Door:shot(dt,dir)
 		self.yspeed = -100
 		score = score + SCORE
 		playSound("door")
+		stats[5] = stats[5] + math.random(80,120)
 	end
 end
 

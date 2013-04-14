@@ -8,7 +8,7 @@ local snd = {}	-- sound Sources
 local IMAGE_FILES = {
 	"splash", "tangram", "lovesplashpixel", "howto",
 	"tiles", "door", "boldfont", "captain_dialog", "boss_health",
-	"highscore_panes", "exclamation",
+	"highscore_panes", "exclamation", "stats_screen",
 	"hud", "hud2", "hud_people", "item_slots", "water_bar",
 	"reserve_bar", "overloaded_bar", "temperature_bar", "temperature_bar_blink",
 	"stream", "water", "shards", "level_buildings", "menu_box",
@@ -79,7 +79,7 @@ BUILDING_NAMES = {{"SMALL","BUSINESS"},{"APARTMENT","COMPLEX"},{"BIG","CORPORATI
 DIFFICULTY_NAMES = {"EASY", "NORMAL", "HARD"}
 BOSS_MESSAGE = {"PLACEHOLDER"}
 
-KEYBOARD = "ABCDEFGHIJKLMNOPQRSTUVWXYZ_-<$"
+KEYBOARD = "ABCDEFGHIJKLMNOPQRSTUVWXYZ_-<&"
 
 --- Returns size of an Image as two return values
 -- Saves some typing when creating quads
@@ -117,7 +117,7 @@ function loadResources()
 	img.stream:setWrap("repeat", "clamp")
 
 	-- Create fonts
-	font.bold = lg.newImageFont(img.boldfont, " ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789.,!'-:*@<>+/_$")
+	font.bold = lg.newImageFont(img.boldfont, " ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789.,!'-:*@<>+/_$&")
 	lg.setFont(font.bold)
 
 	-- Create quads
@@ -211,7 +211,7 @@ function loadResources()
 
 	quad.prescreen_music = lg.newQuad(224, 0, 26, 11, getSize(img.captain_dialog))
 
-	quad.splash = lg.newQuad(0, 0, 256, 200, getSize(img.splash))
+	quad.screen = lg.newQuad(0, 0, 256, 200, getSize(img.splash))
 
 	quad.player_death_up   = lg.newQuad( 0, 0, 16, 24, getSize(img.player_death))
 	quad.player_death_down = lg.newQuad(16, 0, 16, 24, getSize(img.player_death))
@@ -253,6 +253,11 @@ function loadResources()
 	quad.enemy_healthbar_base = lg.newQuad(0, 0, 20, 8, getSize(img.enemy_healthbar))
 	quad.enemy_healthbar_bar  = lg.newQuad(21, 2, 1, 4, getSize(img.enemy_healthbar))
 
+	quad.stats_pane = {}
+	for i=1,3 do
+		quad.stats_pane[i] = lg.newQuad((i-1)*36, 200, 36, 11, getSize(img.stats_screen))
+	end
+
 	-- Set audio tag volumes
 	love.audio.tags.sfx.setVolume(config.sfx_volume)
 end
@@ -273,6 +278,12 @@ function playMusic(name)
 	music:setLooping(true)
 	love.audio.tags.music.setVolume(config.music_volume)
 	love.audio.play(music)
+end
+
+function stopMusic()
+	if music then
+		music:stop()
+	end
 end
 
 function nextSong()

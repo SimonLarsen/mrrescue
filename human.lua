@@ -148,6 +148,7 @@ function Human:update(dt)
 		score = score + SCORE
 		self.alive = false
 		map:addParticle(PopupText.create("rescue"))
+		stats[4] = stats[4] + 1
 	end
 
 	-- Update animation

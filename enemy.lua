@@ -124,6 +124,7 @@ function NormalEnemy:shot(dt,dir)
 		map:addParticle(BlackSmoke.create(self.x, self.y-8))
 		self.alive = false
 		score = score + self.SCORE
+		stats[1] = stats[1] + 1
 	end
 end
 
@@ -274,6 +275,7 @@ function JumperEnemy:shot(dt,dir)
 		self.alive = false
 		map:addParticle(BlackSmoke.create(self.x, self.y-14))
 		score = score + self.SCORE
+		stats[1] = stats[1] + 1
 	end
 end
 
@@ -424,6 +426,7 @@ function VolcanoEnemy:shot(dt,dir)
 		map:addParticle(BlackSmoke.create(self.x, self.y-8))
 		self.alive = false
 		score = score + self.SCORE
+		stats[1] = stats[1] + 1
 	end
 end
 
@@ -624,6 +627,7 @@ function Fireball:shot()
 	self.alive = false
 	map:addParticle(SmallBlackSmoke.create(self.x, self.y-1))
 	score = score + self.SCORE
+	stats[1] = stats[1] + 1
 end
 
 function Fireball:draw()

@@ -167,6 +167,10 @@ function Player:update(dt)
 		self.yspeed = -230
 		self.state = PS_DEAD
 	end
+
+	-- Count up distance moved stat (16 pixels per meter)
+	local dist = (math.sqrt(self.xspeed^2 + self.yspeed^2)*dt)/16
+	stats[3] = stats[3] + dist
 end
 
 --- Called each update if current state is PS_RUN
@@ -312,6 +316,7 @@ function Player:updateStream(dt)
 	if keystate.shoot and self.overloaded == false then
 		self.shooting = true
 		self.streamLength = math.min(self.streamLength + STREAM_SPEED*dt, MAX_STREAM)
+		stats[2] = stats[2] + 20*dt
 	else
 		self.shooting = false
 		self.streamLength = 0

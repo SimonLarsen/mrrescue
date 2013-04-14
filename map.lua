@@ -573,10 +573,12 @@ function Map:destroyWindow(cx,cy,id,dir)
 		self:set(cx,cy-1, 239)
 		self:set(cx,cy,   255)
 		table.insert(self.particles, Shards.create(cx*16+6, (cy-1)*16, dir))
+		stats[5] = stats[5] + math.random(100,200)
 	elseif id == 39 then -- right lower window
 		self:set(cx,cy-1, 240)
 		self:set(cx,cy,   256)
 		table.insert(self.particles, Shards.create(cx*16+10, (cy-1)*16, dir))
+		stats[5] = stats[5] + math.random(100,200)
 	end
 	self:forceRedraw()
 end

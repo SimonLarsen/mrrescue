@@ -67,6 +67,7 @@ function Fire:shot(dt,dir)
 	if self.health < 0 then
 		self.alive = false
 		score = score + SCORE
+		stats[1] = stats[1] + 1
 	end
 end
 

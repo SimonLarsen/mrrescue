@@ -17,6 +17,19 @@ joykeynames = {"jump","shoot","action"}
 
 highscores = { {}, {}, {} }
 
+stats = { 0, 0, 0, 0, 0, 0 }
+
+stats_names = {
+	"FIRES EXTINGUISHED", -- 1
+	"WATER USED",         -- 2
+	"DISTANCE MOVED",     -- 3
+	"PEOPLE RESCUED",     -- 4
+	"PROPERTY DAMAGE",    -- 5
+	"FLOORS SCALED"       -- 6
+}
+
+stats_units = { nil, " LITERS", " METERS", nil, " $", nil }
+
 keystate = {
 	up = false, down = false, left = false, right = false,
 	jump = false, shoot = false, action = false,
@@ -63,6 +76,13 @@ function loadHighscores()
 	end
 end
 
+function loadStats()
+	if love.filesystem.exists("stats") then
+		local data = love.filesystem.read("stats")
+		stats = TSerial.unpack(data)
+	end
+end
+
 function saveConfig()
 	local data = TSerial.pack(config)
 	love.filesystem.write("settings", data)
@@ -71,6 +91,11 @@ end
 function saveHighscores()
 	local data = TSerial.pack(highscores)
 	love.filesystem.write("highscores", data)
+end
+
+function saveStats()
+	local data = TSerial.pack(stats)
+	love.filesystem.write("stats", data)
 end
 
 function setMode()

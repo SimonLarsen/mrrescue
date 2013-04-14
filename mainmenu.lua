@@ -19,7 +19,7 @@ function mainmenu.draw()
 	lg.push()
 	lg.scale(config.scale)
 
-	lg.drawq(img.splash, quad.splash, 0,0)
+	lg.drawq(img.splash, quad.screen, 0,0)
 	lg.setFont(font.bold)
 	for i=1,6 do
 		if i == selection then
@@ -47,6 +47,8 @@ function mainmenu.keypressed(k, uni)
 			highscore_list.enter()
 		elseif selection == 4 then
 			options.enter()
+		elseif selection == 5 then
+			history.enter()
 		elseif selection == 6 then
 			love.event.quit()
 		end
@@ -72,6 +74,8 @@ function mainmenu.action(k)
 			highscore_list.enter()
 		elseif selection == 4 then
 			options.enter()
+		elseif selection == 5 then
+			history.enter()
 		elseif selection == 6 then
 			love.event.quit()
 		end

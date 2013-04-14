@@ -35,6 +35,7 @@ end
 function ingame.nextLevel()
 	last_missed = #map.humans
 	casualties = casualties + last_missed
+	stats[6] = stats[6] + 3
 
 	if casualties >= max_casualties then
 		ingame_state = INGAME_GAMEOVER
@@ -347,7 +348,7 @@ end
 
 function setPrescreenMessage()
 	if casualties >= max_casualties then
-		prescreen_message = {"TOO MANY CASUALTIES!"}
+		prescreen_message = {"TOO MANY CIVILIANS","HAVE DIED!","","YOU ARE FIRED!"}
 
 	elseif player.state == PS_DEAD then
 		prescreen_message = {"OVERHEATED!"}
@@ -356,6 +357,7 @@ function setPrescreenMessage()
 			prescreen_message = table.random(GOODLUCK_MESSAGES)
 		elseif map.type == MT_BOSS then
 			prescreen_message = BOSS_MESSAGE
+			playMusic("roof")
 		elseif last_missed > 0 then
 			if last_missed == 1 then
 				prescreen_message = {"HEY THERE, BUDDY!","YOU MISSED 1 PERSON.","TRY A LITTLE HARDER."}

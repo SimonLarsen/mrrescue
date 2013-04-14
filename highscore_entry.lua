@@ -4,6 +4,7 @@ local lg = love.graphics
 
 function highscore_entry.enter()
 	state = STATE_HIGHSCORE_ENTRY
+	stopMusic()
 	highscore_entry.name = "_____"
 	highscore_entry.selection = 1
 	highscore_entry.position = 1
