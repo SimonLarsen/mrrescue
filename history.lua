@@ -22,12 +22,21 @@ function history.draw()
 
 	for i=1,2 do
 		local index = i + (history.selection-1)*2
-		lg.printf(stats_names[index], 74, 16+i*56, 112, "left")
-
+		lg.printf(stats_names[index], 78, 16+i*56, 112, "left")
 		if stats_units[index] then
-			lg.print(math.floor(stats[index]) .. stats_units[index], 74, 40+i*56)
+			lg.print(math.floor(stats[index]) .. stats_units[index], 78, 40+i*56)
 		else
-			lg.print(math.floor(stats[index]), 74, 40+i*56)
+			lg.print(math.floor(stats[index]), 78, 40+i*56)
+		end
+
+		if stats[index] > stats_interval[index][3] then
+			lg.drawq(img.awards, quad.award_gold[index], 46, 10+i*56)
+		elseif stats[index] > stats_interval[index][2] then
+			lg.drawq(img.awards, quad.award_silver[index], 46, 10+i*56)
+		elseif stats[index] > stats_interval[index][1] then
+			lg.drawq(img.awards, quad.award_bronze[index], 46, 10+i*56)
+		else
+			lg.drawq(img.awards, quad.award_none[index], 46, 10+i*56)
 		end
 	end
 

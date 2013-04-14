@@ -8,7 +8,7 @@ local snd = {}	-- sound Sources
 local IMAGE_FILES = {
 	"splash", "tangram", "lovesplashpixel", "howto",
 	"tiles", "door", "boldfont", "captain_dialog", "boss_health",
-	"highscore_panes", "exclamation", "stats_screen",
+	"highscore_panes", "exclamation", "stats_screen", "awards",
 	"hud", "hud2", "hud_people", "item_slots", "water_bar",
 	"reserve_bar", "overloaded_bar", "temperature_bar", "temperature_bar_blink",
 	"stream", "water", "shards", "level_buildings", "menu_box",
@@ -256,6 +256,17 @@ function loadResources()
 	quad.stats_pane = {}
 	for i=1,3 do
 		quad.stats_pane[i] = lg.newQuad((i-1)*36, 200, 36, 11, getSize(img.stats_screen))
+	end
+
+	quad.award_none = {}
+	quad.award_bronze = {}
+	quad.award_silver = {}
+	quad.award_gold = {}
+	for i = 1,6 do
+		quad.award_none[i]   = lg.newQuad((i-1)*24,  0, 24, 25, getSize(img.awards))
+		quad.award_bronze[i] = lg.newQuad((i-1)*24, 25, 24, 25, getSize(img.awards))
+		quad.award_silver[i] = lg.newQuad((i-1)*24, 50, 24, 25, getSize(img.awards))
+		quad.award_gold[i]   = lg.newQuad((i-1)*24, 75, 24, 25, getSize(img.awards))
 	end
 
 	-- Set audio tag volumes
