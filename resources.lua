@@ -9,9 +9,9 @@ local IMAGE_FILES = {
 	"splash", "tangram", "lovesplashpixel", "howto",
 	"tiles", "door", "boldfont", "captain_dialog", "boss_health",
 	"highscore_panes", "exclamation", "stats_screen", "awards",
-	"hud", "hud2", "hud_people", "item_slots", "water_bar",
-	"reserve_bar", "overloaded_bar", "temperature_bar", "temperature_bar_blink",
-	"stream", "water", "shards", "level_buildings", "menu_box",
+	"hud", "hud2", "hud_people", "item_slots", "water_bar", "reserve_bar",
+	"overloaded_bar", "temperature_bar", "temperature_bar_blink",
+	"stream", "water", "shards", "level_buildings", "menu_box", "countdown",
 
 	"fire_wall", "fire_wall_small", "fire_floor",
 
@@ -55,7 +55,7 @@ local IMAGE_FILES = {
 
 local BACKGROUND_FILES = { "mountains", "night" }
 
-local SOUND_FILES = { "powerup", "door", "empty", "blip", "confirm", "endexplosion" }
+local SOUND_FILES = { "powerup", "door", "empty", "blip", "confirm", "endexplosion", "countdown"}
 
 NUM_ROOMS = { [10] = 6, [11] = 6, [17] = 6, [24] = 6 }
 
@@ -267,6 +267,11 @@ function loadResources()
 		quad.award_bronze[i] = lg.newQuad((i-1)*24, 25, 24, 25, getSize(img.awards))
 		quad.award_silver[i] = lg.newQuad((i-1)*24, 50, 24, 25, getSize(img.awards))
 		quad.award_gold[i]   = lg.newQuad((i-1)*24, 75, 24, 25, getSize(img.awards))
+	end
+
+	quad.countdown = {}
+	for i=0,3 do
+		quad.countdown[i] = lg.newQuad(0, i*26, 64, 26, getSize(img.countdown))
 	end
 
 	-- Set audio tag volumes

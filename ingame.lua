@@ -1,18 +1,20 @@
 ingame = {}
 
 local lg = love.graphics
-INGAME_ACTIVE, INGAME_FADE_IN, INGAME_NEXTLEVEL_OUT, INGAME_FALL_OUT, INGAME_PRESCREEN, INGAME_GAMEOVER_OUT, INGAME_GAMEOVER, INGAME_WON = 0,1,2,3,4,5,6,7
+INGAME_ACTIVE, INGAME_FADE_IN, INGAME_NEXTLEVEL_OUT, INGAME_FALL_OUT, INGAME_PRESCREEN,
+INGAME_GAMEOVER_OUT, INGAME_GAMEOVER, INGAME_WON, INGAME_COUNTDOWN, INGAME_COUNTDOWN_IN = 0,1,2,3,4,5,6,7,8,9
 
 function ingame.enter()
 	state = STATE_INGAME
 	translate_x, translate_y = 0,0
-	playMusic(table.random({"rockerronni","bundesliga","scooterfest"}))
-
+	
+	stopMusic()
 	ingame.newGame()
 end
 
 function ingame.newGame()
-	ingame_state = INGAME_PRESCREEN
+	--ingame_state = INGAME_PRESCREEN
+	ingame_state = INGAME_COUNTDOWN_IN
 	max_casualties = 6-level
 	ingame.shake = 0
 
@@ -85,7 +87,8 @@ function ingame.update(dt)
 
 	-- Transition TO or FROM next level
 	elseif ingame_state == INGAME_NEXTLEVEL_OUT or ingame_state == INGAME_FALL_OUT
-	or ingame_state == INGAME_FADE_IN or ingame_state == INGAME_GAMEOVER_OUT then
+	or ingame_state == INGAME_FADE_IN or ingame_state == INGAME_GAMEOVER_OUT
+	or ingame_state == INGAME_COUNTDOWN_IN then
 		transition_time = transition_time + dt*15
 
 		-- Calculate translation offest
@@ -104,6 +107,9 @@ function ingame.update(dt)
 				ingame_state = INGAME_FADE_IN
 			elseif ingame_state == INGAME_FADE_IN then
 				ingame_state = INGAME_ACTIVE
+			elseif ingame_state == INGAME_COUNTDOWN_IN then
+				ingame_state = INGAME_COUNTDOWN
+				playSound("countdown")
 			elseif ingame_state == INGAME_GAMEOVER_OUT then
 				setPrescreenMessage()
 				ingame_state = INGAME_GAMEOVER
@@ -118,6 +124,19 @@ function ingame.update(dt)
 		end
 		map:setDrawRange(translate_x, translate_y, WIDTH, HEIGHT)
 		map:update(dt)
+	elseif ingame_state == INGAME_COUNTDOWN then
+		-- Calculate translation offest
+		translate_x = cap(player.x-WIDTH/2, 0, MAPW-WIDTH)
+		translate_y = cap(player.y-11-HEIGHT/2, 0, MAPH-HEIGHT+30)
+
+		map:setDrawRange(translate_x, translate_y, WIDTH, HEIGHT)
+		map:update(dt)
+
+		transition_time = transition_time + dt
+		if transition_time >= 3.5 then
+			ingame_state = INGAME_ACTIVE
+			playMusic(table.random({"rockerronni","bundesliga","scooterfest"}))
+		end
 	end
 end
 
@@ -128,7 +147,8 @@ function ingame.draw()
 
 	if ingame_state == INGAME_ACTIVE or ingame_state == INGAME_FADE_IN
 	or ingame_state == INGAME_NEXTLEVEL_OUT or ingame_state == INGAME_FALL_OUT
-	or ingame_state == INGAME_GAMEOVER_OUT or ingame_state == INGAME_WON then
+	or ingame_state == INGAME_GAMEOVER_OUT or ingame_state == INGAME_WON
+	or ingame_state == INGAME_COUNTDOWN_IN or ingame_state == INGAME_COUNTDOWN then
 		-- Translate to center player
 		lg.push()
 		if ingame.shake > 0 then
@@ -190,7 +210,7 @@ function ingame.draw()
 				end
 			end
 		end
-		if ingame_state == INGAME_FADE_IN then
+		if ingame_state == INGAME_FADE_IN or ingame_state == INGAME_COUNTDOWN_IN then
 			local frame = math.floor(transition_time)
 
 			for ix = 0,7 do
@@ -203,6 +223,10 @@ function ingame.draw()
 			if translate_y < 0 then
 				drawWonMessage()
 			end
+		end
+		if ingame_state == INGAME_COUNTDOWN then
+			local frame = math.floor(transition_time)
+			lg.drawq(img.countdown, quad.countdown[frame], 96, 87)
 		end
 
 	elseif ingame_state == INGAME_PRESCREEN then
