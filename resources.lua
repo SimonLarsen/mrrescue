@@ -7,10 +7,10 @@ local snd = {}	-- sound Sources
 
 local IMAGE_FILES = {
 	"splash", "tangram", "lovesplashpixel", "howto",
-	"tiles", "door", "boldfont", "captain_dialog", "boss_health",
-	"highscore_panes", "exclamation", "stats_screen", "awards",
-	"hud", "hud2", "hud_people", "item_slots", "water_bar", "reserve_bar",
-	"overloaded_bar", "temperature_bar", "temperature_bar_blink",
+	"tiles", "door", "boldfont", "captain_dialog", "captain_dialog_sad",
+	"boss_health", "highscore_panes", "exclamation", "stats_screen",
+	"awards", "hud", "hud2", "hud_people", "item_slots", "water_bar",
+	"reserve_bar", "overloaded_bar", "temperature_bar", "temperature_bar_blink",
 	"stream", "water", "shards", "level_buildings", "menu_box", "countdown",
 
 	"fire_wall", "fire_wall_small", "fire_floor",
@@ -55,15 +55,14 @@ local IMAGE_FILES = {
 
 local BACKGROUND_FILES = { "mountains", "night" }
 
-local SOUND_FILES = { "powerup", "door", "empty", "blip", "confirm", "endexplosion", "countdown"}
+local SOUND_FILES = { "powerup", "door", "empty", "blip", "confirm",
+					  "endexplosion", "countdown", "rescue", "glass" }
 
 NUM_ROOMS = { [10] = 6, [11] = 6, [17] = 6, [24] = 6 }
 
-GOODLUCK_MESSAGES = {
-	{"GOOD LUCK,","BUDDY!"}, {"GO GET 'EM,","BUDDY!"}, {"GO FIGHT FIRE WITH","WATER!","","HE HE HE"}
-}
 NO_CASUALTIES_MESSAGES = {
-	{"KEEP UP THE GOOD","WORK, BUDDY!","YOU'RE ON FIRE.","HE HE HE"}
+	"KEEP UP THE GOOD WORK, BUDDY!\nYOU'RE ON FIRE.\nHE HE HE",
+	"REMEMBER TO SCOUT FOR VALUABLE POWERUPS.\nTHEY WILL COME IN HANDY LATER"
 }
 
 WON_MESSAGES = {
@@ -75,9 +74,10 @@ WON_MESSAGES = {
 	 "","YOU ARE NOW TRUE","MR. RESCUE STAR IN HEART!","","PRESS RETURN TO CONTINUE"}
 }
 
+BOSS_MESSAGE = "PLACEHOLDER"
+
 BUILDING_NAMES = {{"SMALL","BUSINESS"},{"APARTMENT","COMPLEX"},{"BIG","CORPORATION"}}
 DIFFICULTY_NAMES = {"EASY", "NORMAL", "HARD"}
-BOSS_MESSAGE = {"PLACEHOLDER"}
 
 KEYBOARD = "ABCDEFGHIJKLMNOPQRSTUVWXYZ_-<&"
 

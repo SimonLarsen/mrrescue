@@ -13,7 +13,6 @@ function ingame.enter()
 end
 
 function ingame.newGame()
-	--ingame_state = INGAME_PRESCREEN
 	ingame_state = INGAME_COUNTDOWN_IN
 	max_casualties = 6-level
 	ingame.shake = 0
@@ -30,8 +29,6 @@ function ingame.newGame()
 	map = Map.create(section, level)
 	local startx, starty = map:getStart()
 	player = Player.create(startx,starty,level)
-
-	setPrescreenMessage()
 end
 
 function ingame.nextLevel()
@@ -348,34 +345,29 @@ function drawPrescreen()
 
 	local fr = math.floor(transition_time) % 2
 	lg.drawq(img.captain_dialog, quad.captain_dialog[fr], 28, 72)
-	drawPrescreenMessage()
+
+	lg.printf(prescreen_message, 74, 80, 140, "left")
 
 	lg.printf("PRESS RETURN TO CONTINUE", 0, 150, WIDTH, "center")
 end
 
 function drawGameover()
 	local fr = math.floor(transition_time) % 2
-	lg.drawq(img.captain_dialog, quad.captain_dialog[fr], 28, 72)
+	lg.drawq(img.captain_dialog_sad, quad.captain_dialog[fr], 28, 72)
 
 	if casualties >= max_casualties then
-		drawPrescreenMessage()
+		lg.printf(prescreen_message, 74, 80, 140, "left")
 	elseif player.state == PS_DEAD then
-		drawPrescreenMessage()
-	end
-end
-
-function drawPrescreenMessage()
-	for i=1,#prescreen_message do
-		lg.print(prescreen_message[i], 73, 69+i*11)
+		lg.printf(prescreen_message, 74, 80, 140, "left")
 	end
 end
 
 function setPrescreenMessage()
 	if casualties >= max_casualties then
-		prescreen_message = {"TOO MANY CIVILIANS","HAVE DIED!","","YOU ARE FIRED!"}
+		prescreen_message = "TOO MANY CIVILIANS HAVE DIED!\n\nYOU ARE FIRED!"
 
 	elseif player.state == PS_DEAD then
-		prescreen_message = {"OVERHEATED!"}
+		prescreen_message = "OVERHEATED!"
 	else
 		if section == 1 then
 			prescreen_message = table.random(GOODLUCK_MESSAGES)
@@ -384,9 +376,9 @@ function setPrescreenMessage()
 			playMusic("roof")
 		elseif last_missed > 0 then
 			if last_missed == 1 then
-				prescreen_message = {"HEY THERE, BUDDY!","YOU MISSED 1 PERSON.","TRY A LITTLE HARDER."}
+				prescreen_message = "HEY THERE, BUDDY!\nYOU MISSED 1 PERSON.\nTRY A LITTLE HARDER."
 			else
-				prescreen_message = {"HEY THERE, BUDDY!","YOU LET "..last_missed.." PEOPLE","BURN TO DEATH.","TRY A LITTLE HARDER."}
+				prescreen_message = "HEY THERE, BUDDY!\nYOU LET "..last_missed.." PEOPLE BURN TO DEATH.\nTRY A LITTLE HARDER."
 			end
 		else
 			prescreen_message = table.random(NO_CASUALTIES_MESSAGES)
