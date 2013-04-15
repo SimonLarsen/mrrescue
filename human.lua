@@ -148,16 +148,18 @@ function Human:update(dt)
 	-- Check if thrown out of window
 	if self.x < -16 or self.x > MAPW+16 or self.y > MAPH+64 then
 		saved = saved + 1
-		score = score + SCORE
 		self.alive = false
 
 		last_rescue = 0
 		combo = combo + 1
 		if combo < 3 then
 			map:addParticle(PopupText.create("rescue"))
+			score = score + SCORE
 		elseif combo >= 3 and combo <= 5 then
 			map:addParticle(PopupText.create(combo.."combo"))
+			score = (combo-1)*score + SCORE
 		elseif combo > 5 then
+			score = score + 2000
 			map:addParticle(PopupText.create("megacombo"))
 		end
 		playSound("rescue")

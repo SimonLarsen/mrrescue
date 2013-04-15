@@ -382,7 +382,7 @@ function setPrescreenMessage()
 		if section == 1 then
 			prescreen_message = table.random(GOODLUCK_MESSAGES)
 		elseif map.type == MT_BOSS then
-			prescreen_message = BOSS_MESSAGE
+			prescreen_message = BOSS_MESSAGE[level]
 			playMusic("roof")
 		elseif last_missed > 0 then
 			if last_missed == 1 then
