@@ -8,7 +8,7 @@ local PUSH_SPEED  = 100
 local NUM_HUMANS = 4
 local GRAVITY = 350
 local PANIC_RADIUS = 29
-local MAX_HEALTH = 10
+local MAX_HEALTH = 5
 local SCORE = 250
 
 local IDLE_TIME = 2
@@ -130,6 +130,9 @@ function Human:update(dt)
 			self.xspeed = self.xspeed*-0.6
 			if last then
 				last:shot(0.16, self.dir)
+				if last.health >= 0 then
+					playSound("door")
+				end
 			end
 		end
 		self.y = self.y + self.yspeed*dt
@@ -147,7 +150,16 @@ function Human:update(dt)
 		saved = saved + 1
 		score = score + SCORE
 		self.alive = false
-		map:addParticle(PopupText.create("rescue"))
+
+		last_rescue = 0
+		combo = combo + 1
+		if combo < 3 then
+			map:addParticle(PopupText.create("rescue"))
+		elseif combo >= 3 and combo <= 5 then
+			map:addParticle(PopupText.create(combo.."combo"))
+		elseif combo > 5 then
+			map:addParticle(PopupText.create("megacombo"))
+		end
 		playSound("rescue")
 		stats[4] = stats[4] + 1
 	end
@@ -242,6 +254,7 @@ function Human:throw(x,y,dir)
 	self.yspeed = -130
 	self.dir = dir
 	self.buttHit = 0
+	playSound("throw")
 end
 
 function Human:push(x,y,dir,intensity)

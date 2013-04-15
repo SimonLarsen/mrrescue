@@ -55,8 +55,8 @@ local IMAGE_FILES = {
 
 local BACKGROUND_FILES = { "mountains", "night" }
 
-local SOUND_FILES = { "powerup", "door", "empty", "blip", "confirm",
-					  "endexplosion", "countdown", "rescue", "glass" }
+local SOUND_FILES = { "powerup", "door", "empty", "blip", "confirm", "jump", "pss",
+					  "endexplosion", "countdown", "rescue", "glass", "throw" }
 
 NUM_ROOMS = { [10] = 6, [11] = 6, [17] = 6, [24] = 6 }
 
@@ -218,9 +218,10 @@ function loadResources()
 	quad.player_death_suit = lg.newQuad(32, 0, 16, 10, getSize(img.player_death))
 
 	quad.popup_text = {}
-	for i=0,6 do
+	for i=0,9 do
 		quad.popup_text[i] = lg.newQuad(0,i*8, 64,8, getSize(img.popup_text))
 	end
+	quad.popup_text[10] = lg.newQuad(0,80,64,16, getSize(img.popup_text))
 
 	quad.level_buildings = lg.newQuad(0,0, 134,159, getSize(img.level_buildings))
 	quad.building_outline1 = lg.newQuad(144,0, 37,40, getSize(img.level_buildings))

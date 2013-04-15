@@ -68,6 +68,7 @@ function Fire:shot(dt,dir)
 		self.alive = false
 		score = score + SCORE
 		stats[1] = stats[1] + 1
+		playSound("pss")
 	end
 end
 

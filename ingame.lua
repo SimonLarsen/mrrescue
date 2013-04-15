@@ -4,6 +4,8 @@ local lg = love.graphics
 INGAME_ACTIVE, INGAME_FADE_IN, INGAME_NEXTLEVEL_OUT, INGAME_FALL_OUT, INGAME_PRESCREEN,
 INGAME_GAMEOVER_OUT, INGAME_GAMEOVER, INGAME_WON, INGAME_COUNTDOWN, INGAME_COUNTDOWN_IN = 0,1,2,3,4,5,6,7,8,9
 
+COMBO_TIME = 3
+
 function ingame.enter()
 	state = STATE_INGAME
 	translate_x, translate_y = 0,0
@@ -22,6 +24,8 @@ function ingame.newGame()
 	saved = 0
 	section = 1
 	last_missed = 0
+	last_rescue = 0
+	combo = 0
 
 	transition_time = 0
 	warning_frame = 0
@@ -58,6 +62,12 @@ function ingame.update(dt)
 
 		-- Update entities
 		player:update(dt)
+
+		-- Check combo counter
+		last_rescue = last_rescue + dt
+		if last_rescue > COMBO_TIME then
+			combo = 0
+		end
 
 		-- Calculate translation offest
 		translate_x = cap(player.x-WIDTH/2, 0, MAPW-WIDTH)
@@ -455,6 +465,8 @@ function ingame.keypressed(k,uni)
 	if ingame_state == INGAME_ACTIVE then
 		if k == "escape" then
 			ingame_menu.enter()
+		elseif k == "p" then
+			map:addParticle(PopupText.create("megacombo"))
 		else
 			for a, key in pairs(config.keys) do
 				if k == key then

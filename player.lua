@@ -602,6 +602,7 @@ function Player:jump()
 	if self.state == PS_CLIMB then
 		self:leaveLadder()
 	elseif self.onGround == true and self.state ~= PS_DEAD then
+		playSound("jump")
 		self.yspeed = -JUMP_POWER
 	end
 end

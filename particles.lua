@@ -198,6 +198,14 @@ function PopupText.create(text)
 		self.id = 5
 	elseif text == "theft" then
 		self.id = 6
+	elseif text == "3combo" then
+		self.id = 7
+	elseif text == "4combo" then
+		self.id = 8
+	elseif text == "5combo" then
+		self.id = 9
+	elseif text == "megacombo" then
+		self.id = 10
 	end
 
 	return self
