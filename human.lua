@@ -157,9 +157,9 @@ function Human:update(dt)
 			score = score + SCORE
 		elseif combo >= 3 and combo <= 5 then
 			map:addParticle(PopupText.create(combo.."combo"))
-			score = (combo-1)*score + SCORE
+			score = score + (combo-1)*SCORE
 		elseif combo > 5 then
-			score = score + 2000
+			score = score + (combo-1)*SCORE
 			map:addParticle(PopupText.create("megacombo"))
 		end
 		playSound("rescue")

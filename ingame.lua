@@ -92,6 +92,11 @@ function ingame.update(dt)
 		-- Update warning icon frame
 		warning_frame = (warning_frame + dt*2) % 2
 
+		-- Kill player if too many casualties
+		if casualties >= max_casualties then
+			player.temperature = player.max_temperature
+		end
+
 	-- Transition TO or FROM next level
 	elseif ingame_state == INGAME_NEXTLEVEL_OUT or ingame_state == INGAME_FALL_OUT
 	or ingame_state == INGAME_FADE_IN or ingame_state == INGAME_GAMEOVER_OUT
@@ -356,7 +361,7 @@ function drawPrescreen()
 	local fr = math.floor(transition_time) % 2
 	lg.drawq(img.captain_dialog, quad.captain_dialog[fr], 28, 72)
 
-	lg.printf(prescreen_message, 74, 80, 140, "left")
+	lg.printf(prescreen_message, 74, 80, 150, "left")
 
 	lg.printf("PRESS RETURN TO CONTINUE", 0, 150, WIDTH, "center")
 end
@@ -375,9 +380,8 @@ end
 function setPrescreenMessage()
 	if casualties >= max_casualties then
 		prescreen_message = "TOO MANY CIVILIANS HAVE DIED!\n\nYOU ARE FIRED!"
-
 	elseif player.state == PS_DEAD then
-		prescreen_message = "OVERHEATED!"
+		prescreen_message = "YOUR SUIT OVERHEATED!\n\nGAME OVER"
 	else
 		if section == 1 then
 			prescreen_message = table.random(GOODLUCK_MESSAGES)

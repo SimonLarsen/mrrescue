@@ -55,8 +55,9 @@ local IMAGE_FILES = {
 
 local BACKGROUND_FILES = { "mountains", "night" }
 
-local SOUND_FILES = { "powerup", "door", "empty", "blip", "confirm", "jump", "pss",
-					  "endexplosion", "countdown", "rescue", "glass", "throw" }
+local SOUND_FILES = { "powerup", "door", "empty", "blip", "confirm",
+					  "jump", "pss", "endexplosion", "countdown",
+					  "rescue", "glass", "throw", "crash" }
 
 NUM_ROOMS = { [10] = 6, [11] = 6, [17] = 6, [24] = 6 }
 

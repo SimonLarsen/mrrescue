@@ -73,6 +73,8 @@ function MagmaHulk:update(dt)
 				self.hitGround = true
 				-- Set shake
 				ingame.shake = 0.4
+				-- Play sound
+				playSound("crash")
 				-- Add shockwave
 				if self.angry == true then
 					self.shockwaveX = math.floor(self.x)
