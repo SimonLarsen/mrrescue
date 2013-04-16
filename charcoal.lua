@@ -72,6 +72,7 @@ function Charcoal:update(dt)
 			self.dir = -self.dir
 			self.xspeed = self.dir*40
 			ingame.shake = 0.4
+			playSound("crash")
 			self:setState(BS_DAZED)
 			self.time = self.DAZED_TIME
 			local ballcount = self.angry == true and 10 or 6
