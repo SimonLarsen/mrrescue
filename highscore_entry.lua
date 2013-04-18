@@ -125,7 +125,7 @@ function highscore_entry.keypressed(k, uni)
 		else
 			highscore_entry.confirm()
 		end
-	elseif (uni >= 97 and 122) or k == " " or k == "-" then
+	elseif (uni >= 97 and uni <= 122) or k == " " or k == "-" then
 		if highscore_entry.position <= 5 then
 			if k == " " then
 				highscore_entry.addChar("_")
