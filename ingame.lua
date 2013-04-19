@@ -26,6 +26,8 @@ function ingame.newGame()
 	last_missed = 0
 	last_rescue = 0
 	combo = 0
+	max_combo = 0
+	time = 0
 
 	transition_time = 0
 	warning_frame = 0
@@ -58,6 +60,7 @@ function ingame.update(dt)
 
 	-- INGAME STATE
 	if ingame_state == INGAME_ACTIVE then
+		time = time + dt
 		updateKeys()
 
 		-- Update entities
@@ -66,6 +69,7 @@ function ingame.update(dt)
 		-- Check combo counter
 		last_rescue = last_rescue + dt
 		if last_rescue > COMBO_TIME then
+			max_combo = math.max(max_combo, combo)
 			combo = 0
 		end
 
@@ -489,11 +493,11 @@ function ingame.keypressed(k,uni)
 		end
 	elseif ingame_state == INGAME_GAMEOVER then
 		if k == "return" or k == " " then
-			highscore_entry.enter()
+			summary.enter()
 		end
 	elseif ingame_state == INGAME_WON and translate_y < 0 then
 		if k == "return" or k == " " then
-			highscore_entry.enter()
+			summary.enter()
 		end
 	end
 end
@@ -511,8 +515,8 @@ function ingame.action(a)
 			transition_time = 0
 		end
 	elseif ingame_state == INGAME_GAMEOVER then
-		highscore_entry.enter()
+		summary.enter()
 	elseif ingame_state == INGAME_WON and translate_y < 0 then
-		highscore_entry.enter()
+		summary.enter()
 	end
 end

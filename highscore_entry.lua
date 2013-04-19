@@ -4,7 +4,6 @@ local lg = love.graphics
 
 function highscore_entry.enter()
 	state = STATE_HIGHSCORE_ENTRY
-	stopMusic()
 	highscore_entry.name = "_____"
 	highscore_entry.selection = 1
 	highscore_entry.position = 1
@@ -38,7 +37,8 @@ function highscore_entry.draw()
 	lg.push()
 	lg.scale(config.scale)
 
-	lg.printf("PLEASE ENTER YOUR NAME", 0, 32, 256, "center")
+	lg.printf("NEW HIGHSCORE!", 0, 32, WIDTH, "center")
+	lg.printf("PLEASE ENTER YOUR NAME", 0, 48, 256, "center")
 
 	local char = 1
 	for iy = 1,3 do

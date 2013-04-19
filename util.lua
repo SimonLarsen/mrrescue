@@ -119,3 +119,11 @@ function drawBox(x,y,w,h)
 	lg.drawq(img.menu_box, quad.box_corner, x,y+h, 0, 1, -1)
 	lg.drawq(img.menu_box, quad.box_corner, x+w,y+h, 0, -1, -1)
 end
+
+function secondsToString(time)
+	local hours =   string.format("%02d", math.floor(time / 60^2))
+	local minutes = string.format("%02d", math.floor((time % 60^2) / 60))
+	local seconds = string.format("%02d", math.floor(time % 60))
+
+	return hours .. ":" .. minutes .. ":" .. seconds
+end
