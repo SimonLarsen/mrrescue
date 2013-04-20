@@ -78,7 +78,7 @@ function levelselection.action(k)
 		level = level - 1
 		if level < 1 then level = 3 end
 		playSound("blip")
-	elseif k == "jump" then
+	elseif k == "jump" or k == "pause" then
 		ingame.enter(level)
 		playSound("confirm")
 	elseif k == "action" then

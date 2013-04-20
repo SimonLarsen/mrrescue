@@ -58,7 +58,7 @@ function ingame_menu.action(k)
 	elseif k == "up" then
 		ingame_menu.selection = wrap(ingame_menu.selection-1, 1,2)
 		playSound("blip")
-	elseif k == "jump" then
+	elseif k == "pause" or k == "jump" then
 		if ingame_menu.selection == 1 then
 			state = STATE_INGAME
 			playSound("confirm")

@@ -58,10 +58,11 @@ function ingame.update(dt)
 		dt = dt/4
 	end
 
+	updateKeys()
+
 	-- INGAME STATE
 	if ingame_state == INGAME_ACTIVE then
 		time = time + dt
-		updateKeys()
 
 		-- Update entities
 		player:update(dt)
@@ -502,9 +503,13 @@ function ingame.keypressed(k,uni)
 	end
 end
 
-function ingame.action(a)
+function ingame.action(k)
 	if ingame_state == INGAME_ACTIVE then
-		player:action(a)
+		if k == "pause" then
+			ingame_menu.enter()
+		else
+			player:action(k)
+		end
 	elseif ingame_state == INGAME_PRESCREEN then
 		if k == "left" then
 			prevSong()

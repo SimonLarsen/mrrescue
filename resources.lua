@@ -86,6 +86,26 @@ DIFFICULTY_NAMES = {"EASY", "NORMAL", "HARD"}
 
 KEYBOARD = "ABCDEFGHIJKLMNOPQRSTUVWXYZ_-<&"
 
+stats_interval = {
+	{ 200, 600, 1800 },
+	{ 50000, 100000, 300000 },
+	{ 3000, 7000, 20000 },
+	{ 60, 120, 300 },
+	{ 15000, 30500, 80000 },
+	{ 50, 100, 400 }
+}
+
+stats_names = {
+	"FIRES EXTINGUISHED", -- 1
+	"WATER USED",         -- 2
+	"DISTANCE MOVED",     -- 3
+	"PEOPLE RESCUED",     -- 4
+	"PROPERTY DAMAGE",    -- 5
+	"FLOORS SCALED"       -- 6
+}
+
+stats_units = { nil, " LITERS", " METERS", nil, " $", nil }
+
 --- Returns size of an Image as two return values
 -- Saves some typing when creating quads
 function getSize(img)

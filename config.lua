@@ -8,36 +8,16 @@ default_config = {
 			up = "up", down = "down", left = "left", right = "right", jump = "s", shoot = "d", action = "a"
 	},
 	joykeys = {
-		jump = 3, shoot = 4, action = 2
+		jump = 3, shoot = 4, action = 2, pause = 10
 	}
 }
 
 keynames = {"up","down","left","right","jump","shoot","action"}
-joykeynames = {"jump","shoot","action"}
+joykeynames = {"jump","shoot","action","pause"}
 
 highscores = { {}, {}, {} }
 
 stats = { 0, 0, 0, 0, 0, 0 }
-
-stats_interval = {
-	{ 200, 600, 1800 },
-	{ 50000, 100000, 300000 },
-	{ 3000, 7000, 20000 },
-	{ 60, 120, 300 },
-	{ 15000, 30500, 80000 },
-	{ 50, 100, 400 }
-}
-
-stats_names = {
-	"FIRES EXTINGUISHED", -- 1
-	"WATER USED",         -- 2
-	"DISTANCE MOVED",     -- 3
-	"PEOPLE RESCUED",     -- 4
-	"PROPERTY DAMAGE",    -- 5
-	"FLOORS SCALED"       -- 6
-}
-
-stats_units = { nil, " LITERS", " METERS", nil, " $", nil }
 
 keystate = {
 	up = false, down = false, left = false, right = false,

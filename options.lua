@@ -17,18 +17,18 @@ function options.draw()
 
 	lg.setFont(font.bold)
 
-	drawBox(40, 59, 176, 110)
+	drawBox(40, 51, 176, 110)
 
 	lg.printf("OPTIONS", 0, 37, WIDTH, "center")
-	lg.print("SCALE:", 65, 71)		lg.print(config.scale, 167, 71)
-	lg.print("VSYNC:", 65, 84)		lg.print(config.vsync and "ON" or "OFF", 167, 84)
-	lg.print("SOUND VOL:", 65, 97)	lg.print(math.floor(config.sfx_volume*10+0.01), 167, 97)
-	lg.print("MUSIC VOL:", 65, 110)	lg.print(math.floor(config.music_volume*10+0.01), 167, 110)
-	lg.print("KEYBOARD", 65, 123)
-	lg.print("JOYSTICK", 65, 136)
-	lg.print("BACK", 65, 149)
+	lg.print("SCALE:", 65, 63)		lg.print(config.scale, 167, 63)
+	lg.print("VSYNC:", 65, 76)		lg.print(config.vsync and "ON" or "OFF", 167, 76)
+	lg.print("SOUND VOL:", 65, 89)	lg.print(math.floor(config.sfx_volume*10+0.01), 167, 89)
+	lg.print("MUSIC VOL:", 65, 102)	lg.print(math.floor(config.music_volume*10+0.01), 167, 102)
+	lg.print("KEYBOARD", 65, 115)
+	lg.print("JOYSTICK", 65, 128)
+	lg.print("BACK", 65, 141)
 
-	lg.print(">", 52, 57+options.selection*13)
+	lg.print(">", 52, 49+options.selection*13)
 
 	lg.pop()
 end

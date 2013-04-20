@@ -178,6 +178,8 @@ function highscore_entry.action(k)
 		else
 			highscore_entry.confirm()
 		end
+	elseif k == "pause" then
+		highscore_entry.confirm()
 	elseif k == "action" then
 		highscore_entry.delete()
 	end

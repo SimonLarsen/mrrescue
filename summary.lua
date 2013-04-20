@@ -32,7 +32,7 @@ function summary.keypressed(k, uni)
 end
 
 function summary.action(k)
-	if k == "jump" or k == "action" then
+	if k == "jump" or k == "action" or k == "pause" then
 		highscore_entry.enter()
 	end
 end
