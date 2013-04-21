@@ -64,9 +64,6 @@ function ingame.update(dt)
 	if ingame_state == INGAME_ACTIVE then
 		time = time + dt
 
-		-- Update entities
-		player:update(dt)
-
 		-- Check combo counter
 		last_rescue = last_rescue + dt
 		if last_rescue > COMBO_TIME then
@@ -74,15 +71,19 @@ function ingame.update(dt)
 			combo = 0
 		end
 
+		-- Update map entities
+		map:update(dt)
+
+		-- Update entities
+		player:update(dt)
+
 		-- Calculate translation offest
 		translate_x = cap(player.x-WIDTH/2, 0, MAPW-WIDTH)
 		translate_y = cap(player.y-11-HEIGHT/2, 0, MAPH-HEIGHT+30)
 		if ingame.shake > 0 then
 			ingame.shake = ingame.shake - dt
 		end
-
 		map:setDrawRange(translate_x, translate_y, WIDTH, HEIGHT)
-		map:update(dt)
 
 		-- Set next level transition state if player has climbed out of the screen
 		if player.y < 0 then
@@ -346,7 +347,6 @@ function drawHUD()
 		if map.boss.angry == true then bossframe = bossframe + 2 end
 		if map.boss.hit == true or map.boss.state == BS_DEAD then bossframe = bossframe + 1 end
 		lg.drawq(map.boss:getPortraitImage(), quad.boss_portrait[bossframe], 15,15)
-		map.boss.hit = false
 	end
 
 	-- Draw panic/burning human icons

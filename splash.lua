@@ -9,6 +9,10 @@ function splash.enter()
 	playMusic("opening")
 end
 
+function splash.update(dt)
+	transition_time = transition_time + dt
+end
+
 function splash.draw()
 	lg.push()
 	lg.scale(config.scale)
@@ -55,10 +59,6 @@ function splash.draw()
 	end
 
 	lg.pop()
-end
-
-function splash.update(dt)
-	transition_time = transition_time + dt
 end
 
 function splash.keypressed(k,uni)

@@ -39,7 +39,10 @@ function GasLeak:update(dt)
 	if self.anim then
 		self.anim:update(dt)
 	end
+
 	if self.hasShot > 0 then self.hasShot = self.hasShot - dt end
+
+	map.boss.hit = false
 
 	if self.state == BS_IDLE then
 		self.time = self.time - dt

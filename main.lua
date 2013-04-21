@@ -40,8 +40,8 @@ MAPW = 41*16
 MAPH = 16*16
 show_debug = false
 
-local MAX_FRAMETIME = 1/15
-local MIN_FRAMETIME = 1/120
+local MAX_FRAMETIME = 1/20
+local MIN_FRAMETIME = 1/60
 
 STATE_SPLASH, STATE_INGAME, STATE_MAINMENU, STATE_LEVELSELECTION, STATE_OPTIONS, STATE_KEYBOARD, STATE_JOYSTICK,
 STATE_HOWTO, STATE_HIGHSCORE_LIST, STATE_HIGHSCORE_ENTRY, STATE_INGAME_MENU, STATE_HISTORY, STATE_SUMMARY = 0,1,2,3,4,5,6,7,8,9,10,11,12
@@ -147,6 +147,7 @@ function love.run()
     math.random() math.random()
     if love.load then love.load(arg) end
     local dt = 0
+	local acc = 0
 
     -- Main loop time.
     while true do
@@ -167,28 +168,22 @@ function love.run()
             end
         end
 
-        -- Update dt, as we'll be passing it to update
-        if love.timer then
-            love.timer.step()
-            dt = love.timer.getDelta()
-			dt = cap(dt, MIN_FRAMETIME, MAX_FRAMETIME)
-        end
+		love.timer.step()
+		dt = love.timer.getDelta()
+		dt = math.min(dt, MAX_FRAMETIME)
+		acc = acc + dt
 
-        -- Call update and draw
-        if love.update then love.update(dt) end -- will pass 0 if love.timer is disabled
-        if love.graphics then
-            love.graphics.clear()
-            if love.draw then love.draw() end
-        end
+		while acc >= MIN_FRAMETIME do
+			love.update(MIN_FRAMETIME)
+			acc = acc - MIN_FRAMETIME
+		end
 
 		-- Update screen
-        if love.graphics then love.graphics.present() end
+		love.graphics.clear()
+		love.draw()
 
-		-- Sleep to compensate for framerate cap
-		local elapsed_time = love.timer.getMicroTime() - frame_start
-		if elapsed_time < MIN_FRAMETIME then
-			love.timer.sleep(MIN_FRAMETIME - elapsed_time)
-		end
+		love.graphics.present()
+		love.timer.sleep(0.001)
     end
 end
 

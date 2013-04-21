@@ -46,6 +46,8 @@ function MagmaHulk:update(dt)
 		self.anim:update(dt)
 	end
 
+	map.boss.hit = false
+
 	if self.state == BS_IDLE then
 		self.time = self.time - dt
 		if self.time <= 0 then

@@ -18,6 +18,8 @@ function GasGhost:update(dt)
 	self.anim:update(dt)
 	self.time = self.time + dt*2.8
 
+	self.hit = false
+
 	self.x = self.x + self.dir*self.SPEED*dt
 	if self.x < -32 or self.x > MAPW+32 then
 		self.alive = false
@@ -45,7 +47,6 @@ function GasGhost:draw()
 	self.fly = math.floor(self.y)
 
 	self.anim:draw(self.flx, self.fly, 0, self.dir, 1, 16, 25, nil, self.hit and img.gasghost_hit)
-	self.hit = false
 end
 
 function GasGhost:shot(dt,dir)

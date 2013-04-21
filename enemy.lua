@@ -39,6 +39,8 @@ function NormalEnemy.create(x,y)
 end
 
 function NormalEnemy:update(dt)
+	self.hit = false
+
 	-- Running state
 	if self.state == EN_RUN then
 		local oldx = self.x
@@ -96,8 +98,6 @@ function NormalEnemy:draw()
 	if self.hit == true then
 		drawHealthBar(self.flx, self.fly - 30, self.health, self.MAX_HEALTH)
 	end
-
-	self.hit = false
 end
 
 function NormalEnemy:drawLight()
@@ -201,6 +201,8 @@ function JumperEnemy.create(x,y)
 end
 
 function JumperEnemy:update(dt)
+	self.hit = false
+
 	if self.state == EN_IDLE then
 		self.nextJump = self.nextJump - dt
 		if self.nextJump <= 0 then
@@ -251,8 +253,6 @@ function JumperEnemy:draw()
 	if self.hit == true then
 		drawHealthBar(self.flx, self.fly - 36, self.health, self.MAX_HEALTH)
 	end
-	
-	self.hit = false
 end
 
 function JumperEnemy:drawLight()
@@ -332,8 +332,6 @@ function AngryJumperEnemy:draw()
 	if self.hit == true then
 		drawHealthBar(self.flx, self.fly - 36, self.health, self.MAX_HEALTH)
 	end
-
-	self.hit = false
 end
 
 -- %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -363,6 +361,8 @@ function VolcanoEnemy.create(x,y)
 end
 
 function VolcanoEnemy:update(dt)
+	self.hit = false
+
 	-- Running state
 	local oldx = self.x
 	self.x = self.x + self.dir*self.MOVE_SPEED*dt
@@ -411,8 +411,6 @@ function VolcanoEnemy:draw()
 	if self.hit == true then
 		drawHealthBar(self.flx, self.fly - 36, self.health, self.MAX_HEALTH)
 	end
-
-	self.hit = false
 end
 
 function VolcanoEnemy:drawLight()
@@ -490,8 +488,6 @@ function AngryVolcanoEnemy:draw()
 	if self.hit == true then
 		drawHealthBar(self.flx, self.fly - 36, self.health, self.MAX_HEALTH)
 	end
-
-	self.hit = false
 end
 
 -- %%%%%%%%%%%%%%%%%%%%%%%%%
@@ -560,8 +556,6 @@ function ThiefEnemy:draw()
 	if self.hit == true then
 		drawHealthBar(self.flx, self.fly - 36, self.health, self.MAX_HEALTH)
 	end
-
-	self.hit = false
 end
 
 -- %%%%%%%%%%%%%%%%%%%%%%%%%%

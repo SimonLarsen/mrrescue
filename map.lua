@@ -203,9 +203,6 @@ function Map:update(dt)
 	if self.type == MT_BOSS then
 		self.boss:update(dt)
 	end
-
-	-- Recreate sprite batches
-	self:recreateSpriteBatches()
 end
 
 function Map:clearFire()
@@ -268,6 +265,9 @@ function Map:setDrawRange(x,y,w,h)
 
 	self.viewX, self.viewY = x,y
 	self.viewW, self.viewH = w,h
+
+	-- Recreate sprite batches
+	self:recreateSpriteBatches()
 end
 
 --- Draws the background layer of the map.
