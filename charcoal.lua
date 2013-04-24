@@ -1,5 +1,5 @@
 Charcoal = { MAX_HEALTH = 10, GRAVITY = 350, ROLL_SPEED = 100, DAZED_TIME = 3,
-			 TRANSITION_TIME = 2, SHOT_TIME = 1 }
+			 TRANSITION_TIME = 2, SHOT_TIME = 1, SCORE = 5000 }
 Charcoal.__index = Charcoal
 setmetatable(Charcoal, Boss)
 
@@ -103,6 +103,7 @@ function Charcoal:update(dt)
 			self:setState(BS_DEAD)
 			map:clearFire()
 			map:clearEnemies()
+			score = score + self.SCORE
 		elseif self.time <= 0 then
 			self.y = MAPH-16
 			self:setState(BS_TRANSFORM)

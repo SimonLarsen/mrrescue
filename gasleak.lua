@@ -1,6 +1,6 @@
 GasLeak = { MAX_HEALTH = 12, WALK_SPEED = 40, PUSHED_COOLDOWN = 0.2,
 		    PUSHED_SPEED = 40, DEAD_TIME = 5, DEAD_SMOKE_INTERVAL = 0.5,
-			GHOST_DELAY = 2.5, GHOST_DELAY_ANGRY = 1.5, HAS_SHOT_TIME = 0.4 }
+			GHOST_DELAY = 2.5, GHOST_DELAY_ANGRY = 1.5, HAS_SHOT_TIME = 0.4, SCORE = 5000 }
 GasLeak.__index = GasLeak
 setmetatable(GasLeak, Boss)
 
@@ -86,6 +86,7 @@ function GasLeak:update(dt)
 			self:setState(BS_DEAD)
 			map:clearFire()
 			map:clearEnemies()
+			score = score + self.SCORE
 		elseif self.angry == false and self.health < self.MAX_HEALTH*0.75 then
 			self:setState(BS_TRANSITION)
 			playSound("transform")
@@ -106,6 +107,7 @@ function GasLeak:update(dt)
 			self:setState(BS_DEAD)
 			map:clearFire()
 			map:clearEnemies()
+			score = score + self.SCORE
 		elseif self.angry == false and self.health < self.MAX_HEALTH*0.75 then
 			self:setState(BS_TRANSITION)
 			playSound("transform")

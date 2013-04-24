@@ -1,5 +1,5 @@
 MagmaHulk = { MAX_HEALTH = 12, GRAVITY = 350, JUMP_POWER = 200, MAX_JUMP = 128,
-		 TRANSITION_TIME = 2 }
+		 TRANSITION_TIME = 2, SCORE = 5000 }
 MagmaHulk.__index = MagmaHulk
 setmetatable(MagmaHulk, Boss)
 
@@ -96,6 +96,7 @@ function MagmaHulk:update(dt)
 			self:setState(BS_DEAD)
 			map:clearFire()
 			map:clearEnemies()
+			score = score + self.SCORE
 		elseif self.angry == false and self.health < self.MAX_HEALTH*0.75 then
 			self:setState(BS_TRANSITION)
 			self.time = self.TRANSITION_TIME
