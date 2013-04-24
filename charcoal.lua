@@ -47,6 +47,7 @@ function Charcoal:update(dt)
 		if self.time <= 0 then
 			self:setState(BS_TRANSFORM)
 			self.time = self.TRANSITION_TIME
+			playSound("transform")
 		end
 
 	elseif self.state == BS_TRANSITION then
@@ -54,6 +55,7 @@ function Charcoal:update(dt)
 		if self.time <= 0 then
 			self.angry = true
 			self:setState(BS_TRANSFORM)
+			playSound("transform")
 		end
 
 	elseif self.state == BS_ROLL then
