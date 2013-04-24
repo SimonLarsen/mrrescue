@@ -26,6 +26,7 @@ function MagmaHulk.create(x,y)
 			self.yspeed = -self.JUMP_POWER
 			self.xspeed = 0.93*cap(cap(player.x,194,464) - self.x, -self.MAX_JUMP, self.MAX_JUMP)
 			self.hitGround = false
+			playSound("bossjump")
 		end
 	)
 	self.anims[BS_LAND] = newAnimation(img.magmahulk_land, 58, 64, 0.14, 7,
@@ -98,6 +99,7 @@ function MagmaHulk:update(dt)
 		elseif self.angry == false and self.health < self.MAX_HEALTH*0.75 then
 			self:setState(BS_TRANSITION)
 			self.time = self.TRANSITION_TIME
+			playSound("transform")
 		end
 	elseif self.state == BS_TRANSITION then
 		self.time = self.time - dt

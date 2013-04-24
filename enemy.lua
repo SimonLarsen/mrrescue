@@ -123,6 +123,7 @@ function NormalEnemy:shot(dt,dir)
 	if self.health <= 0 then
 		map:addParticle(BlackSmoke.create(self.x, self.y-8))
 		self.alive = false
+		playSound("enemydie")
 		score = score + self.SCORE
 		stats[1] = stats[1] + 1
 	end
@@ -273,6 +274,7 @@ function JumperEnemy:shot(dt,dir)
 	self.health = self.health - dt
 	if self.health <= 0 then
 		self.alive = false
+		playSound("enemydie")
 		map:addParticle(BlackSmoke.create(self.x, self.y-14))
 		score = score + self.SCORE
 		stats[1] = stats[1] + 1
@@ -423,6 +425,7 @@ function VolcanoEnemy:shot(dt,dir)
 	if self.health <= 0 then
 		map:addParticle(BlackSmoke.create(self.x, self.y-8))
 		self.alive = false
+		playSound("enemydie")
 		score = score + self.SCORE
 		stats[1] = stats[1] + 1
 	end

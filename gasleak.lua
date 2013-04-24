@@ -69,6 +69,7 @@ function GasLeak:update(dt)
 				self.nextGhost = self.GHOST_DELAY_ANGRY
 			end
 			self.hasShot = self.HAS_SHOT_TIME
+			playSound("shoot")
 		end
 
 		-- Move towards player
@@ -87,6 +88,7 @@ function GasLeak:update(dt)
 			map:clearEnemies()
 		elseif self.angry == false and self.health < self.MAX_HEALTH*0.75 then
 			self:setState(BS_TRANSITION)
+			playSound("transform")
 		end
 	elseif self.state == BS_PUSHED then
 		self.hit = true
@@ -106,6 +108,7 @@ function GasLeak:update(dt)
 			map:clearEnemies()
 		elseif self.angry == false and self.health < self.MAX_HEALTH*0.75 then
 			self:setState(BS_TRANSITION)
+			playSound("transform")
 		end
 	elseif self.state == BS_DEAD then
 		self.time = self.time - dt

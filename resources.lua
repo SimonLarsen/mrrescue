@@ -55,9 +55,9 @@ local IMAGE_FILES = {
 
 local BACKGROUND_FILES = { "mountains", "night" }
 
-local SOUND_FILES = { "powerup", "door", "empty", "blip", "confirm",
-					  "jump", "pss", "endexplosion", "countdown",
-					  "rescue", "glass", "throw", "crash" }
+local SOUND_FILES = { "powerup", "door", "empty", "blip", "confirm", "shoot",
+					  "jump", "pss", "endexplosion", "countdown", "transform",
+					  "rescue", "glass", "throw", "crash", "bossjump", "enemydie" }
 
 NUM_ROOMS = { [10] = 6, [11] = 6, [17] = 6, [24] = 6 }
 
@@ -87,12 +87,12 @@ DIFFICULTY_NAMES = {"EASY", "NORMAL", "HARD"}
 KEYBOARD = "ABCDEFGHIJKLMNOPQRSTUVWXYZ_-<&"
 
 stats_interval = {
-	{ 200, 600, 1800 },
-	{ 50000, 100000, 300000 },
-	{ 3000, 7000, 20000 },
-	{ 60, 120, 300 },
-	{ 15000, 30500, 80000 },
-	{ 50, 100, 400 }
+	{ 300, 900, 2000 },
+	{ 30000, 60000, 120000 },
+	{ 4000, 8000, 20000 },
+	{ 80, 160, 400 },
+	{ 18000, 35000, 90000 },
+	{ 80, 160, 500 }
 }
 
 stats_names = {

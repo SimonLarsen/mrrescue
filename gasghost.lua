@@ -37,6 +37,7 @@ function GasGhost:update(dt)
 		map:addParticle(BlackSmoke.create(self.x-6, self.y-18))
 		map:addParticle(BlackSmoke.create(self.x+6, self.y-18))
 		self.alive = false
+		playSound("endexplosion")
 	end
 
 	self.y = self.starty + (-math.cos(self.time)+1)*20

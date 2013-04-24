@@ -107,6 +107,7 @@ function Charcoal:update(dt)
 		elseif self.angry == false and self.health < self.MAX_HEALTH*0.75 then
 			self:setState(BS_TRANSITION)
 			self.time = self.TRANSITION_TIME
+			playSound("transform")
 		end
 
 	elseif self.state == BS_DEAD then
