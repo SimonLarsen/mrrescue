@@ -97,6 +97,7 @@ function MagmaHulk:update(dt)
 			map:clearFire()
 			map:clearEnemies()
 			score = score + self.SCORE
+			stopMusic()
 		elseif self.angry == false and self.health < self.MAX_HEALTH*0.75 then
 			self:setState(BS_TRANSITION)
 			self.time = self.TRANSITION_TIME
@@ -119,8 +120,9 @@ function MagmaHulk:update(dt)
 				playSound("endexplosion")
 			end
 		end
-		if self.time <= 0 then
+		if self.time <= 0 and ingame_state ~= INGAME_WON then
 			ingame_state = INGAME_WON
+			playMusic("victory", false)
 		end
 	end
 

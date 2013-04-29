@@ -104,6 +104,7 @@ function Charcoal:update(dt)
 			map:clearFire()
 			map:clearEnemies()
 			score = score + self.SCORE
+			stopMusic()
 		elseif self.time <= 0 then
 			self.y = MAPH-16
 			self:setState(BS_TRANSFORM)
@@ -123,8 +124,9 @@ function Charcoal:update(dt)
 				playSound("endexplosion")
 			end
 		end
-		if self.time <= 0 then
+		if self.time <= 0 and ingame_state ~= INGAME_WON then
 			ingame_state = INGAME_WON
+			playMusic("victory", false)
 		end
 	end
 

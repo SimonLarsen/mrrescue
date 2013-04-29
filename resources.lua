@@ -311,7 +311,7 @@ function playSound(name)
 	love.audio.play(snd[name])
 end
 
-function playMusic(name)
+function playMusic(name, loop)
 	-- Stop previously playing music if any
 	if music then
 		music:stop()
@@ -320,7 +320,11 @@ function playMusic(name)
 	music_name = name
 	music = love.audio.newSource("data/sfx/"..name..".ogg", "stream")
 	music:addTags("music")
-	music:setLooping(true)
+	if loop ~= nil then
+		music:setLooping(loop)
+	else
+		music:setLooping(true)
+	end
 	love.audio.tags.music.setVolume(config.music_volume)
 	love.audio.play(music)
 end
