@@ -39,8 +39,6 @@ function NormalEnemy.create(x,y)
 end
 
 function NormalEnemy:update(dt)
-	self.hit = false
-
 	-- Running state
 	if self.state == EN_RUN then
 		local oldx = self.x
@@ -87,6 +85,8 @@ function NormalEnemy:update(dt)
 	end
 
 	self.anim:update(dt)
+
+	self.hit = false
 end
 
 function NormalEnemy:draw()
@@ -202,8 +202,6 @@ function JumperEnemy.create(x,y)
 end
 
 function JumperEnemy:update(dt)
-	self.hit = false
-
 	if self.state == EN_IDLE then
 		self.nextJump = self.nextJump - dt
 		if self.nextJump <= 0 then
@@ -235,6 +233,8 @@ function JumperEnemy:update(dt)
 	end
 
 	self.anim:update(dt)
+
+	self.hit = false
 end
 
 function JumperEnemy:draw()
@@ -363,8 +363,6 @@ function VolcanoEnemy.create(x,y)
 end
 
 function VolcanoEnemy:update(dt)
-	self.hit = false
-
 	-- Running state
 	local oldx = self.x
 	self.x = self.x + self.dir*self.MOVE_SPEED*dt
@@ -394,6 +392,8 @@ function VolcanoEnemy:update(dt)
 	end
 
 	self.anim:update(dt)
+
+	self.hit = false
 end
 
 function VolcanoEnemy:draw()
