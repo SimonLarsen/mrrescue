@@ -1,4 +1,7 @@
 --[[
+The following module has been heavily modified for Mr. Rescue
+does not represent the quality of the original module.
+
 Copyright (c) 2009-2010 Bart Bes
 
 Permission is hereby granted, free of charge, to any person

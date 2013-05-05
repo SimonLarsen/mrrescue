@@ -2,8 +2,8 @@ All assets (graphics, music, text) and licensed under a
 Creative Commons Attribution-NonCommercial 3.0 Unported License.
 See http://creativecommons.org/licenses/by-nc-sa/3.0/deed.en_US for more info.
 
-All source code for Mr. Rescue with the exception of the
-Simple LÖVE Audio Manager is licensed under the zlib licence included below.
+All source code for Mr. Rescue with the exception of the modules
+slam, AnAL and TSerial, is licensed under the zlib licence included below.
 
 --------------------------------------------------------------------------------
 Source code license
