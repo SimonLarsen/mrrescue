@@ -20,6 +20,7 @@ function summary.draw()
 	lg.printf("YOU SAVED "..saved.." CIVILIANS", 0, 80, WIDTH, "center")
 	lg.printf("LONGEST COMBO: " .. max_combo, 0, 96, WIDTH, "center")
 	lg.printf("TOTAL TIME: ".. secondsToString(time), 0, 112, WIDTH, "center")
+	lg.printf("FLOORS CLEARED: " .. (section-1)*3, 0, 128, WIDTH, "center")
 
 	lg.printf("PRESS RETURN TO CONTINUE", 0, 160, WIDTH, "center")
 	lg.pop()

@@ -58,7 +58,7 @@ function collideX(self)
 					if self.xspeed > 0 then
 						self.x = bbox.x-self.corners[2]-0.0001
 					else
-						self.x = bbox.x+bbox.w-self.corners[1]
+						self.x = bbox.x+bbox.w-self.corners[1]+0.0001
 					end
 				end
 			end
