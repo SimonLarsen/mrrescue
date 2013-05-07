@@ -30,7 +30,7 @@ function joystick.draw()
 			lg.setColor(195,52,41)
 		end
 		lg.print(string.upper(joykeynames[i]), 65, 66+i*13)
-		lg.print(string.upper(config.joykeys[joykeynames[i]]), 165, 66+i*13)
+		lg.print(config.joykeys[joykeynames[i]], 165, 66+i*13)
 		lg.setColor(255,255,255)
 	end
 	lg.print("DEFAULT", 65, 131)
