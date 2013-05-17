@@ -43,6 +43,12 @@ show_debug = false
 local MAX_FRAMETIME = 1/20
 local MIN_FRAMETIME = 1/60
 
+local AXIS_COOLDOWN = 0.2
+local xacc = 0
+local yacc = 0
+local xacccool = 0
+local yacccool = 0
+
 STATE_SPLASH, STATE_INGAME, STATE_MAINMENU, STATE_LEVELSELECTION, STATE_OPTIONS, STATE_KEYBOARD, STATE_JOYSTICK,
 STATE_HOWTO, STATE_HIGHSCORE_LIST, STATE_HIGHSCORE_ENTRY, STATE_INGAME_MENU, STATE_HISTORY, STATE_SUMMARY = 0,1,2,3,4,5,6,7,8,9,10,11,12
 
@@ -64,6 +70,12 @@ end
 
 function love.update(dt)
 	gamestates[state].update(dt)
+	if xacccool > 0 then
+		xacccool = xacccool - dt
+	end
+	if yacccool > 0 then
+		yacccool = yacccool - dt
+	end
 end
 
 function love.draw()
@@ -114,24 +126,38 @@ function updateKeys()
 		elseif axis2 > 0.5 then
 			keystate.down = true
 		end
-		-- Check sudden movements (for ladders)
-		if math.abs(keystate.oldaxis1) < 0.05 then
-			if axis1 < -0.5 then
+
+		-- Check sudden movements in axes
+		-- (for ladders and menus)
+		xacc = xacc*0.50 + axis1*0.50
+		yacc = yacc*0.50 + axis2*0.50
+
+		if math.abs(axis1) < 0.1 then
+			xacccool = 0
+		end
+		if math.abs(axis2) < 0.1 then
+			yacccool = 0
+		end
+
+		if xacccool <= 0 then
+			if axis1 < -0.90 then
 				gamestates[state].action("left")
-			elseif axis1 > 0.5 then
+				xacccool = AXIS_COOLDOWN
+			elseif axis1 > 0.90 then
 				gamestates[state].action("right")
+				xacccool = AXIS_COOLDOWN
 			end
 		end
-		if math.abs(keystate.oldaxis2) < 0.05 then
-			if axis2 < -0.5 then
+
+		if yacccool <= 0 then
+			if axis2 < -0.90 then
 				gamestates[state].action("up")
-			elseif axis2 > 0.5 then
+				yacccool = AXIS_COOLDOWN
+			elseif axis2 > 0.90 then
 				gamestates[state].action("down")
+				yacccool = AXIS_COOLDOWN
 			end
 		end
-		-- Write axis values for next update
-		keystate.oldaxis1 = axis1 or 0
-		keystate.oldaxis2 = axis2 or 0
 	end
 
 	-- Check joystick keys
