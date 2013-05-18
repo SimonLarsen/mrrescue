@@ -1,5 +1,6 @@
 default_config = {
 	scale = 3,
+	fullscreen = false,
 	vsync = true,
 	sfx_volume = 1.0,
 	music_volume = 0.5,
@@ -88,11 +89,24 @@ function saveStats()
 end
 
 function setMode()
-	love.graphics.setMode(WIDTH*config.scale, HEIGHT*config.scale, false, config.vsync)
+	if config.fullscreen == false then
+		love.graphics.setMode(WIDTH*config.scale, HEIGHT*config.scale, false, config.vsync)
+		love.graphics.setScissor()
+	else
+		love.graphics.setMode(0,0, true, config.vsync)
+		love.graphics.setMode(love.graphics.getWidth(), love.graphics.getHeight(), true, config.vsync)
+		fs_translatex = (love.graphics.getWidth()-WIDTH*config.scale)/2
+		fs_translatey = (love.graphics.getHeight()-HEIGHT*config.scale)/2
+	end
 end
 
 function toggleVSync()
 	config.vsync = not config.vsync
+	setMode()
+end
+
+function toggleFullscreen()
+	config.fullscreen = not config.fullscreen
 	setMode()
 end
 

@@ -191,6 +191,9 @@ function ingame.draw()
 			lg.pop()
 			lg.pop()	
 			lg.push()
+			if config.fullscreen == true then
+				lg.translate(-fs_translatex,-fs_translatey)
+			end
 			lg.translate(-math.floor(translate_x), -math.floor(translate_y))
 			updateLightmap()
 			lg.pop()
@@ -453,7 +456,14 @@ end
 --- Updates the light map canvas
 --  Assumes the view matrix is translated but not scaled
 function updateLightmap()
+	-- Disable scissoring before drawing lightmap
+	local sx, sy, sw, sh
+	if config.fullscreen == true then
+		sx, sy, sw, sh = lg.getScissor()
+		lg.setScissor()
+	end
 	canvas:clear(0,0,0,255)
+
 	lg.setCanvas(canvas)
 	lg.setBlendMode("additive")
 
@@ -468,6 +478,11 @@ function updateLightmap()
 	lg.rectangle("fill", MAPW-32, 0, 32, MAPH)
 	lg.setBlendMode("alpha")
 	lg.setCanvas()
+
+	-- Reenable scissoring
+	if config.fullscreen == true then
+		lg.setScissor(sx,sy,sw,sh)
+	end
 end
 
 function ingame.keypressed(k,uni)

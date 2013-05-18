@@ -12,6 +12,7 @@ local IMAGE_FILES = {
 	"awards", "hud", "hud2", "hud_people", "item_slots", "water_bar",
 	"reserve_bar", "overloaded_bar", "temperature_bar", "temperature_bar_blink",
 	"stream", "water", "shards", "level_buildings", "menu_box", "countdown",
+	"border", "stripes",
 
 	"fire_wall", "fire_wall_small", "fire_floor",
 
@@ -37,7 +38,8 @@ local IMAGE_FILES = {
 	"magmahulk_rage_jump", "magmahulk_rage_land", "shockwave", "magmahulk_portrait",
 
 	"gasleak_idle", "gasleak_hit", "gasleak_walk", "gasleak_shot_walk",
-	"gasleak_rage_walk", "gasleak_rage_shot_walk", "gasleak_idle_shot", "gasleak_rage_idle_shot", "gasleak_rage_idle",
+	"gasleak_rage_walk", "gasleak_rage_shot_walk", "gasleak_idle_shot",
+	"gasleak_rage_idle_shot", "gasleak_rage_idle",
 	"gasleak_transition", "gasleak_portrait", "gasghost", "gasghost_hit",
 
 	"charcoal_bump", "charcoal_daze", "charcoal_daze_hit", "charcoal_idle",
@@ -144,6 +146,7 @@ function loadResources()
 
 	-- Set special image attributes
 	img.stream:setWrap("repeat", "clamp")
+	img.stripes:setWrap("repeat", "repeat")
 
 	-- Create fonts
 	font.bold = lg.newImageFont(img.boldfont, " ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789.,!'-:*@<>+/_$&?")
@@ -303,6 +306,8 @@ function loadResources()
 	for i=0,3 do
 		quad.countdown[i] = lg.newQuad(0, i*26, 64, 26, getSize(img.countdown))
 	end
+
+	quad.border = lg.newQuad(0,0, 266, 210, getSize(img.border))
 
 	-- Set audio tag volumes
 	love.audio.tags.sfx.setVolume(config.sfx_volume)

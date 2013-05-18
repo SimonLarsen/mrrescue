@@ -61,24 +61,33 @@ function love.load()
 	loadStats()
 
 	love.graphics.setBackgroundColor(0,0,0)
-	love.graphics.setMode(WIDTH*config.scale, HEIGHT*config.scale, false, config.vsync)
+
 	love.graphics.setDefaultImageFilter("nearest","nearest")
 	loadResources()
+
+	setMode()
 
 	splash.enter()
 end
 
 function love.update(dt)
-	gamestates[state].update(dt)
 	if xacccool > 0 then
 		xacccool = xacccool - dt
 	end
 	if yacccool > 0 then
 		yacccool = yacccool - dt
 	end
+	gamestates[state].update(dt)
 end
 
 function love.draw()
+	-- Draw border and enable scissoring for fullscreen
+	if config.fullscreen == true then
+		lg.setScissor()
+		lg.drawq(img.border, quad.border, -5*config.scale+fs_translatex, -5*config.scale+fs_translatey, 0, config.scale, config.scale)
+		lg.setScissor(fs_translatex, fs_translatey, WIDTH*config.scale, HEIGHT*config.scale)
+		lg.translate(fs_translatex,fs_translatey)
+	end
 	gamestates[state].draw()
 end
 
