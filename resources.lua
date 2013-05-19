@@ -12,7 +12,7 @@ local IMAGE_FILES = {
 	"awards", "hud", "hud2", "hud_people", "item_slots", "water_bar",
 	"reserve_bar", "overloaded_bar", "temperature_bar", "temperature_bar_blink",
 	"stream", "water", "shards", "level_buildings", "menu_box", "countdown",
-	"border", "stripes",
+	"border",
 
 	"fire_wall", "fire_wall_small", "fire_floor",
 
@@ -146,7 +146,6 @@ function loadResources()
 
 	-- Set special image attributes
 	img.stream:setWrap("repeat", "clamp")
-	img.stripes:setWrap("repeat", "repeat")
 
 	-- Create fonts
 	font.bold = lg.newImageFont(img.boldfont, " ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789.,!'-:*@<>+/_$&?")

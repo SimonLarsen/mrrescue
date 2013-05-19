@@ -192,7 +192,10 @@ function ingame.draw()
 			lg.pop()	
 			lg.push()
 			if config.fullscreen == true then
-				lg.translate(-fs_translatex,-fs_translatey)
+				--lg.translate(-fs_translatex,-fs_translatey)
+				local sw = love.graphics.getWidth()/WIDTH/config.scale
+				local sh = love.graphics.getHeight()/HEIGHT/config.scale
+				lg.scale(1/sw,1/sh)
 			end
 			lg.translate(-math.floor(translate_x), -math.floor(translate_y))
 			updateLightmap()
@@ -481,7 +484,7 @@ function updateLightmap()
 
 	-- Reenable scissoring
 	if config.fullscreen == true then
-		lg.setScissor(sx,sy,sw,sh)
+		--lg.setScissor(sx,sy,sw,sh)
 	end
 end
 

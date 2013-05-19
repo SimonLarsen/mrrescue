@@ -83,12 +83,23 @@ end
 function love.draw()
 	-- Draw border and enable scissoring for fullscreen
 	if config.fullscreen == true then
+		--[[
 		lg.setScissor()
 		lg.drawq(img.border, quad.border, -5*config.scale+fs_translatex, -5*config.scale+fs_translatey, 0, config.scale, config.scale)
 		lg.setScissor(fs_translatex, fs_translatey, WIDTH*config.scale, HEIGHT*config.scale)
 		lg.translate(fs_translatex,fs_translatey)
+		]]
 	end
+	setView()
 	gamestates[state].draw()
+end
+
+function setView()
+	if config.fullscreen == true then
+		local sw = love.graphics.getWidth()/WIDTH/config.scale
+		local sh = love.graphics.getHeight()/HEIGHT/config.scale
+		lg.scale(sw,sh)
+	end
 end
 
 function love.keypressed(k, uni)
