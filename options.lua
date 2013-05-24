@@ -21,7 +21,12 @@ function options.draw()
 
 	lg.printf("OPTIONS", 0, 37, WIDTH, "center")
 	lg.print("SCALE:", 65, 63)		lg.print(config.scale, 167, 63)
-	lg.print("FULLSCREEN:", 65, 76)	lg.print(config.fullscreen and "ON" or "OFF", 167, 76)
+	lg.print("FULLSCREEN:", 65, 76)
+	if config.fullscreen == 0 then		lg.print("OFF", 167, 76)
+	elseif config.fullscreen == 1 then	lg.print("FILL", 167, 76)
+	elseif config.fullscreen == 2 then	lg.print("ZOOM", 167, 76)
+	else								lg.print("SCALE", 167, 76)
+	end
 	lg.print("VSYNC:", 65, 89)		lg.print(config.vsync and "ON" or "OFF", 167, 89)
 	lg.print("SOUND VOL:", 65, 102)	lg.print(math.floor(config.sfx_volume*10+0.01), 167, 102)
 	lg.print("MUSIC VOL:", 65, 115)	lg.print(math.floor(config.music_volume*10+0.01), 167, 115)
@@ -52,12 +57,22 @@ function options.keypressed(k, uni)
 			setMode()
 			playSound("blip")
 		elseif options.selection == 2 then -- FULLSCREEN
-			toggleFullscreen()
+			if k == "left" then
+				if config.fullscreen > 0 then
+					config.fullscreen = cap(config.fullscreen - 1, 0, 3)
+					setMode()
+				end
+			else
+				if config.fullscreen < 3 then
+					config.fullscreen = cap(config.fullscreen + 1, 0, 3)
+					setMode()
+				end
+			end
 			playSound("blip")
 		elseif options.selection == 3 then -- VSYNC
 			toggleVSync()
 			playSound("blip")
-		elseif options.selection == 5 then -- SFX VOLUME
+		elseif options.selection == 4 then -- SFX VOLUME
 			if k == "left" then
 				config.sfx_volume = cap(config.sfx_volume - 0.1, 0,1)
 			else
@@ -65,7 +80,7 @@ function options.keypressed(k, uni)
 			end
 			love.audio.tags.sfx.setVolume(config.sfx_volume)
 			playSound("blip")
-		elseif options.selection == 6 then -- MUSIC VOLUME
+		elseif options.selection == 5 then -- MUSIC VOLUME
 			if k == "left" then
 				config.music_volume = cap(config.music_volume - 0.1, 0,1)
 			else
@@ -76,10 +91,7 @@ function options.keypressed(k, uni)
 		end
 
 	elseif k == "return" then
-		if options.selection == 2 then -- FULLSCREEN
-			toggleFullscreen()
-			playSound("blip")
-		elseif options.selection == 3 then -- VSYNC
+		if options.selection == 3 then -- VSYNC
 			toggleVSync()
 			playSound("blip")
 		elseif options.selection == 6 then -- KEYBOARD
@@ -118,7 +130,17 @@ function options.action(k)
 			setMode()
 			playSound("blip")
 		elseif options.selection == 2 then -- FULLSCREEN
-			toggleFullscreen()
+			if k == "left" then
+				if config.fullscreen > 0 then
+					config.fullscreen = cap(config.fullscreen - 1, 0, 3)
+					setMode()
+				end
+			else
+				if config.fullscreen < 3 then
+					config.fullscreen = cap(config.fullscreen + 1, 0, 3)
+					setMode()
+				end
+			end
 			playSound("blip")
 		elseif options.selection == 3 then -- VSYNC
 			toggleVSync()

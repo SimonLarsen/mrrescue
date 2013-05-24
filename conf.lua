@@ -5,7 +5,7 @@ function love.conf(t)
     t.identity = "mrrescue"
     t.version = "0.8.0"         
     t.console = false           
-    t.release = false           
+    t.release = true
     t.screen.width = 256*3
     t.screen.height = 200*3
     t.screen.fullscreen = false 

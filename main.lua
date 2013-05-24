@@ -82,23 +82,32 @@ end
 
 function love.draw()
 	-- Draw border and enable scissoring for fullscreen
-	if config.fullscreen == true then
-		--[[
-		lg.setScissor()
-		lg.drawq(img.border, quad.border, -5*config.scale+fs_translatex, -5*config.scale+fs_translatey, 0, config.scale, config.scale)
-		lg.setScissor(fs_translatex, fs_translatey, WIDTH*config.scale, HEIGHT*config.scale)
-		lg.translate(fs_translatex,fs_translatey)
-		]]
-	end
-	setView()
+	lg.push()
+	setZoom()
 	gamestates[state].draw()
+	lg.pop()
+
+	lg.setScissor()
+	if state == STATE_INGAME then
+		updateLightmap()
+	end
 end
 
-function setView()
-	if config.fullscreen == true then
+function setZoom()
+	if config.fullscreen == 1 then
 		local sw = love.graphics.getWidth()/WIDTH/config.scale
 		local sh = love.graphics.getHeight()/HEIGHT/config.scale
 		lg.scale(sw,sh)
+	elseif config.fullscreen == 2 then
+		local sw = love.graphics.getWidth()/WIDTH/config.scale
+		local sh = love.graphics.getHeight()/HEIGHT/config.scale
+		local tx = (love.graphics.getWidth() - WIDTH*config.scale*sh)/2
+		lg.translate(tx, 0)
+		lg.scale(sh, sh)
+		lg.setScissor(tx, 0, WIDTH*config.scale*sh, love.graphics.getHeight())
+	elseif config.fullscreen == 3 then
+		lg.translate(fs_translatex,fs_translatey)
+		lg.setScissor(fs_translatex, fs_translatey, WIDTH*config.scale, HEIGHT*config.scale)
 	end
 end
 
@@ -238,4 +247,53 @@ function love.quit()
 	saveConfig()
 	saveHighscores()
 	saveStats()
+end
+
+function love.releaseerrhand(msg)
+    print("An error has occured, the game has been stopped.")
+
+    if not love.graphics or not love.event or not love.graphics.isCreated() then
+        return
+    end
+
+    love.graphics.setCanvas()
+    love.graphics.setPixelEffect()
+
+    -- Load.
+    if love.audio then love.audio.stop() end
+    love.graphics.reset()
+    love.graphics.setBackgroundColor(89, 157, 220)
+    local font = love.graphics.newFont(14)
+    love.graphics.setFont(font)
+
+    love.graphics.setColor(255, 255, 255, 255)
+
+    love.graphics.clear()
+
+    local err = {}
+
+    p = string.format("An error has occured that caused %s to stop.\nYou can notify %s about this%s.\n\nError: %s", love._release.title or "this game", love._release.author or "the author", love._release.url and " at " .. love._release.url or "", msg)
+
+    local function draw()
+        love.graphics.clear()
+        love.graphics.printf(p, 70, 70, love.graphics.getWidth() - 70)
+        love.graphics.present()
+    end
+
+    draw()
+
+    local e, a, b, c
+    while true do
+        e, a, b, c = love.event.wait()
+
+        if e == "quit" then
+            return
+        end
+        if e == "keypressed" and a == "escape" then
+            return
+        end
+
+        draw()
+
+    end
 end

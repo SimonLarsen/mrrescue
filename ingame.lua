@@ -167,8 +167,8 @@ function ingame.draw()
 	or ingame_state == INGAME_NEXTLEVEL_OUT or ingame_state == INGAME_FALL_OUT
 	or ingame_state == INGAME_GAMEOVER_OUT or ingame_state == INGAME_WON
 	or ingame_state == INGAME_COUNTDOWN_IN or ingame_state == INGAME_COUNTDOWN then
-		-- Translate to center player
 		lg.push()
+		-- Translate to center player
 		if ingame.shake > 0 then
 			lg.translate(-math.floor(translate_x+math.random()*4-2), -math.floor(translate_y+math.random()*2.5))
 		else
@@ -186,32 +186,12 @@ function ingame.draw()
 			player:draw()
 		end
 
-		-- Update lightmap
-		if map.type == MT_NORMAL then
-			lg.pop()
-			lg.pop()	
-			lg.push()
-			if config.fullscreen == true then
-				--lg.translate(-fs_translatex,-fs_translatey)
-				local sw = love.graphics.getWidth()/WIDTH/config.scale
-				local sh = love.graphics.getHeight()/HEIGHT/config.scale
-				lg.scale(1/sw,1/sh)
-			end
-			lg.translate(-math.floor(translate_x), -math.floor(translate_y))
-			updateLightmap()
-			lg.pop()
+		lg.pop()
 
-			-- Draw canvas with lighting
-			lg.push()
-			lg.scale(config.scale)
+		if map.type == MT_NORMAL then
 			lg.setBlendMode("multiplicative")
 			lg.draw(canvas, 0,0)
 			lg.setBlendMode("alpha")
-		else
-			lg.pop()
-			lg.pop()
-			lg.push()
-			lg.scale(config.scale)
 		end
 
 		-- Draw red screen if hit
@@ -227,6 +207,10 @@ function ingame.draw()
 		-- Draw transition if eligible
 		if ingame_state == INGAME_NEXTLEVEL_OUT or ingame_state == INGAME_FALL_OUT or ingame_state == INGAME_GAMEOVER_OUT then
 			local frame = math.floor(transition_time)
+			lg.pop()
+			--lg.pop()
+			lg.push()
+			lg.scale(config.scale)
 
 			for ix = 0,7 do
 				for iy = 0,6 do
@@ -459,32 +443,27 @@ end
 --- Updates the light map canvas
 --  Assumes the view matrix is translated but not scaled
 function updateLightmap()
-	-- Disable scissoring before drawing lightmap
-	local sx, sy, sw, sh
-	if config.fullscreen == true then
-		sx, sy, sw, sh = lg.getScissor()
-		lg.setScissor()
-	end
-	canvas:clear(0,0,0,255)
+	if ingame_state == INGAME_ACTIVE or ingame_state == INGAME_FADE_IN
+	or ingame_state == INGAME_NEXTLEVEL_OUT or ingame_state == INGAME_FALL_OUT
+	or ingame_state == INGAME_GAMEOVER_OUT or ingame_state == INGAME_WON
+	or ingame_state == INGAME_COUNTDOWN_IN or ingame_state == INGAME_COUNTDOWN then
+		lg.translate(-math.floor(translate_x), -math.floor(translate_y))
+		canvas:clear(0,0,0,255)
 
-	lg.setCanvas(canvas)
-	lg.setBlendMode("additive")
+		lg.setCanvas(canvas)
+		lg.setBlendMode("additive")
 
-	lg.draw(img.light_player, player.flx-128, player.fly-138)
-	map:drawFireLight()
-	for i,v in ipairs(map.enemies) do
-		v:drawLight()
-	end
-	
-	-- Light up outside building
-	lg.rectangle("fill", 0,0, 32, MAPH)
-	lg.rectangle("fill", MAPW-32, 0, 32, MAPH)
-	lg.setBlendMode("alpha")
-	lg.setCanvas()
-
-	-- Reenable scissoring
-	if config.fullscreen == true then
-		--lg.setScissor(sx,sy,sw,sh)
+		lg.draw(img.light_player, player.flx-128, player.fly-138)
+		map:drawFireLight()
+		for i,v in ipairs(map.enemies) do
+			v:drawLight()
+		end
+		
+		-- Light up outside building
+		lg.rectangle("fill", 0,0, 32, MAPH)
+		lg.rectangle("fill", MAPW-32, 0, 32, MAPH)
+		lg.setBlendMode("alpha")
+		lg.setCanvas()
 	end
 end
 

@@ -12,7 +12,6 @@ local IMAGE_FILES = {
 	"awards", "hud", "hud2", "hud_people", "item_slots", "water_bar",
 	"reserve_bar", "overloaded_bar", "temperature_bar", "temperature_bar_blink",
 	"stream", "water", "shards", "level_buildings", "menu_box", "countdown",
-	"border",
 
 	"fire_wall", "fire_wall_small", "fire_floor",
 
@@ -305,8 +304,6 @@ function loadResources()
 	for i=0,3 do
 		quad.countdown[i] = lg.newQuad(0, i*26, 64, 26, getSize(img.countdown))
 	end
-
-	quad.border = lg.newQuad(0,0, 266, 210, getSize(img.border))
 
 	-- Set audio tag volumes
 	love.audio.tags.sfx.setVolume(config.sfx_volume)

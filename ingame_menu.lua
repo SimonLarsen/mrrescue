@@ -13,9 +13,10 @@ function ingame_menu.update(dt)
 end
 
 function ingame_menu.draw()
-	ingame.draw()
-
 	lg.push()
+	ingame.draw()
+	lg.pop()
+
 	lg.scale(config.scale)
 	lg.setColor(0,0,0,238)
 	lg.rectangle("fill", 0, 0, WIDTH, HEIGHT)
@@ -25,8 +26,6 @@ function ingame_menu.draw()
 	lg.print("RESUME", 103, 92)
 	lg.print("QUIT", 103, 106)
 	lg.print(">", 92, 77+ingame_menu.selection*14)
-
-	lg.pop()
 end
 
 function ingame_menu.keypressed(k, uni)

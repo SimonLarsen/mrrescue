@@ -1,6 +1,6 @@
 default_config = {
 	scale = 3,
-	fullscreen = false,
+	fullscreen = 0,
 	vsync = true,
 	sfx_volume = 1.0,
 	music_volume = 0.5,
@@ -46,6 +46,10 @@ function loadConfig()
 			config[i] = v
 		end
 	end
+	-- Avoid crash if fullscreen is a boolean from old version
+	if type(config.fullscreen) == "boolean" then
+		config.fullscreen = 0
+	end
 
 	-- Select first open joystick if current is not open
 	if love.joystick.isOpen(config.joystick) == false then
@@ -89,24 +93,19 @@ function saveStats()
 end
 
 function setMode()
-	if config.fullscreen == false then
+	if config.fullscreen == 0 then
 		love.graphics.setMode(WIDTH*config.scale, HEIGHT*config.scale, false, config.vsync)
 		love.graphics.setScissor()
-	else
+	elseif config.fullscreen > 0 and config.fullscreen <= 3 then
 		love.graphics.setMode(0,0, true, config.vsync)
 		love.graphics.setMode(love.graphics.getWidth(), love.graphics.getHeight(), true, config.vsync)
-		fs_translatex = (love.graphics.getWidth()-WIDTH*config.scale)/2
-		fs_translatey = (love.graphics.getHeight()-HEIGHT*config.scale)/2
 	end
+	fs_translatex = (love.graphics.getWidth()-WIDTH*config.scale)/2
+	fs_translatey = (love.graphics.getHeight()-HEIGHT*config.scale)/2
 end
 
 function toggleVSync()
 	config.vsync = not config.vsync
-	setMode()
-end
-
-function toggleFullscreen()
-	config.fullscreen = not config.fullscreen
 	setMode()
 end
 
