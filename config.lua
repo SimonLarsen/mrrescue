@@ -9,7 +9,7 @@ default_config = {
 			up = "up", down = "down", left = "left", right = "right", jump = "s", shoot = "d", action = "a"
 	},
 	joykeys = {
-		jump = 3, shoot = 4, action = 2, pause = 10
+		jump = 1, shoot = 3, action = 2, pause = 8
 	}
 }
 
