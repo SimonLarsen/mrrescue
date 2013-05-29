@@ -88,7 +88,7 @@ function love.draw()
 	lg.pop()
 
 	lg.setScissor()
-	if state == STATE_INGAME then
+	if state == STATE_INGAME and map.type == MT_NORMAL then
 		updateLightmap()
 	end
 end
