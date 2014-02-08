@@ -1,9 +1,11 @@
-All assets (graphics, music, text) are licensed under a
-Creative Commons Attribution-ShareAlike 3.0 Unported License.
+All assets (graphics, music, text) are copyright (c) 2013 Tangram Games
+and are licensed under a Creative Commons Attribution-ShareAlike 3.0 Unported License.
 See http://creativecommons.org/licenses/by-sa/3.0/deed.en_US for more info.
 
-All source code for Mr. Rescue with the exception of the modules
-slam, AnAL and TSerial, is licensed under the zlib licence included below.
+The libraries slam, AnAL and TSerial are not covered by the Mr. Rescue license.
+Please see the files of equivalent basename for license information.
+All other source code for Mr. Rescue is licensed under the zlib license
+included below.
 
 --------------------------------------------------------------------------------
 Source code license
@@ -28,3 +30,4 @@ freely, subject to the following restrictions:
 
    3. This notice may not be removed or altered from any source
    distribution.
+   
