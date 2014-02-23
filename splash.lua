@@ -21,15 +21,15 @@ function splash.draw()
 		if transition_time < 1 then
 			local alpha = cap(255*transition_time, 0,255)
 			lg.setColor(255,255,255,alpha)
-			lg.drawq(img.tangram, quad.screen, 0,0)
+			lg.draw(img.tangram, quad.screen, 0,0)
 			lg.setColor(255,255,255,255)
 		elseif transition_time > 3 then
 			local alpha = cap(255*(1-(transition_time-3)), 0,255)
 			lg.setColor(255,255,255,alpha)
-			lg.drawq(img.tangram, quad.screen, 0,0)
+			lg.draw(img.tangram, quad.screen, 0,0)
 			lg.setColor(255,255,255,255)
 		else
-			lg.drawq(img.tangram, quad.screen, 0,0)
+			lg.draw(img.tangram, quad.screen, 0,0)
 		end
 	elseif transition_time < 8 then
 		if transition_time < 5 then

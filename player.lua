@@ -662,7 +662,7 @@ function Player:draw()
 		end
 
 		-- Draw gun
-		lg.drawq(img.player_gun, quad.player_gun[self.gundir], self.flx, self.fly-16, 0, self.dir, 1, 3, 0)
+		lg.draw(img.player_gun, quad.player_gun[self.gundir], self.flx, self.fly-16, 0, self.dir, 1, 3, 0)
 
 		-- Draw water
 		if self.shooting == true then
@@ -699,11 +699,11 @@ function Player:draw()
 	-- Dead from overheating
 	elseif self.state == PS_DEAD then
 		if self.yspeed < 0 then
-			lg.drawq(img.player_death, quad.player_death_up, self.flx, self.time, 0,self.dir,1, 8, 24)
-			lg.drawq(img.player_death, quad.player_death_suit, self.flx, self.fly, 0,self.dir,1, 7, 10)
+			lg.draw(img.player_death, quad.player_death_up, self.flx, self.time, 0,self.dir,1, 8, 24)
+			lg.draw(img.player_death, quad.player_death_suit, self.flx, self.fly, 0,self.dir,1, 7, 10)
 		else
-			lg.drawq(img.player_death, quad.player_death_suit, self.flx, self.fly, 0,self.dir,1, 7, 10)
-			lg.drawq(img.player_death, quad.player_death_down, self.flx, self.time, 0,self.dir,1, 8,25)
+			lg.draw(img.player_death, quad.player_death_suit, self.flx, self.fly, 0,self.dir,1, 7, 10)
+			lg.draw(img.player_death, quad.player_death_down, self.flx, self.time, 0,self.dir,1, 8,25)
 		end
 	end
 end
@@ -715,35 +715,35 @@ function Player:drawWater()
 
 	if self.gundir == GD_UP then -- up
 		if self.streamLength > 0 then
-			lg.drawq(img.stream, self.wquad, self.flx, self.fly, -math.pi/2, 1, self.dir, -19, 4)
+			lg.draw(img.stream, self.wquad, self.flx, self.fly, -math.pi/2, 1, self.dir, -19, 4)
 			if self.streamCollided == false then
-				lg.drawq(img.water, quad.water_end[frame], self.flx+self.dir*0.5, self.fly-20-math.floor(self.streamLength), -math.pi/2, 1,1, 8, 7.5)
+				lg.draw(img.water, quad.water_end[frame], self.flx+self.dir*0.5, self.fly-20-math.floor(self.streamLength), -math.pi/2, 1,1, 8, 7.5)
 			else
-				lg.drawq(img.water, quad.water_hit[frame], self.flx+self.dir*0.5, self.fly-13-math.floor(self.streamLength), -math.pi/2, 1,1, 8, 9.5)
+				lg.draw(img.water, quad.water_hit[frame], self.flx+self.dir*0.5, self.fly-13-math.floor(self.streamLength), -math.pi/2, 1,1, 8, 9.5)
 			end
 		end
-		lg.drawq(img.water, quad.water_out[frame], self.flx+self.dir*0.5, self.fly-16, -math.pi/2, 1,1, 0,7.5)
+		lg.draw(img.water, quad.water_out[frame], self.flx+self.dir*0.5, self.fly-16, -math.pi/2, 1,1, 0,7.5)
 
 	elseif self.gundir == GD_HORIZONTAL then -- horizontal
 		if self.streamLength > 0 then
-			lg.drawq(img.stream, self.wquad, self.flx+self.dir*11, self.fly-10, 0, self.dir, 1)
+			lg.draw(img.stream, self.wquad, self.flx+self.dir*11, self.fly-10, 0, self.dir, 1)
 			if self.streamCollided == false then
-				lg.drawq(img.water, quad.water_end[frame], self.flx+self.dir*(11+math.floor(self.streamLength)), self.fly-5, 0, self.dir,1, 7.5, 8)
+				lg.draw(img.water, quad.water_end[frame], self.flx+self.dir*(11+math.floor(self.streamLength)), self.fly-5, 0, self.dir,1, 7.5, 8)
 			else
-				lg.drawq(img.water, quad.water_hit[frame], self.flx+self.dir*(6.5+math.floor(self.streamLength))-1, self.fly-7, 0, self.dir,1, 9.5, 8)
+				lg.draw(img.water, quad.water_hit[frame], self.flx+self.dir*(6.5+math.floor(self.streamLength))-1, self.fly-7, 0, self.dir,1, 9.5, 8)
 			end
 		end
-		lg.drawq(img.water, quad.water_out[frame], self.flx, self.fly, 0, self.dir,1, -9,13)
+		lg.draw(img.water, quad.water_out[frame], self.flx, self.fly, 0, self.dir,1, -9,13)
 	
 	elseif self.gundir == GD_DOWN then -- down
 		if self.streamLength > 0 then
-			lg.drawq(img.stream, self.wquad, self.flx, self.fly, -math.pi/2, -1, self.dir, -5, 4)
+			lg.draw(img.stream, self.wquad, self.flx, self.fly, -math.pi/2, -1, self.dir, -5, 4)
 			if self.streamCollided == false then
-				lg.drawq(img.water, quad.water_end[frame], self.flx+self.dir*0.5, self.fly+math.floor(self.streamLength), math.pi/2, 1,1, 5, 7.5)
+				lg.draw(img.water, quad.water_end[frame], self.flx+self.dir*0.5, self.fly+math.floor(self.streamLength), math.pi/2, 1,1, 5, 7.5)
 			else
-				lg.drawq(img.water, quad.water_hit[frame], self.flx+self.dir*0.5, self.fly+math.floor(self.streamLength)+1, math.pi/2, 1,1, 11, 9.5)
+				lg.draw(img.water, quad.water_hit[frame], self.flx+self.dir*0.5, self.fly+math.floor(self.streamLength)+1, math.pi/2, 1,1, 11, 9.5)
 			end
 		end
-		lg.drawq(img.water, quad.water_out[frame], self.flx+self.dir*0.5, self.fly+2, math.pi/2, 1,1, 0,7.5)
+		lg.draw(img.water, quad.water_out[frame], self.flx+self.dir*0.5, self.fly+2, math.pi/2, 1,1, 0,7.5)
 	end
 end

@@ -4,7 +4,7 @@ default_config = {
 	vsync = true,
 	sfx_volume = 1.0,
 	music_volume = 0.5,
-	joystick = 1,
+	joystick = nil,
 	keys = {
 			up = "up", down = "down", left = "left", right = "right", jump = "s", shoot = "d", action = "a"
 	},
@@ -52,10 +52,10 @@ function loadConfig()
 	end
 
 	-- Select first open joystick if current is not open
-	if love.joystick.isOpen(config.joystick) == false then
-		config.joystick = 1
-		nextJoystick()
-	end
+--	if love.joystick.isOpen(config.joystick) == false then
+--		config.joystick = 1
+--		nextJoystick()
+--	end
 end
 
 function loadHighscores()
@@ -94,11 +94,12 @@ end
 
 function setMode()
 	if config.fullscreen == 0 then
-		love.graphics.setMode(WIDTH*config.scale, HEIGHT*config.scale, false, config.vsync)
+	   local flags = {fullscreen = false, vsync = config.vsync}
+		love.window.setMode(WIDTH*config.scale, HEIGHT*config.scale, flags)
 		love.graphics.setScissor()
 	elseif config.fullscreen > 0 and config.fullscreen <= 3 then
-		love.graphics.setMode(0,0, true, config.vsync)
-		love.graphics.setMode(love.graphics.getWidth(), love.graphics.getHeight(), true, config.vsync)
+		love.window.setMode(0,0, true, config.vsync)
+		love.window.setMode(love.graphics.getWidth(), love.graphics.getHeight(), true, config.vsync)
 	end
 	fs_translatex = (love.graphics.getWidth()-WIDTH*config.scale)/2
 	fs_translatey = (love.graphics.getHeight()-HEIGHT*config.scale)/2

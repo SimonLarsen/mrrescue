@@ -1,8 +1,5 @@
 --[[
-The following module has been heavily modified for Mr. Rescue
-does not represent the quality of the original module.
-
-Copyright (c) 2009-2010 Bart Bes
+Copyright (c) 2009-2013 Bart Bes
 
 Permission is hereby granted, free of charge, to any person
 obtaining a copy of this software and associated documentation
@@ -37,7 +34,7 @@ animation.__index = animation
 -- @param delay The delay between two frames
 -- @param frames The number of frames, 0 for autodetect
 -- @return The created animation
-function newAnimation(image, fw, fh, delay, frames, callback)
+function newAnimation(image, fw, fh, delay, frames)
 	local a = {}
 	a.img = image
 	a.frames = {}
@@ -48,8 +45,8 @@ function newAnimation(image, fw, fh, delay, frames, callback)
 	a.fh = fh
 	a.playing = true
 	a.speed = 1
+	a.mode = 1
 	a.direction = 1
-	a.callback = callback
 	local imgw = image:getWidth()
 	local imgh = image:getHeight()
 	if frames == 0 then
@@ -73,29 +70,30 @@ function animation:update(dt)
 	self.timer = self.timer + dt * self.speed
 	if self.timer > self.delays[self.position] then
 		self.timer = self.timer - self.delays[self.position]
-		self.position = self.position + self.direction
+		self.position = self.position + 1 * self.direction
 		if self.position > #self.frames then
-			if self.callback then self.callback() end
-			self.position = 1
-		elseif self.position < 1 then
-			if self.callback then self.callback() end
+			if self.mode == 1 then
+				self.position = 1
+			elseif self.mode == 2 then
+				self.position = self.position - 1
+				self:stop()
+			elseif self.mode == 3 then
+				self.direction = -1
+				self.position = self.position - 1
+			end
+		elseif self.position < 1 and self.mode == 3 then
+			self.direction = 1
+			self.position = self.position + 1
+		elseif self.position < 1 and self.mode == 4 then
 			self.position = #self.frames
 		end
 	end
 end
 
 --- Draw the animation
--- @param x The X coordinate
--- @param y The Y coordinate
--- @param angle The angle to draw at (radians)
--- @param sx The scale on the X axis
--- @param sy The scale on the Y axis
--- @param ox The X coordinate of the origin
--- @param oy The Y coordinate of the origin
--- @param frame Optional frame to draw instead of current position
--- @param altimg Optional alternative image to draw instead
-function animation:draw(x, y, angle, sx, sy, ox, oy, frame, altimg)
-	love.graphics.drawq(altimg or self.img, self.frames[frame or self.position], x, y, angle, sx, sy, ox, oy)
+local drawq = love.graphics.drawq or love.graphics.draw
+function animation:draw(...)
+	return drawq(self.img, self.frames[self.position], ...)
 end
 
 --- Add a frame
@@ -126,7 +124,7 @@ end
 --- Reset
 -- Go back to the first frame.
 function animation:reset()
-	self:seek(1)
+	return self:seek(1)
 end
 
 --- Seek to a frame
@@ -164,13 +162,31 @@ end
 --- Get the width of the current frame
 -- @return The width of the current frame
 function animation:getWidth()
-	return self.frames[self.position]:getWidth()
+	return (select(3, self.frames[self.position]:getViewport()))
 end
 
 --- Get the height of the current frame
 -- @return The height of the current frame
 function animation:getHeight()
-	return self.frames[self.position]:getHeight()
+	return (select(4, self.frames[self.position]:getViewport()))
+end
+
+--- Set the play mode
+-- Could be "loop" to loop it, "once" to play it once, or "bounce" to play it, reverse it, and play it again (looping)
+-- @param mode The mode: one of the above
+function animation:setMode(mode)
+	if mode == "loop" then
+		self.mode = 1
+		self.direction = 1
+	elseif mode == "once" then
+		self.mode = 2
+		self.direction = 1
+	elseif mode == "bounce" then
+		self.mode = 3
+	elseif mode == "reverse" then
+		self.mode = 4
+		self.direction = -1
+	end
 end
 
 --- Animations_legacy_support
@@ -180,9 +196,9 @@ if Animations_legacy_support then
 	local oldLGDraw = love.graphics.draw
 	function love.graphics.draw(item, ...)
 		if type(item) == "table" and item.draw then
-			item:draw(...)
+			return item:draw(...)
 		else
-			oldLGDraw(item, ...)
+			return oldLGDraw(item, ...)
 		end
 	end
 end

@@ -1,7 +1,7 @@
 function drawHealthBar(x,y, health, max_health)
 	local length = math.floor((health/max_health)*16+0.5)
-	lg.drawq(img.enemy_healthbar, quad.enemy_healthbar_base, x-10, y, 0, 1, 1, 0, 4)
-	lg.drawq(img.enemy_healthbar, quad.enemy_healthbar_bar,  x-8, y, 0, length, 1, 0, 2)
+	lg.draw(img.enemy_healthbar, quad.enemy_healthbar_base, x-10, y, 0, 1, 1, 0, 4)
+	lg.draw(img.enemy_healthbar, quad.enemy_healthbar_bar,  x-8, y, 0, length, 1, 0, 2)
 end
 
 -- %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -101,7 +101,7 @@ function NormalEnemy:draw()
 end
 
 function NormalEnemy:drawLight()
-	lg.drawq(img.light_fire, quad.light_fire[(self.anim.position-1)%5], self.x-45, self.y-57)
+	lg.draw(img.light_fire, quad.light_fire[(self.anim.position-1)%5], self.x-45, self.y-57)
 end
 
 function NormalEnemy:collideBox(bbox)
@@ -257,7 +257,7 @@ function JumperEnemy:draw()
 end
 
 function JumperEnemy:drawLight()
-	lg.drawq(img.light_fire, quad.light_fire[(self.anim.position-1)%5], self.x-45, self.y-62)
+	lg.draw(img.light_fire, quad.light_fire[(self.anim.position-1)%5], self.x-45, self.y-62)
 end
 
 function JumperEnemy:collideBox(bbox)
@@ -416,7 +416,7 @@ function VolcanoEnemy:draw()
 end
 
 function VolcanoEnemy:drawLight()
-	lg.drawq(img.light_fire, quad.light_fire[(self.anim.position-1)%5], self.x-45, self.y-60)
+	lg.draw(img.light_fire, quad.light_fire[(self.anim.position-1)%5], self.x-45, self.y-60)
 end
 
 function VolcanoEnemy:shot(dt,dir)
@@ -630,11 +630,11 @@ end
 function Fireball:draw()
 	self.flx = math.floor(self.x)
 	self.fly = math.floor(self.y)
-	lg.drawq(img.enemy_fireball, quad.fireball[self.frame], self.x, self.y, 0, 1, 1, 4, 4)
+	lg.draw(img.enemy_fireball, quad.fireball[self.frame], self.x, self.y, 0, 1, 1, 4, 4)
 end
 
 function Fireball:drawLight()
-	lg.drawq(img.light_fireball, quad.light_fireball[self.frame], self.x, self.y, 0, 1,1, 16, 16)
+	lg.draw(img.light_fireball, quad.light_fireball[self.frame], self.x, self.y, 0, 1,1, 16, 16)
 end
 
 function Fireball:collideBox(bbox)
