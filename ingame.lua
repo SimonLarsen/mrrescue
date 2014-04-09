@@ -15,7 +15,7 @@ function ingame.enter()
 end
 
 function ingame.newGame()
-	ingame_state = INGAME_COUNTDOWN_IN
+	ingame_state = INGAME_ACTIVE
 	max_casualties = 6-level
 	ingame.shake = 0
 
@@ -189,7 +189,7 @@ function ingame.draw()
 		lg.pop()
 
 		if map.type == MT_NORMAL then
-			lg.setBlendMode("multiplicative")
+			lg.setBlendMode("premultiplied")
 			lg.draw(canvas, 0,0)
 			lg.setBlendMode("alpha")
 		end

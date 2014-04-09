@@ -78,7 +78,6 @@ function love.update(dt)
 		yacccool = yacccool - dt
 	end
 	gamestates[state].update(dt)
-	print (translate_x, translate_y)
 
 end
 
@@ -91,7 +90,7 @@ function love.draw()
 
 	lg.setScissor()
 	if state == STATE_INGAME and map.type == MT_NORMAL then
-		updateLightmap()
+--		updateLightmap()
 	end
 end
 

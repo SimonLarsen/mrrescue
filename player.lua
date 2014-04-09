@@ -92,7 +92,6 @@ end
 -- @param dt Time passed since last update
 function Player:update(dt)
 	self.shooting = false
-
 	-- RUNNING STATE
 	if self.state == PS_RUN then
 		self:updateRunning(dt)
@@ -654,9 +653,9 @@ function Player:draw()
 	if self.state == PS_RUN then
 		-- Draw player
 		if self.onGround == false then
-			self.anim:draw(self.flx, self.fly, 0, self.dir, 1, 8, 22, 2)
+			self.anim:draw(self.flx, self.fly, 0, self.dir, 1, 8, 22)
 		elseif math.abs(self.xspeed) < 30 then
-			self.anim:draw(self.flx, self.fly, 0, self.dir, 1, 8, 22, 4)
+			self.anim:draw(self.flx, self.fly, 0, self.dir, 1, 8, 22)
 		else
 			self.anim:draw(self.flx, self.fly, 0, self.dir, 1, 8, 22)
 		end
@@ -675,7 +674,8 @@ function Player:draw()
 		end
 	-- Climbing
 	elseif self.state == PS_CLIMB then
-		self.anim:draw(self.flx, self.fly, 0, 1,1, 7, 20)
+	   print (self.flx, self.fly)
+--		self.anim:draw(self.flx, self.fly, 0, 1,1, 7, 20)
 	-- Carrying a human
 	elseif self.state == PS_CARRY then
 		if math.abs(self.xspeed) < 30 then

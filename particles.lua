@@ -40,7 +40,7 @@ end
 
 function Shards:draw()
 	for i,v in ipairs(self.shards) do
-		love.graphics.drawq(img.shards, quad.shard[i], v.x, v.y, v.rot, 1,1, 4,4)
+		love.graphics.draw(img.shards, quad.shard[i], v.x, v.y, v.rot, 1,1, 4,4)
 	end
 end
 
@@ -144,7 +144,7 @@ end
 
 function Sparkles:draw()
 	for i,v in ipairs(self.particles) do
-		love.graphics.drawq(img.sparkles, quad.sparkles[v.size], v.x, v.y, 0,1,1, 3.5, 3.5)
+		love.graphics.draw(img.sparkles, quad.sparkles[v.size], v.x, v.y, 0,1,1, 3.5, 3.5)
 	end
 end
 
@@ -171,7 +171,7 @@ end
 
 function SaveBeam:draw()
 	local frame = math.floor(self.time)
-	lg.drawq(img.savebeam, quad.savebeam[frame], self.x, self.y, 0, self.dir, 1, 1, 16)
+	lg.draw(img.savebeam, quad.savebeam[frame], self.x, self.y, 0, self.dir, 1, 1, 16)
 end
 
 PopupText = {}
@@ -219,7 +219,7 @@ function PopupText:update(dt)
 end
 
 function PopupText:draw()
-	lg.drawq(img.popup_text, quad.popup_text[self.id], self.x, self.y-math.sqrt(self.time)*32, 0, 1, 1, 32, 0)
+	lg.draw (img.popup_text, quad.popup_text[self.id], self.x, self.y-math.sqrt(self.time)*32, 0, 1, 1, 32, 0)
 end
 
 CoalBallBreak = {}
