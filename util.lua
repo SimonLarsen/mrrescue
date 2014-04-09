@@ -109,15 +109,15 @@ function drawBox(x,y,w,h)
 	lg.rectangle("fill",x+1,y+1,w-2,h-2)
 	lg.setColor(255,255,255)
 	-- Draw sides
-	lg.drawq(img.menu_box, quad.box_left, x, y+1, 0, 1, (h-2))
-	lg.drawq(img.menu_box, quad.box_left, x+w, y+1, 0, -1, (h-2))
-	lg.drawq(img.menu_box, quad.box_top,  x+1, y, 0, (w-2), 1)
-	lg.drawq(img.menu_box, quad.box_top,  x+1, y+h, 0, (w-2), -1)
+	lg.draw(img.menu_box, quad.box_left, x, y+1, 0, 1, (h-2))
+	lg.draw(img.menu_box, quad.box_left, x+w, y+1, 0, -1, (h-2))
+	lg.draw(img.menu_box, quad.box_top,  x+1, y, 0, (w-2), 1)
+	lg.draw(img.menu_box, quad.box_top,  x+1, y+h, 0, (w-2), -1)
 	-- Draw corners
-	lg.drawq(img.menu_box, quad.box_corner, x,y)
-	lg.drawq(img.menu_box, quad.box_corner, x+w,y, 0, -1, 1)
-	lg.drawq(img.menu_box, quad.box_corner, x,y+h, 0, 1, -1)
-	lg.drawq(img.menu_box, quad.box_corner, x+w,y+h, 0, -1, -1)
+	lg.draw(img.menu_box, quad.box_corner, x,y)
+	lg.draw(img.menu_box, quad.box_corner, x+w,y, 0, -1, 1)
+	lg.draw(img.menu_box, quad.box_corner, x,y+h, 0, 1, -1)
+	lg.draw(img.menu_box, quad.box_corner, x+w,y+h, 0, -1, -1)
 end
 
 function secondsToString(time)

@@ -62,7 +62,7 @@ function love.load()
 
 	love.graphics.setBackgroundColor(0,0,0)
 
-	love.graphics.setDefaultImageFilter("nearest","nearest")
+	love.graphics.setDefaultFilter("nearest","nearest")
 	loadResources()
 
 	setMode()
@@ -78,6 +78,7 @@ function love.update(dt)
 		yacccool = yacccool - dt
 	end
 	gamestates[state].update(dt)
+
 end
 
 function love.draw()
@@ -89,7 +90,7 @@ function love.draw()
 
 	lg.setScissor()
 	if state == STATE_INGAME and map.type == MT_NORMAL then
-		updateLightmap()
+--		updateLightmap()
 	end
 end
 
@@ -143,57 +144,60 @@ function updateKeys()
 	end
 
 	-- Check joystick axes
-	local axis1, axis2 = love.joystick.getAxes(config.joystick)
-	if axis1 and axis2 then
-		if axis1 < -0.5 then
-			keystate.left = true
-		elseif axis1 > 0.5 then
-			keystate.right = true
-		end
-		if axis2 < -0.5 then
-			keystate.up = true
-		elseif axis2 > 0.5 then
-			keystate.down = true
-		end
+	if config.joystick then
+	   local axis1, axis2 = config.joystick:getAxes()
+	   if axis1 and axis2 then
+	      if axis1 < -0.5 then
+		 keystate.left = true
+	      elseif axis1 > 0.5 then
+		 keystate.right = true
+	      end
+	      if axis2 < -0.5 then
+		 keystate.up = true
+	      elseif axis2 > 0.5 then
+		 keystate.down = true
+	      end
 
-		-- Check sudden movements in axes
-		-- (for ladders and menus)
-		xacc = xacc*0.50 + axis1*0.50
-		yacc = yacc*0.50 + axis2*0.50
+	      -- Check sudden movements in axes
+	      -- (for ladders and menus)
+	      xacc = xacc*0.50 + axis1*0.50
+	      yacc = yacc*0.50 + axis2*0.50
 
-		if math.abs(axis1) < 0.1 then
-			xacccool = 0
-		end
-		if math.abs(axis2) < 0.1 then
-			yacccool = 0
-		end
+	      if math.abs(axis1) < 0.1 then
+		 xacccool = 0
+	      end
+	      if math.abs(axis2) < 0.1 then
+		 yacccool = 0
+	      end
 
-		if xacccool <= 0 then
-			if axis1 < -0.90 then
-				gamestates[state].action("left")
-				xacccool = AXIS_COOLDOWN
-			elseif axis1 > 0.90 then
-				gamestates[state].action("right")
-				xacccool = AXIS_COOLDOWN
-			end
-		end
+	      if xacccool <= 0 then
+		 if axis1 < -0.90 then
+		    gamestates[state].action("left")
+		    xacccool = AXIS_COOLDOWN
+		 elseif axis1 > 0.90 then
+		    gamestates[state].action("right")
+		    xacccool = AXIS_COOLDOWN
+		 end
+	      end
 
-		if yacccool <= 0 then
-			if axis2 < -0.90 then
-				gamestates[state].action("up")
-				yacccool = AXIS_COOLDOWN
-			elseif axis2 > 0.90 then
-				gamestates[state].action("down")
-				yacccool = AXIS_COOLDOWN
-			end
-		end
+	      if yacccool <= 0 then
+		 if axis2 < -0.90 then
+		    gamestates[state].action("up")
+		    yacccool = AXIS_COOLDOWN
+		 elseif axis2 > 0.90 then
+		    gamestates[state].action("down")
+		    yacccool = AXIS_COOLDOWN
+		 end
+	      end
+	   end
 	end
-
 	-- Check joystick keys
-	for action, key in pairs(config.joykeys) do
-		if love.joystick.isDown(config.joystick, key) then
-			keystate[action] = true
-		end
+	if config.joystick then
+	   for action, key in pairs(config.joykeys) do
+	      if config.joystick:isDown(key) then
+		 keystate[action] = true
+	      end
+	   end
 	end
 end
 
@@ -207,7 +211,7 @@ function love.run()
 
     -- Main loop time.
     while true do
-		local frame_start = love.timer.getMicroTime()
+		local frame_start = love.timer.getTime()
         -- Process events.
         if love.event then
             love.event.pump()

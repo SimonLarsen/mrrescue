@@ -18,16 +18,16 @@ function levelselection.draw()
 
 	lg.print("PLEASE SELECT", 129, 11)
 	lg.print("A LEVEL", 151, 22)
-	lg.drawq(img.level_buildings, quad.level_buildings, 116, 34)
+	lg.draw(img.level_buildings, quad.level_buildings, 116, 34)
 	drawBox(6,82,126,69)
 	drawBox(6,44,126,38)
 
 	if level == 1 then
-		lg.drawq(img.level_buildings, quad.building_outline1, 138,121)
+		lg.draw(img.level_buildings, quad.building_outline1, 138,121)
 	elseif level == 2 then
-		lg.drawq(img.level_buildings, quad.building_outline2, 192,108)
+		lg.draw(img.level_buildings, quad.building_outline2, 192,108)
 	else
-		lg.drawq(img.level_buildings, quad.building_outline3, 156,43)
+		lg.draw(img.level_buildings, quad.building_outline3, 156,43)
 	end
 
 	lg.printf(BUILDING_NAMES[level][1], 16, 54, 107, "center")

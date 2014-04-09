@@ -74,19 +74,19 @@ end
 
 function Fire:drawFront()
 	if self.ground == true then
-		love.graphics.drawq(img.fire_floor, quad.fire_floor[self.flframe%4], self.x, self.y+1)
+		love.graphics.draw(img.fire_floor, quad.fire_floor[self.flframe%4], self.x, self.y+1)
 	end
 	if self.ceiling == true then
-		love.graphics.drawq(img.fire_floor, quad.fire_floor[self.flframe%4], self.x, self.y-1, 0,1,-1,0,16)
+		love.graphics.draw(img.fire_floor, quad.fire_floor[self.flframe%4], self.x, self.y-1, 0,1,-1,0,16)
 	end
 end
 
 function Fire:drawBack()
 	self.flframe = math.floor(self.frame)
 	if self.health < Fire.max_health/2 then
-		love.graphics.drawq(img.fire_wall_small, quad.fire_wall[self.flframe%5], self.x, self.y, 0,1,1,4,16)
+		love.graphics.draw(img.fire_wall_small, quad.fire_wall[self.flframe%5], self.x, self.y, 0,1,1,4,16)
 	else
-		love.graphics.drawq(img.fire_wall, quad.fire_wall[self.flframe%5], self.x, self.y, 0,1,1,4,16)
+		love.graphics.draw(img.fire_wall, quad.fire_wall[self.flframe%5], self.x, self.y, 0,1,1,4,16)
 	end
 end
 

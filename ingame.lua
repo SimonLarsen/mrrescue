@@ -15,7 +15,7 @@ function ingame.enter()
 end
 
 function ingame.newGame()
-	ingame_state = INGAME_COUNTDOWN_IN
+	ingame_state = INGAME_ACTIVE
 	max_casualties = 6-level
 	ingame.shake = 0
 
@@ -189,7 +189,7 @@ function ingame.draw()
 		lg.pop()
 
 		if map.type == MT_NORMAL then
-			lg.setBlendMode("multiplicative")
+			lg.setBlendMode("premultiplied")
 			lg.draw(canvas, 0,0)
 			lg.setBlendMode("alpha")
 		end
@@ -197,7 +197,7 @@ function ingame.draw()
 		-- Draw red screen if hit
 		if player.heat > 0 then
 			lg.setColor(255,255,255,cap(player.heat*255, 16, 255))
-			lg.drawq(img.red_screen, quad.red_screen, 0,0)
+			lg.draw(img.red_screen, quad.red_screen, 0,0)
 			lg.setColor(255,255,255,255)
 		end
 
@@ -214,7 +214,7 @@ function ingame.draw()
 
 			for ix = 0,7 do
 				for iy = 0,6 do
-					lg.drawq(img.circles, quad.circles[math.max(0,math.min(frame-13+ix+iy,6))], ix*32, iy*32)
+					lg.draw(img.circles, quad.circles[math.max(0,math.min(frame-13+ix+iy,6))], ix*32, iy*32)
 				end
 			end
 		end
@@ -223,7 +223,7 @@ function ingame.draw()
 
 			for ix = 0,7 do
 				for iy = 0,6 do
-					lg.drawq(img.circles, quad.circles[6-math.max(0,math.min(frame-13+ix+iy,6))], ix*32, iy*32)
+					lg.draw(img.circles, quad.circles[6-math.max(0,math.min(frame-13+ix+iy,6))], ix*32, iy*32)
 				end
 			end
 		end
@@ -234,7 +234,7 @@ function ingame.draw()
 		end
 		if ingame_state == INGAME_COUNTDOWN then
 			local frame = math.floor(transition_time)
-			lg.drawq(img.countdown, quad.countdown[frame], 96, 87)
+			lg.draw(img.countdown, quad.countdown[frame], 96, 87)
 		end
 
 	elseif ingame_state == INGAME_PRESCREEN then
@@ -266,26 +266,26 @@ function drawHUD()
 	quad.water_bar:setViewport(0, 0, math.floor(water_ratio*55+0.5), 11)
 	if player.overloaded == false then
 		if player.hasReserve == true then
-			lg.drawq(img.reserve_bar, quad.water_bar, 10, HEIGHT-22)
+			lg.draw(img.reserve_bar, quad.water_bar, 10, HEIGHT-22)
 		else
-			lg.drawq(img.water_bar, quad.water_bar, 10, HEIGHT-22)
+			lg.draw(img.water_bar, quad.water_bar, 10, HEIGHT-22)
 		end
 	else
-		lg.drawq(img.overloaded_bar, quad.water_bar, 10, HEIGHT-22)
+		lg.draw(img.overloaded_bar, quad.water_bar, 10, HEIGHT-22)
 	end
 
 	-- Draw temperature bar
 	local temp_length = math.floor((player.temperature/player.max_temperature)*82+0.5)
 	quad.temperature_bar:setViewport(0,0, temp_length, 6)
-	lg.drawq(img.temperature_bar, quad.temperature_bar, 75, HEIGHT-25)
-	lg.drawq(img.temperature_bar, quad.temperature_bar_end, 75+temp_length, HEIGHT-25)
+	lg.draw(img.temperature_bar, quad.temperature_bar, 75, HEIGHT-25)
+	lg.draw(img.temperature_bar, quad.temperature_bar_end, 75+temp_length, HEIGHT-25)
 
 	-- Draw casualty count
 	for i=1,max_casualties do
 		if i<= casualties then
-			lg.drawq(img.hud_people, quad.hud_people_red, 168+(i-1)*5, HEIGHT-25)
+			lg.draw(img.hud_people, quad.hud_people_red, 168+(i-1)*5, HEIGHT-25)
 		else
-			lg.drawq(img.hud_people, quad.hud_people_green, 168+(i-1)*5, HEIGHT-25)
+			lg.draw(img.hud_people, quad.hud_people_green, 168+(i-1)*5, HEIGHT-25)
 		end
 	end
 
@@ -308,13 +308,13 @@ function drawHUD()
 	-- Draw item slots
 	for i=1,3 do
 		if i <= player.num_regens then
-			lg.drawq(img.item_slots, quad.item_slot_regen, 78+(i-1)*6, HEIGHT-14)
+			lg.draw(img.item_slots, quad.item_slot_regen, 78+(i-1)*6, HEIGHT-14)
 		end
 		if i <= player.num_tanks then
-			lg.drawq(img.item_slots, quad.item_slot_tank, 100+(i-1)*6, HEIGHT-14)
+			lg.draw(img.item_slots, quad.item_slot_tank, 100+(i-1)*6, HEIGHT-14)
 		end
 		if i <= player.num_suits then
-			lg.drawq(img.item_slots, quad.item_slot_suit, 122+(i-1)*6, HEIGHT-14)
+			lg.draw(img.item_slots, quad.item_slot_suit, 122+(i-1)*6, HEIGHT-14)
 		end
 	end
 
@@ -328,15 +328,15 @@ function drawHUD()
 
 	-- Draw boss health bar
 	if map.type == MT_BOSS and ingame_state ~= INGAME_WON then
-		lg.drawq(img.boss_health, quad.boss_health, 0, 11)
+		lg.draw(img.boss_health, quad.boss_health, 0, 11)
 		local boss_length = math.floor((map.boss.health/map.boss.MAX_HEALTH)*178+0.5)
-		lg.drawq(img.boss_health, quad.boss_bar, 64,22, 0, boss_length, 1)
-		lg.drawq(img.boss_health, quad.boss_bar_end, 64+boss_length,22, 0)
+		lg.draw(img.boss_health, quad.boss_bar, 64,22, 0, boss_length, 1)
+		lg.draw(img.boss_health, quad.boss_bar_end, 64+boss_length,22, 0)
 
 		local bossframe = 0
 		if map.boss.angry == true then bossframe = bossframe + 2 end
 		if map.boss.hit == true or map.boss.state == BS_DEAD then bossframe = bossframe + 1 end
-		lg.drawq(map.boss:getPortraitImage(), quad.boss_portrait[bossframe], 15,15)
+		lg.draw(map.boss:getPortraitImage(), quad.boss_portrait[bossframe], 15,15)
 	end
 
 	-- Draw panic/burning human icons
@@ -348,13 +348,13 @@ function drawPrescreen()
 	lg.setFont(font.bold)
 	if map.type == MT_NORMAL then
 		lg.printf("FLOOR ".. floor .. "-" .. floor+2, 0, 40, WIDTH, "center")
-		lg.drawq(img.captain_dialog, quad.prescreen_music, 7, 183)
+		lg.draw(img.captain_dialog, quad.prescreen_music, 7, 183)
 	else
 		lg.printf("ROOF", 0, 40, WIDTH, "center")
 	end
 
 	local fr = math.floor(transition_time) % 2
-	lg.drawq(img.captain_dialog, quad.captain_dialog[fr], 28, 72)
+	lg.draw(img.captain_dialog, quad.captain_dialog[fr], 28, 72)
 
 	lg.printf(prescreen_message, 74, 80, 150, "left")
 
@@ -363,7 +363,7 @@ end
 
 function drawGameover()
 	local fr = math.floor(transition_time) % 2
-	lg.drawq(img.captain_dialog_sad, quad.captain_dialog[fr], 28, 72)
+	lg.draw(img.captain_dialog_sad, quad.captain_dialog[fr], 28, 72)
 
 	if casualties >= max_casualties then
 		lg.printf(prescreen_message, 74, 80, 140, "left")
@@ -437,7 +437,7 @@ function drawIcon(x,y,frame_offset)
 	if xt > yt then t = yt
 	else t = xt end
 	
-	lg.drawq(img.warning_icons, quad.warning_icons[frame], WIDTH/2+t*deltax, 84+t*deltay, 0,1,1,11,10)
+	lg.draw(img.warning_icons, quad.warning_icons[frame], WIDTH/2+t*deltax, 84+t*deltay, 0,1,1,11,10)
 end
 
 --- Updates the light map canvas
