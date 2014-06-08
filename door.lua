@@ -72,9 +72,9 @@ end
 
 function Door:draw()
 	if self.health > 0.20 then
-		love.graphics.drawq(img.door, quad.door_normal, self.x-2,  self.y+24, self.state*(100+self.yspeed)*self.xspeed*0.0005, 1,1, 0, 24)
+		love.graphics.draw(img.door, quad.door_normal, self.x-2,  self.y+24, self.state*(100+self.yspeed)*self.xspeed*0.0005, 1,1, 0, 24)
 	else
-		love.graphics.drawq(img.door, quad.door_damaged, self.x-2,  self.y+24, self.state*(100+self.yspeed)*self.xspeed*0.0005, 1,1, 0, 24)
+		love.graphics.draw(img.door, quad.door_damaged, self.x-2,  self.y+24, self.state*(100+self.yspeed)*self.xspeed*0.0005, 1,1, 0, 24)
 	end
 end
 

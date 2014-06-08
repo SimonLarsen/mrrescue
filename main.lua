@@ -62,7 +62,7 @@ function love.load()
 
 	love.graphics.setBackgroundColor(0,0,0)
 
-	love.graphics.setDefaultImageFilter("nearest","nearest")
+	love.graphics.setDefaultFilter("nearest","nearest")
 	loadResources()
 
 	setMode()
@@ -115,15 +115,19 @@ function love.keypressed(k, uni)
 	gamestates[state].keypressed(k, uni)
 end
 
+function love.textinput(text)
+	if gamestates[state].textinput then
+		gamestates[state].textinput(text)
+	end
+end
+
 function love.joystickpressed(joy, k)
-	if joy == config.joystick then
-		if gamestates[state].joystickpressed then
-			gamestates[state].joystickpressed(joy, k)
-		else
-			for a, key in pairs(config.joykeys) do
-				if k == key then
-					gamestates[state].action(a)
-				end
+	if gamestates[state].joystickpressed then
+		gamestates[state].joystickpressed(joy, k)
+	else
+		for a, key in pairs(config.joykeys) do
+			if k == key then
+				gamestates[state].action(a)
 			end
 		end
 	end
@@ -143,7 +147,10 @@ function updateKeys()
 	end
 
 	-- Check joystick axes
-	local axis1, axis2 = love.joystick.getAxes(config.joystick)
+	local joystick = love.joystick.getJoysticks()[1]
+	if joystick == nil then return end
+
+	local axis1, axis2 = joystick:getAxes()
 	if axis1 and axis2 then
 		if axis1 < -0.5 then
 			keystate.left = true
@@ -191,7 +198,7 @@ function updateKeys()
 
 	-- Check joystick keys
 	for action, key in pairs(config.joykeys) do
-		if love.joystick.isDown(config.joystick, key) then
+		if joystick:isDown(key) then
 			keystate[action] = true
 		end
 	end
@@ -207,7 +214,7 @@ function love.run()
 
     -- Main loop time.
     while true do
-		local frame_start = love.timer.getMicroTime()
+		local frame_start = love.timer.getTime()
         -- Process events.
         if love.event then
             love.event.pump()

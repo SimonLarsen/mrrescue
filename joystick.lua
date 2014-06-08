@@ -17,24 +17,19 @@ function joystick.draw()
 	lg.scale(config.scale)
 	lg.setFont(font.bold)
 
-	drawBox(40,54,176,108)
+	drawBox(40,54,176,95)
 
 	lg.printf("SET JOYSTICK", 0, 39, WIDTH, "center")
-	lg.print("DEVICE: ", 65, 66)
-	local joyname = love.joystick.getName(config.joystick)
-	if joyname then
-		lg.print(string.upper(joyname:sub(1,10)), 125, 66)
-	end
 	for i=1,4 do
-		if joystick.waiting == true and joystick.selection == i+1 then
+		if joystick.waiting == true and joystick.selection == i then
 			lg.setColor(195,52,41)
 		end
-		lg.print(string.upper(joykeynames[i]), 65, 66+i*13)
-		lg.print(config.joykeys[joykeynames[i]], 165, 66+i*13)
+		lg.print(string.upper(joykeynames[i]), 65, 53+i*13)
+		lg.print(config.joykeys[joykeynames[i]], 165, 53+i*13)
 		lg.setColor(255,255,255)
 	end
-	lg.print("DEFAULT", 65, 131)
-	lg.print("BACK", 65, 144)
+	lg.print("DEFAULT", 65, 118)
+	lg.print("BACK", 65, 131)
 
 	lg.print(">", 52, 53+joystick.selection*13)
 
@@ -43,22 +38,19 @@ end
 
 function joystick.keypressed(k, uni)
 	if k == "down" then
-		joystick.selection = wrap(joystick.selection + 1, 1, 7)
+		joystick.selection = wrap(joystick.selection + 1, 1, 6)
 		playSound("blip")
 	elseif k == "up" then
-		joystick.selection = wrap(joystick.selection - 1, 1, 7)
+		joystick.selection = wrap(joystick.selection - 1, 1, 6)
 		playSound("blip")
 	elseif k == "return" then
-		if joystick.selection == 1 then
-			playSound("blip")
-			nextJoystick()
-		elseif joystick.selection >= 2 and joystick.selection <= 5 then -- Keys
+		if joystick.selection >= 1 and joystick.selection <= 4 then -- Keys
 			playSound("blip")
 			joystick.waiting = true
-		elseif joystick.selection == 6 then -- Default
+		elseif joystick.selection == 5 then -- Default
 			playSound("confirm")
 			defaultJoyKeys()
-		elseif joystick.selection == 7 then -- Back
+		elseif joystick.selection == 6 then -- Back
 			playSound("confirm")
 			options.enter()
 		end
@@ -82,28 +74,25 @@ function joystick.joystickpressed(joy, k)
 		end
 	else
 		playSound("blip")
-		config.joykeys[joykeynames[joystick.selection-1]] = k
+		config.joykeys[joykeynames[joystick.selection]] = k
 		joystick.waiting = false
 	end
 end
 
 function joystick.action(k)
 	if k == "down" then
-		joystick.selection = wrap(joystick.selection + 1, 1, 7)
+		joystick.selection = wrap(joystick.selection + 1, 1, 6)
 		playSound("blip")
 	elseif k == "up" then
-		joystick.selection = wrap(joystick.selection - 1, 1, 7)
+		joystick.selection = wrap(joystick.selection - 1, 1, 6)
 		playSound("blip")
 	elseif k == "jump" then
-		if joystick.selection == 1 then
-			playSound("blip")
-			nextJoystick()
-		elseif joystick.selection >= 2 and joystick.selection <= 5 then -- Keys
+		if joystick.selection >= 1 and joystick.selection <= 4 then -- Keys
 			joystick.waiting = true
-		elseif joystick.selection == 6 then -- DEFAULT
+		elseif joystick.selection == 5 then -- DEFAULT
 			playSound("confirm")
 			defaultJoyKeys()
-		elseif joystick.selection == 7 then -- BACK
+		elseif joystick.selection == 6 then -- BACK
 			playSound("confirm")
 			options.enter()
 		end

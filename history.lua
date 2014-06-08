@@ -17,8 +17,8 @@ function history.draw()
 	lg.scale(config.scale)
 
 	lg.printf("STATS", 0, 32, WIDTH, "center")
-	lg.drawq(img.stats_screen, quad.screen, 0,16)
-	lg.drawq(img.stats_screen, quad.stats_pane[history.selection], 58, 48)
+	lg.draw(img.stats_screen, quad.screen, 0,16)
+	lg.draw(img.stats_screen, quad.stats_pane[history.selection], 58, 48)
 
 	for i=1,2 do
 		local index = i + (history.selection-1)*2
@@ -30,13 +30,13 @@ function history.draw()
 		end
 
 		if stats[index] > stats_interval[index][3] then
-			lg.drawq(img.awards, quad.award_gold[index], 46, 10+i*56)
+			lg.draw(img.awards, quad.award_gold[index], 46, 10+i*56)
 		elseif stats[index] > stats_interval[index][2] then
-			lg.drawq(img.awards, quad.award_silver[index], 46, 10+i*56)
+			lg.draw(img.awards, quad.award_silver[index], 46, 10+i*56)
 		elseif stats[index] > stats_interval[index][1] then
-			lg.drawq(img.awards, quad.award_bronze[index], 46, 10+i*56)
+			lg.draw(img.awards, quad.award_bronze[index], 46, 10+i*56)
 		else
-			lg.drawq(img.awards, quad.award_none[index], 46, 10+i*56)
+			lg.draw(img.awards, quad.award_none[index], 46, 10+i*56)
 		end
 	end
 

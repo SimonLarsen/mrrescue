@@ -346,7 +346,7 @@ function Map:fillBatch(batch, test)
 		for ix = sx, ex do
 			local id = self:get(ix,iy)
 			if id and id > 0 and test(id) == true then
-				batch:addq(quad.tile[self:get(ix,iy)], ix*16, iy*16)
+				batch:add(quad.tile[self:get(ix,iy)], ix*16, iy*16)
 			end
 		end
 	end
@@ -362,7 +362,7 @@ function Map:drawFireLight()
 		for ix = sx, ex do
 			if self.fire[ix] and self.fire[ix][iy] then
 				local inst = self.fire[ix][iy]
-				lg.drawq(img.light_fire, quad.light_fire[inst.flframe%5], inst.x-34, inst.y-42)
+				lg.draw(img.light_fire, quad.light_fire[inst.flframe%5], inst.x-34, inst.y-42)
 			end
 		end
 	end

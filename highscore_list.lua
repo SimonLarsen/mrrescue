@@ -19,7 +19,7 @@ function highscore_list.draw()
 	lg.scale(config.scale)
 
 	drawBox(12, 19, 233, 172)
-	lg.drawq(img.highscore_panes, quad.highscore_pane[highscore_list.level], 0, 9)
+	lg.draw(img.highscore_panes, quad.highscore_pane[highscore_list.level], 0, 9)
 
 	local scores = highscores[highscore_list.level]
 	for i=1, 10 do

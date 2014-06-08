@@ -1,16 +1,22 @@
 function love.conf(t)
-    t.title = "Mr. Rescue"        
-    t.author = "Tangram Games"        
-    t.url = "http://tangramgames.dk"
     t.identity = "mrrescue"
-    t.version = "0.8.0"         
-    t.console = false           
-    t.release = true
-    t.screen.width = 256*3
-    t.screen.height = 200*3
-    t.screen.fullscreen = false 
-    t.screen.vsync = true       
-    t.screen.fsaa = 0           
-    t.modules.mouse = false      
+    t.version = "0.9.1"
+    t.console = false
+
+    t.window.title = "Mr. Rescue"
+    t.window.icon = nil
+    t.window.width = 256*3
+    t.window.height = 200*3
+    t.window.borderless = false
+    t.window.resizable = false
+    t.window.fullscreen = false
+    t.window.fullscreentype = "normal"
+    t.window.vsync = true
+    t.window.fsaa = 0
+    t.window.display = 1
+    t.window.highdpi = false
+    t.window.srgb = false
+
     t.modules.physics = false
+    t.modules.mouse = false
 end

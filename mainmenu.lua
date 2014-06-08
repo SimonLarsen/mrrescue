@@ -19,7 +19,7 @@ function mainmenu.draw()
 	lg.push()
 	lg.scale(config.scale)
 
-	lg.drawq(img.splash, quad.screen, 0,0)
+	lg.draw(img.splash, quad.screen, 0,0)
 	lg.setFont(font.bold)
 	for i=1,6 do
 		if i == selection then

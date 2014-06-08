@@ -147,8 +147,8 @@ function MagmaHulk:draw()
 	-- Draw shockwave
 	if self.shockwaveActive == true then
 		local frame = math.floor(self.shockwaveFrame)
-		lg.drawq(img.shockwave, quad.shockwave[frame], self.shockwaveX, 240, 0, 1,1, 82, 32)
-		lg.drawq(img.shockwave, quad.shockwave[frame], self.shockwaveX, 240, 0,-1,1, 82, 32)
+		lg.draw(img.shockwave, quad.shockwave[frame], self.shockwaveX, 240, 0, 1,1, 82, 32)
+		lg.draw(img.shockwave, quad.shockwave[frame], self.shockwaveX, 240, 0,-1,1, 82, 32)
 	end
 
 	-- Draw boss

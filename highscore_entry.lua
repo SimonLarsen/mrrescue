@@ -86,7 +86,7 @@ function highscore_entry.confirm()
 	playSound("confirm")
 end
 
-function highscore_entry.keypressed(k, uni)
+function highscore_entry.keypressed(k)
 	if k == "right" then
 		if highscore_entry.selection % 10 == 0 then
 			highscore_entry.selection = highscore_entry.selection - 9
@@ -125,7 +125,14 @@ function highscore_entry.keypressed(k, uni)
 		else
 			highscore_entry.confirm()
 		end
-	elseif (uni >= 97 and uni <= 122) or k == " " or k == "-" then
+	elseif k == "backspace" then
+		highscore_entry.delete()
+	end
+end
+
+function highscore_entry.textinput(k)
+	local uni = k:byte()
+	if (uni >= 97 and uni <= 122) or k == " " or k == "-" then
 		if highscore_entry.position <= 5 then
 			if k == " " then
 				highscore_entry.addChar("_")
@@ -134,8 +141,6 @@ function highscore_entry.keypressed(k, uni)
 			end
 		end
 		highscore_entry.selection = 30
-	elseif k == "backspace" then
-		highscore_entry.delete()
 	end
 end
 

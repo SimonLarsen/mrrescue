@@ -17,7 +17,7 @@ function howto.draw()
 	lg.push()
 	lg.scale(config.scale)
 
-	lg.drawq(img.howto, howto.quad, 0,0)
+	lg.draw(img.howto, howto.quad, 0,0)
 
 	lg.pop()
 end

@@ -95,7 +95,7 @@ end
 -- @param frame Optional frame to draw instead of current position
 -- @param altimg Optional alternative image to draw instead
 function animation:draw(x, y, angle, sx, sy, ox, oy, frame, altimg)
-	love.graphics.drawq(altimg or self.img, self.frames[frame or self.position], x, y, angle, sx, sy, ox, oy)
+	love.graphics.draw(altimg or self.img, self.frames[frame or self.position], x, y, angle, sx, sy, ox, oy)
 end
 
 --- Add a frame
