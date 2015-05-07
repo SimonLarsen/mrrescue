@@ -39,8 +39,7 @@ We highly recommend checking out the ingame how-to but here’s the basics:
 Links
 -----
 
-Source code is hosted on GitHub: https://github.com/SimonLarsen/mrrescue  
-The soundtrack can be downloaded on Bandcamp: http://simonlarsen.bandcamp.com
+Source code is hosted on GitHub: https://github.com/SimonLarsen/mrrescue
 
 Licence
 -------
