@@ -189,7 +189,7 @@ function ingame.draw()
 		lg.pop()
 
 		if map.type == MT_NORMAL then
-			lg.setBlendMode("multiplicative")
+			lg.setBlendMode("multiply")
 			lg.draw(canvas, 0,0)
 			lg.setBlendMode("alpha")
 		end
@@ -449,10 +449,11 @@ function updateLightmap()
 	or ingame_state == INGAME_COUNTDOWN_IN or ingame_state == INGAME_COUNTDOWN then
 		lg.push()
 		lg.translate(-math.floor(translate_x), -math.floor(translate_y))
-		canvas:clear(0,0,0,255)
+		-- canvas:clear(0,0,0,255)
 
 		lg.setCanvas(canvas)
-		lg.setBlendMode("additive")
+		lg.clear(0,0,0,255)
+		lg.setBlendMode("add")
 
 		lg.draw(img.light_player, player.flx-128, player.fly-138)
 		map:drawFireLight()
