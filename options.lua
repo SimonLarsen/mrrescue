@@ -164,7 +164,8 @@ function options.action(k)
 		end
 	elseif k == "jump" then
 		if options.selection == 2 then -- FULLSCREEN
-			toggleFullscreen()
+			config.fullscreen = wrap(config.fullscreen + 1, 0, 3)
+			setMode()
 			playSound("blip")
 		elseif options.selection == 3 then -- VSYNC
 			toggleVSync()
