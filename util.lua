@@ -105,9 +105,9 @@ end
 
 
 function drawBox(x,y,w,h)
-	lg.setColor(30,23,18)
+	lg.setColor(30/255,23/255,18/255)
 	lg.rectangle("fill",x+1,y+1,w-2,h-2)
-	lg.setColor(255,255,255)
+	lg.setColor(1,1,1)
 	-- Draw sides
 	lg.draw(img.menu_box, quad.box_left, x, y+1, 0, 1, (h-2))
 	lg.draw(img.menu_box, quad.box_left, x+w, y+1, 0, -1, (h-2))

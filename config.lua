@@ -38,7 +38,7 @@ function loadConfig()
 			config[i] = v
 		end
 	end
-	if love.filesystem.exists("settings") then
+	if love.filesystem.getInfo("settings")~= nil then
 		local data = love.filesystem.read("settings")
 		local file = TSerial.unpack(data)
 		for i,v in pairs(file) do
@@ -52,7 +52,7 @@ function loadConfig()
 end
 
 function loadHighscores()
-	if love.filesystem.exists("highscores") then
+	if love.filesystem.getInfo("highscores")~= nil then
 		local data = love.filesystem.read("highscores")
 		local file = TSerial.unpack(data)
 		for i=1,3 do
@@ -64,7 +64,7 @@ function loadHighscores()
 end
 
 function loadStats()
-	if love.filesystem.exists("stats") then
+	if love.filesystem.getInfo("stats")~= nil then
 		local data = love.filesystem.read("stats")
 		stats = TSerial.unpack(data)
 	end

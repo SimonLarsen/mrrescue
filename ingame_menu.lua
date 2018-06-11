@@ -18,10 +18,10 @@ function ingame_menu.draw()
 	lg.pop()
 
 	lg.scale(config.scale)
-	lg.setColor(0,0,0,238)
+	lg.setColor(0,0,0,238/255)
 	lg.rectangle("fill", 0, 0, WIDTH, HEIGHT)
 
-	lg.setColor(255,255,255,255)
+	lg.setColor(1,1,1,1)
 	lg.printf("PAUSED", 0, 46, WIDTH, "center")
 	lg.print("RESUME", 103, 92)
 	lg.print("QUIT", 103, 106)

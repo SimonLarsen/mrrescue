@@ -1,6 +1,6 @@
 function love.conf(t)
     t.identity = "mrrescue"
-    t.version = "0.10.0"
+    t.version = "11.0"
     t.console = false
     t.accelerometerjoystick = true
     t.gammacorrect = false

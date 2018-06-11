@@ -7,7 +7,7 @@ local snd = {}	-- sound Sources
 
 local IMAGE_FILES = {
 	"splash", "tangram", "lovesplashpixel", "howto",
-	"tiles", "door", "boldfont", "captain_dialog", "captain_dialog_sad",
+	"tiles", "door", "captain_dialog", "captain_dialog_sad",
 	"boss_health", "highscore_panes", "exclamation", "stats_screen",
 	"awards", "hud", "hud2", "hud_people", "item_slots", "water_bar",
 	"reserve_bar", "overloaded_bar", "temperature_bar", "temperature_bar_blink",
@@ -147,7 +147,7 @@ function loadResources()
 	img.stream:setWrap("repeat", "clamp")
 
 	-- Create fonts
-	font.bold = lg.newImageFont(img.boldfont, " ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789.,!'-:*@<>+/_$&?", 2)
+	font.bold = lg.newImageFont("data/boldfont.png", " ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789.,!'-:*@<>+/_$&?", 2)
 	lg.setFont(font.bold)
 
 	-- Create quads

@@ -45,9 +45,9 @@ function highscore_entry.draw()
 		for ix = 1,10 do
 			if highscore_entry.selection == char then
 				lg.rectangle("fill", 33+ix*16, 66+iy*16, 14, 14)
-				lg.setColor(0,0,0,255)
+				lg.setColor(0,0,0,1)
 				lg.print(KEYBOARD:sub(char,char), 37+ix*16, 70+iy*16)
-				lg.setColor(255,255,255,255)
+				lg.setColor(1,1,1,1)
 			else
 				lg.print(KEYBOARD:sub(char,char), 37+ix*16, 70+iy*16)
 			end

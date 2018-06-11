@@ -189,16 +189,16 @@ function ingame.draw()
 		lg.pop()
 
 		if map.type == MT_NORMAL then
-			lg.setBlendMode("multiply")
+			lg.setBlendMode("multiply", "premultiplied")
 			lg.draw(canvas, 0,0)
 			lg.setBlendMode("alpha")
 		end
 
 		-- Draw red screen if hit
 		if player.heat > 0 then
-			lg.setColor(255,255,255,cap(player.heat*255, 16, 255))
+			lg.setColor(1,1,1,cap(player.heat*255, 16, 255)/255)
 			lg.draw(img.red_screen, quad.red_screen, 0,0)
-			lg.setColor(255,255,255,255)
+			lg.setColor(1,1,1,1)
 		end
 
 		-- Draw hud

@@ -22,11 +22,11 @@ function joystick.draw()
 	lg.printf("SET JOYSTICK", 0, 39, WIDTH, "center")
 	for i=1,4 do
 		if joystick.waiting == true and joystick.selection == i then
-			lg.setColor(195,52,41)
+			lg.setColor(195/255,52/255,41/255)
 		end
 		lg.print(string.upper(joykeynames[i]), 65, 53+i*13)
 		lg.print(config.joykeys[joykeynames[i]], 165, 53+i*13)
-		lg.setColor(255,255,255)
+		lg.setColor(1,1,1)
 	end
 	lg.print("DEFAULT", 65, 118)
 	lg.print("BACK", 65, 131)
