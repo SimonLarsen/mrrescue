@@ -22,19 +22,19 @@ function keyboard.draw()
 	lg.printf("SET KEYBOARD", 0, 26, WIDTH, "center")
 	for i,v in ipairs(keynames) do
 		if keyboard.waiting == true and i == keyboard.selection then
-			lg.setColor(195,52,41)
+			lg.setColor(195/255,52/255,41/255)
 		end
 		lg.print(string.upper(v), 65, 40+i*13)
 		if config.keys[v] == " " then
 			lg.print("SPACE", 154, 40+i*13)
 		elseif config.keys[v] == "none" then
-			lg.setColor(118,31,25)
+			lg.setColor(118/255,31/255,25/255)
 			lg.print("NONE", 154, 40+i*13)
-			lg.setColor(255,255,255)
+			lg.setColor(1,1,1)
 		else
 			lg.print(string.upper(config.keys[v]:sub(1,7)), 154, 40+i*13)
 		end
-		lg.setColor(255,255,255)
+		lg.setColor(1,1,1)
 	end
 	lg.print("DEFAULT", 65, 144)
 	lg.print("BACK", 65, 157)

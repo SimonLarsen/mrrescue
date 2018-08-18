@@ -196,7 +196,7 @@ function ingame.draw()
 
 		-- Draw red screen if hit
 		if player.heat > 0 then
-			lg.setColor(1,1,1,cap(player.heat*255, 16, 255)/255)
+			lg.setColor(1,1,1,cap(player.heat, 0.063, 1))
 			lg.draw(img.red_screen, quad.red_screen, 0,0)
 			lg.setColor(1,1,1,1)
 		end
@@ -249,13 +249,13 @@ end
  
 function drawWonMessage()
 	local alpha = cap((-translate_y)/100, 0, 1)
-	lg.setColor(0,0,0,alpha*255)
+	lg.setColor(0,0,0,alpha)
 	lg.rectangle("fill", 0, 40, WIDTH, #WON_MESSAGES[level]*10+12)
-	lg.setColor(255,255,255,alpha*255)
+	lg.setColor(1,1,1,alpha)
 	for i,v in ipairs(WON_MESSAGES[level]) do
 		lg.printf(v, 0, 48+(i-1)*10, WIDTH, "center")
 	end
-	lg.setColor(255,255,255,255)
+	lg.setColor(1,1,1,1)
 end
 
 function drawHUD()
@@ -296,13 +296,13 @@ function drawHUD()
 	if player:isDying() then
 		local color = 0
 		if warning_frame <= 1 then
-			color = 30 + warning_frame * 225
+			color = 0.118 + warning_frame
 		else
-			color = 255 - (warning_frame % 1)*225
+			color = 1 - (warning_frame % 1)
 		end
-		lg.setColor(255,color,color)
+		lg.setColor(1,color,color)
 		lg.draw(img.temperature_bar_blink, 74, HEIGHT-26)
-		lg.setColor(255,255,255)
+		lg.setColor(1,1,1)
 	end
 
 	-- Draw item slots
@@ -320,11 +320,11 @@ function drawHUD()
 
 	-- Draw score
 	lg.setFont(font.bold)
-	lg.setColor(16,12,9)
+	lg.setColor(16/255,12/255,9/255)
 	lg.print("SCORE: "..score,150,187)
-	lg.setColor(246,247,221)
+	lg.setColor(246/255,247/255,221/255)
 	lg.print("SCORE: "..score,150,186)
-	lg.setColor(255,255,255)
+	lg.setColor(1,1,1)
 
 	-- Draw boss health bar
 	if map.type == MT_BOSS and ingame_state ~= INGAME_WON then

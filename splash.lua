@@ -19,37 +19,37 @@ function splash.draw()
 
 	if transition_time < 4 then
 		if transition_time < 1 then
-			local alpha = cap(255*transition_time, 0,255)
-			lg.setColor(255,255,255,alpha)
+			local alpha = cap(transition_time, 0, 1)
+			lg.setColor(1,1,1,alpha)
 			lg.draw(img.tangram, quad.screen, 0,0)
-			lg.setColor(255,255,255,255)
+			lg.setColor(1,1,1,1)
 		elseif transition_time > 3 then
-			local alpha = cap(255*(1-(transition_time-3)), 0,255)
-			lg.setColor(255,255,255,alpha)
+			local alpha = cap(1-(transition_time-3), 0, 1)
+			lg.setColor(1,1,1,alpha)
 			lg.draw(img.tangram, quad.screen, 0,0)
-			lg.setColor(255,255,255,255)
+			lg.setColor(1,1,1,1)
 		else
 			lg.draw(img.tangram, quad.screen, 0,0)
 		end
 	elseif transition_time < 8 then
 		if transition_time < 5 then
-			local alpha = cap(255*(transition_time-4), 0,255)
-			lg.setColor(255,255,255,alpha)
+			local alpha = cap(transition_time-4, 0, 1)
+			lg.setColor(1,1,1,alpha)
 			lg.draw(img.lovesplashpixel, quad.screen, 0,0)
-			lg.setColor(255,255,255,255)
+			lg.setColor(1,1,1,1)
 		elseif transition_time > 7 then
-			local alpha = cap(255*(1-(transition_time-7)), 0,255)
-			lg.setColor(255,255,255,alpha)
+			local alpha = cap(1-(transition_time-7), 0, 1)
+			lg.setColor(1,1,1,alpha)
 			lg.draw(img.lovesplashpixel, quad.screen, 0,0)
-			lg.setColor(255,255,255,255)
+			lg.setColor(1,1,1,1)
 		else
 			lg.draw(img.lovesplashpixel, quad.screen, 0,0)
 		end
 	elseif transition_time < 10 then
-		local alpha = cap(128*(transition_time-8), 0, 255)
-		lg.setColor(255,255,255,alpha)
+		local alpha = cap(0.5*(transition_time-8), 0, 1)
+		lg.setColor(1,1,1,alpha)
 		lg.draw(img.splash, quad.screen, 0,0)
-		lg.setColor(255,255,255,255)
+		lg.setColor(1,1,1,1)
 	else
 		lg.draw(img.splash, quad.screen, 0,0)
 		lg.setFont(font.bold)
