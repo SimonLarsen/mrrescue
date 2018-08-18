@@ -1,10 +1,14 @@
 function love.conf(t)
     t.identity = "mrrescue"
+    t.appendidentity = false
     t.version = "11.0"
     t.console = false
     t.accelerometerjoystick = true
+    t.externalstorage = false
     t.gammacorrect = false
- 
+
+    t.audio.mixwithsystem = true
+
     t.window.title = "Mr. Rescue"
     t.window.icon = nil
     t.window.width = 256*3
@@ -15,15 +19,17 @@ function love.conf(t)
     t.window.minheight = 1
     t.window.fullscreen = false
     t.window.fullscreentype = "desktop"
-    t.window.vsync = true
+    t.window.vsync = 1
     t.window.msaa = 0
     t.window.display = 1
     t.window.highdpi = false
     t.window.x = nil
     t.window.y = nil
- 
+
     t.modules.audio = true
+    t.modules.data = true
     t.modules.event = true
+    t.modules.font = true
     t.modules.graphics = true
     t.modules.image = true
     t.modules.joystick = true
